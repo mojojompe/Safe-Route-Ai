@@ -1,109 +1,134 @@
-import { useLocation, useNavigate } from 'react-router-dom'
-import { ShieldCheckIcon, ExclamationTriangleIcon, ClockIcon, ArrowLeftIcon, ShareIcon, MapIcon } from '@heroicons/react/24/outline'
+import { useState } from 'react'
 
 export default function RouteBreakdown() {
-  const { state } = useLocation()
-  const nav = useNavigate()
-  // Mock data if no state passed
-  const route = state?.route || {
-    id: 'mock-1',
-    score: 8.5,
-    color: 'green',
-    duration: '15 min',
-    distance: '1.2 km',
-    segments: [
-      { title: 'Main St', score: 9, reason: 'Well Lit, High Foot Traffic', color: '#00d35a' },
-      { title: 'Park Ave', score: 7, reason: 'Moderate Lighting', color: '#eab308' },
-      { title: 'Alley Shortcut', score: 4, reason: 'Isolated Area', color: '#ef4444' },
-    ]
-  }
+  const [view, setView] = useState('segments')
 
   return (
-    <div className="p-8 max-w-5xl mx-auto pb-24">
-      <button onClick={() => nav(-1)} className="flex items-center gap-2 text-sr-text-muted hover:text-white mb-8 transition-colors group">
-        <ArrowLeftIcon className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-        Back to Map
-      </button>
+    <div className="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden font-display">
+      <div className="layout-container flex h-full grow flex-col">
+        <div className="px-4 sm:px-8 md:px-12 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
+          <div className="layout-content-container flex flex-col w-full max-w-7xl flex-1">
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Score Card */}
-        <div className="lg:col-span-2 space-y-8">
-          <div className="relative overflow-hidden rounded-3xl bg-sr-darker border border-sr-muted/50 p-8 shadow-2xl">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-sr-green/10 blur-[100px] rounded-full pointer-events-none"></div>
-
-            <div className="flex items-start justify-between mb-8 relative z-10">
-              <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Route Safety Analysis</h1>
-                <p className="text-sr-text-muted">AI-generated risk assessment for your journey.</p>
-              </div>
-              <div className={`flex flex-col items-center justify-center w-24 h-24 rounded-full border-4 ${route.color === 'green' ? 'border-sr-green text-sr-green' : route.color === 'yellow' ? 'border-yellow-500 text-yellow-500' : 'border-red-500 text-red-500'} bg-sr-darker shadow-lg`}>
-                <span className="text-3xl font-bold">{route.score}</span>
-                <span className="text-xs font-medium uppercase">Score</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="p-4 rounded-2xl bg-sr-muted/30 border border-sr-muted/30 flex items-center gap-4">
-                <ClockIcon className="w-8 h-8 text-sr-green" />
-                <div>
-                  <div className="text-xs text-sr-text-muted uppercase font-bold">Est. Time</div>
-                  <div className="text-xl font-bold text-white">{route.duration}</div>
+            <main className="flex flex-col lg:flex-row gap-8 mt-8">
+              {/* Left Column: Route Segments */}
+              <div className="w-full lg:w-2/5 flex flex-col gap-6">
+                {/* PageHeading */}
+                <div className="flex flex-wrap justify-between gap-3 px-4">
+                  <div className="flex min-w-72 flex-col gap-2">
+                    <p className="text-black dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Route Analysis</p>
+                    <p className="text-gray-600 dark:text-[#9db9a6] text-base font-normal leading-normal">Downtown to City Park</p>
+                  </div>
                 </div>
-              </div>
-              <div className="p-4 rounded-2xl bg-sr-muted/30 border border-sr-muted/30 flex items-center gap-4">
-                <MapIcon className="w-8 h-8 text-blue-400" />
-                <div>
-                  <div className="text-xs text-sr-text-muted uppercase font-bold">Distance</div>
-                  <div className="text-xl font-bold text-white">{route.distance}</div>
-                </div>
-              </div>
-            </div>
 
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <ShieldCheckIcon className="w-5 h-5 text-sr-green" />
-              Segment Breakdown
-            </h3>
-            <div className="space-y-4">
-              {route.segments.map((s: any, i: number) => (
-                <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-sr-muted/20 border border-sr-muted/30 hover:bg-sr-muted/40 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="w-2 h-12 rounded-full" style={{ backgroundColor: s.color }}></div>
-                    <div>
-                      <div className="font-bold text-white">{s.title}</div>
-                      <div className="text-sm text-sr-text-muted">{s.reason}</div>
+                {/* Stats */}
+                <div className="flex flex-wrap gap-4 px-4">
+                  <div className="flex min-w-[120px] flex-1 flex-col gap-2 rounded-xl p-4 sm:p-6 border border-black/10 dark:border-[#3b5443] bg-white dark:bg-[#111813]">
+                    <p className="text-gray-800 dark:text-white text-base font-medium leading-normal">Overall Risk</p>
+                    <p className="text-black dark:text-white tracking-light text-2xl font-bold leading-tight">6.8 / 10</p>
+                  </div>
+                  <div className="flex min-w-[120px] flex-1 flex-col gap-2 rounded-xl p-4 sm:p-6 border border-black/10 dark:border-[#3b5443] bg-white dark:bg-[#111813]">
+                    <p className="text-gray-800 dark:text-white text-base font-medium leading-normal">Distance</p>
+                    <p className="text-black dark:text-white tracking-light text-2xl font-bold leading-tight">2.5 mi</p>
+                  </div>
+                  <div className="flex min-w-[120px] flex-1 flex-col gap-2 rounded-xl p-4 sm:p-6 border border-black/10 dark:border-[#3b5443] bg-white dark:bg-[#111813]">
+                    <p className="text-gray-800 dark:text-white text-base font-medium leading-normal">Est. Time</p>
+                    <p className="text-black dark:text-white tracking-light text-2xl font-bold leading-tight">15 min</p>
+                  </div>
+                </div>
+
+                {/* SegmentedButtons */}
+                <div className="flex px-4 py-3">
+                  <div className="flex h-10 flex-1 items-center justify-center rounded-xl bg-black/5 dark:bg-[#28392e] p-1">
+                    <label className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 text-sm font-medium leading-normal transition-all ${view === 'segments' ? 'bg-white dark:bg-[#111813] shadow-sm text-black dark:text-white' : 'text-gray-600 dark:text-[#9db9a6]'}`}>
+                      <span className="truncate">Route Segments</span>
+                      <input checked={view === 'segments'} onChange={() => setView('segments')} className="invisible w-0" name="view-toggle" type="radio" value="Route Segments" />
+                    </label>
+                    <label className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 text-sm font-medium leading-normal transition-all ${view === 'turn-by-turn' ? 'bg-white dark:bg-[#111813] shadow-sm text-black dark:text-white' : 'text-gray-600 dark:text-[#9db9a6]'}`}>
+                      <span className="truncate">Turn-by-turn</span>
+                      <input checked={view === 'turn-by-turn'} onChange={() => setView('turn-by-turn')} className="invisible w-0" name="view-toggle" type="radio" value="Turn-by-turn" />
+                    </label>
+                  </div>
+                </div>
+
+                {/* Segment Cards List */}
+                <div className="flex flex-col gap-4 px-4 overflow-y-auto max-h-[60vh]">
+                  {/* High Risk Segment Card */}
+                  <div className="flex w-full overflow-hidden rounded-xl border-2 border-primary/50 dark:border-primary/50 bg-white dark:bg-[#111813] shadow-lg ring-2 ring-primary/50 dark:ring-primary/50">
+                    <div className="w-2 bg-red-500"></div>
+                    <div className="flex flex-col gap-4 p-5 w-full">
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="flex flex-col">
+                          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Segment 1 of 4</p>
+                          <h3 className="text-lg font-bold text-black dark:text-white">Oak St to Pine Ave</h3>
+                        </div>
+                        <div className="flex items-center gap-2 rounded-full bg-red-500/10 px-3 py-1 text-sm font-bold text-red-500">
+                          <span>8/10</span>
+                          <span className="material-symbols-outlined text-base">warning</span>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full">Poor Lighting</span>
+                        <span className="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full">High Crime Rate</span>
+                      </div>
+                      <button className="flex items-center justify-center gap-2 rounded-lg bg-primary/20 dark:bg-primary/20 hover:bg-primary/30 dark:hover:bg-primary/30 px-4 py-2 text-sm font-bold text-primary dark:text-primary">
+                        <span className="material-symbols-outlined text-base">alt_route</span>
+                        <span>View Safer Detour</span>
+                      </button>
                     </div>
                   </div>
-                  <div className="text-lg font-bold" style={{ color: s.color }}>{s.score}</div>
+
+                  {/* Medium Risk Segment Card */}
+                  <div className="flex w-full overflow-hidden rounded-xl border border-black/10 dark:border-white/20 bg-white dark:bg-[#111813]">
+                    <div className="w-2 bg-orange-500"></div>
+                    <div className="flex flex-col gap-4 p-5 w-full">
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="flex flex-col">
+                          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Segment 2 of 4</p>
+                          <h3 className="text-lg font-bold text-black dark:text-white">Pine Ave to Elm St</h3>
+                        </div>
+                        <div className="flex items-center gap-2 rounded-full bg-orange-500/10 px-3 py-1 text-sm font-bold text-orange-500">
+                          <span>5/10</span>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full">Isolated Block</span>
+                      </div>
+                      <button className="flex items-center justify-center gap-2 rounded-lg bg-primary/20 dark:bg-primary/20 hover:bg-primary/30 dark:hover:bg-primary/30 px-4 py-2 text-sm font-bold text-primary dark:text-primary">
+                        <span className="material-symbols-outlined text-base">alt_route</span>
+                        <span>View Safer Detour</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Low Risk Segment Card */}
+                  <div className="flex w-full overflow-hidden rounded-xl border border-black/10 dark:border-white/20 bg-white dark:bg-[#111813]">
+                    <div className="w-2 bg-green-500"></div>
+                    <div className="flex flex-col gap-4 p-5 w-full">
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="flex flex-col">
+                          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Segment 3 of 4</p>
+                          <h3 className="text-lg font-bold text-black dark:text-white">Elm St to Maple Blvd</h3>
+                        </div>
+                        <div className="flex items-center gap-2 rounded-full bg-green-500/10 px-3 py-1 text-sm font-bold text-green-500">
+                          <span>2/10</span>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full">Well Lit</span>
+                        <span className="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full">Busy Street</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
+              </div>
 
-        {/* Sidebar Actions */}
-        <div className="space-y-6">
-          <div className="p-6 rounded-3xl bg-sr-darker border border-sr-muted/50">
-            <h3 className="font-bold text-white mb-4">Actions</h3>
-            <button className="w-full py-4 bg-sr-green hover:bg-sr-green-dim text-sr-darker font-bold rounded-xl mb-3 shadow-lg hover:shadow-sr-green/20 transition-all flex items-center justify-center gap-2">
-              Start Navigation
-            </button>
-            <button className="w-full py-4 bg-sr-muted/30 hover:bg-sr-muted/50 text-white font-bold rounded-xl border border-sr-muted transition-all flex items-center justify-center gap-2">
-              <ShareIcon className="w-5 h-5" />
-              Share Route
-            </button>
-          </div>
-
-          <div className="p-6 rounded-3xl bg-red-500/10 border border-red-500/20">
-            <div className="flex items-center gap-3 mb-2 text-red-400">
-              <ExclamationTriangleIcon className="w-6 h-6" />
-              <h3 className="font-bold">High Risk Alert</h3>
-            </div>
-            <p className="text-sm text-red-200/80 leading-relaxed mb-4">
-              This route passes through an area with reported low lighting. Proceed with caution or choose an alternative.
-            </p>
-            <button className="text-sm font-bold text-red-400 hover:text-red-300 underline">
-              View Safer Detour
-            </button>
+              {/* Right Column: Map */}
+              <div className="w-full lg:w-3/5 flex flex-col min-h-[400px] lg:min-h-0">
+                <div className="flex p-4 h-full">
+                  <div className="w-full h-full bg-center bg-no-repeat bg-cover rounded-xl object-cover border border-black/10 dark:border-white/20" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCkAhh5Hcl6W7afASJ34M-nljImcsVU7eCcAZwA_K8uLFexChe_86CPsx4lzH7YKwYYO87gs1GO3srrXmEzeypqWfrDVADoTCGdGA3pLtjp4DXE8UBrJ6ZkE6iXxGfkQsWk1aZ2je12yNOHyYD92U9VMIjEnozoLkVsYVWsJDuVxgsYgtf6YpuMk6v0ayp_ZXARck5L-beKWZhhJp5eL0QfmAOIJ23aCeOWcngculcMLq5ChVpF7WHbgvHzUMXL9bjQOdnfZlVvxq7z")' }}></div>
+                </div>
+              </div>
+            </main>
           </div>
         </div>
       </div>

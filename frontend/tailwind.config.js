@@ -4,16 +4,21 @@ export default {
     theme: {
         extend: {
             colors: {
-                'sr-dark': '#0a1f16', // Deep forest green/black
-                'sr-darker': '#05140d', // Darker shade for sidebars/cards
-                'sr-green': '#00d35a', // Vibrant safety green
+                'sr-dark': '#0a1f16',
+                'sr-darker': '#05140d',
+                'sr-green': '#00d35a',
                 'sr-green-dim': '#00a345',
-                'sr-muted': '#1c3329', // Muted green for borders/inputs
+                'sr-muted': '#1c3329',
                 'sr-text': '#e2e8f0',
                 'sr-text-muted': '#94a3b8',
+                // Colors from provided code.html
+                primary: "#13ec5b",
+                "background-light": "#f6f8f6",
+                "background-dark": "#102216",
             },
             fontFamily: {
                 sans: ['Inter', 'system-ui', 'sans-serif'],
+                display: ["Lexend", "sans-serif"],
             },
             backgroundImage: {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

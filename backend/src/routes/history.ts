@@ -1,17 +1,26 @@
 import { Router } from 'express'
-import RouteHistory from '../models/RouteHistory'
+import { Route } from '../models/Route.js'
+
 const router = Router()
 
 router.get('/', async (req, res) => {
-  const items = await RouteHistory.find().sort({ date: -1 }).limit(50)
-  res.json(items)
+  try {
+    const items = await Route.find().sort({ date: -1 }).limit(50)
+    res.json(items)
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch history' })
+  }
 })
 
 router.post('/save', async (req, res) => {
-  const data = req.body
-  const item = new RouteHistory(data)
-  await item.save()
-  res.json(item)
+  try {
+    const data = req.body
+    const item = new Route(data)
+    await item.save()
+    res.json(item)
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to save route' })
+  }
 })
 
 export default router
