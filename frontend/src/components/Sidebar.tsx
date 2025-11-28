@@ -1,64 +1,45 @@
-import { NavLink } from 'react-router-dom'
-import { HomeIcon, MapIcon, ShieldCheckIcon, BellAlertIcon, UserIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'
-
-const links = [
-  { to: '/', label: 'Home', icon: <HomeIcon className="w-5 h-5" /> },
-  { to: '/map', label: 'Plan Route', icon: <MapIcon className="w-5 h-5" /> },
-  { to: '/tips', label: 'Safety Tips', icon: <ShieldCheckIcon className="w-5 h-5" /> },
-  { to: '/history', label: 'History', icon: <UserIcon className="w-5 h-5" /> }, // Swapped Profile for History based on user feedback
-  { to: '/emergency', label: 'Emergency', icon: <BellAlertIcon className="w-5 h-5" /> },
-]
+import { Link, useLocation } from 'react-router-dom'
 
 export default function Sidebar() {
+  const location = useLocation()
+  const isActive = (path: string) => location.pathname === path
+
   return (
-    <aside className="w-72 bg-sr-darker border-r border-sr-muted/50 flex flex-col h-screen sticky top-0 z-50">
-      <div className="p-8 flex items-center gap-3">
-        <div className="relative">
-          <div className="absolute inset-0 bg-sr-green/20 blur-lg rounded-full"></div>
-          <img src="/logo.svg" alt="Safe Route AI" className="w-10 h-10 relative z-10" />
-        </div>
-        <div>
-          <h1 className="font-bold text-xl text-white tracking-tight">Safe Route <span className="text-sr-green">AI</span></h1>
-          <p className="text-xs text-sr-text-muted font-medium">Navigate with Confidence</p>
-        </div>
-      </div>
-
-      <nav className="flex-1 px-4 space-y-1.5 py-4">
-        <div className="text-xs font-semibold text-sr-text-muted uppercase tracking-wider px-4 mb-4">Menu</div>
-        {links.map(l => (
-          <NavLink
-            key={l.to}
-            to={l.to}
-            className={({ isActive }) => `
-              flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 group
-              ${isActive
-                ? 'bg-sr-green text-sr-darker font-bold shadow-[0_0_15px_rgba(0,211,90,0.3)]'
-                : 'text-sr-text-muted hover:bg-sr-muted/50 hover:text-white'
-              }
-            `}
-          >
-            {l.icon}
-            <span className="tracking-wide">{l.label}</span>
-            {/* Active Indicator Dot */}
-            <span className={`ml-auto w-1.5 h-1.5 rounded-full bg-sr-darker ${l.to === window.location.pathname ? 'opacity-100' : 'opacity-0'}`}></span>
-          </NavLink>
-        ))}
-      </nav>
-
-      <div className="p-4 border-t border-sr-muted/50">
-        <button className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sr-text-muted hover:bg-sr-muted/50 hover:text-white transition-colors">
-          <Cog6ToothIcon className="w-5 h-5" />
-          <span>Settings</span>
-        </button>
-        <div className="mt-4 p-4 bg-sr-muted/30 rounded-xl flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sr-green to-emerald-600 flex items-center justify-center text-sr-darker font-bold shadow-lg">
-            JD
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-bold text-white truncate">John Doe</div>
-            <div className="text-xs text-sr-text-muted truncate">Premium Member</div>
+    <aside className="flex w-64 flex-col bg-background-light dark:bg-[#102216] p-4 border-r border-black/10 dark:border-white/10 h-screen sticky top-0">
+      <div className="flex flex-col gap-4">
+        <div className="flex gap-3 items-center">
+          <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCbpePpAYs3whPbw9byr0pPQSdecansQBiswcwF1tbYt3QT-9fLJUdD_dGvJAsGOpugLc231FTJyko5EFZDLRvFo5y8t6vlwsrGmnTksC7qwtGfVaiycqWeO7fJJrsNZ5aVUu05qbumVC9BIim9YnjP8KIc84mAmmqYG49blACV1m0oVsl0dl8NfCFnjxVkq9fDaLJ1fJLIlO3_4M35k54jTXsnnSZv8UGd-ndJ-Nf8TjYpWfA_rutxHPgk7KdCySLjAKYbCn-ahCwo")' }}></div>
+          <div className="flex flex-col">
+            <h1 className="text-gray-900 dark:text-white text-base font-medium leading-normal">Alex Chen</h1>
+            <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">Safe Route AI Member</p>
           </div>
         </div>
+        <nav className="flex flex-col gap-2 mt-4">
+          <Link to="/" className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive('/') ? 'bg-primary/20 text-primary' : 'text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5'}`}>
+            <span className={`material-symbols-outlined ${isActive('/') ? 'fill' : ''}`}>home</span>
+            <p className="text-sm font-medium leading-normal">Home</p>
+          </Link>
+          <Link to="/map" className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive('/map') ? 'bg-primary/20 text-primary' : 'text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5'}`}>
+            <span className={`material-symbols-outlined ${isActive('/map') ? 'fill' : ''}`}>map</span>
+            <p className="text-sm font-medium leading-normal">Plan Route</p>
+          </Link>
+          <Link to="/safety-tips" className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive('/safety-tips') ? 'bg-primary/20 text-primary' : 'text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5'}`}>
+            <span className={`material-symbols-outlined ${isActive('/safety-tips') ? 'fill' : ''}`}>shield</span>
+            <p className="text-sm font-medium leading-normal">Safety Tips</p>
+          </Link>
+          <Link to="/history" className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive('/history') ? 'bg-primary/20 text-primary' : 'text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5'}`}>
+            <span className={`material-symbols-outlined ${isActive('/history') ? 'fill' : ''}`}>history</span>
+            <p className="text-sm font-medium leading-normal">History</p>
+          </Link>
+          <Link to="/emergency" className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive('/emergency') ? 'bg-primary/20 text-primary' : 'text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5'}`}>
+            <span className={`material-symbols-outlined ${isActive('/emergency') ? 'fill' : ''}`}>emergency_home</span>
+            <p className="text-sm font-medium leading-normal">Emergency</p>
+          </Link>
+          <Link to="/about" className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive('/about') ? 'bg-primary/20 text-primary' : 'text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5'}`}>
+            <span className={`material-symbols-outlined ${isActive('/about') ? 'fill' : ''}`}>info</span>
+            <p className="text-sm font-medium leading-normal">About</p>
+          </Link>
+        </nav>
       </div>
     </aside>
   )

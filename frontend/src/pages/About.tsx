@@ -1,32 +1,50 @@
-
-
 export default function About() {
   return (
-    <div className="space-y-10">
-      <h1 className="text-4xl font-bold">About Safe Route AI</h1>
-
-      <section className="bg-[#0b2419] p-6 rounded-2xl shadow">
-        <h2 className="text-2xl font-semibold mb-3">Our Mission</h2>
-        <p className="text-slate-300 leading-relaxed">
-          Safe Route AI empowers users to make safer walking and driving
-          decisions by analyzing real-time risk factors, lighting conditions,
-          traffic patterns, and historical data.
-        </p>
-      </section>
-
-      <section className="bg-[#0b2419] p-6 rounded-2xl shadow">
-        <h2 className="text-2xl font-semibold mb-3">Privacy First</h2>
-        <p className="text-slate-300 leading-relaxed">
-          Your location data is stored securely and never shared with third
-          parties. Your information is encrypted, anonymized, and used strictly
-          to enhance route safety analytics.
-        </p>
-      </section>
-
-      <section className="bg-[#0b2419] p-6 rounded-2xl shadow">
-        <h2 className="text-2xl font-semibold mb-3">Contact Us</h2>
-        <p className="text-slate-300">support@saferoute.ai</p>
-      </section>
+    <div className="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+      <main className="flex-1 p-6 lg:p-10">
+        <div className="mx-auto max-w-4xl">
+          <div className="flex flex-col gap-2 mb-8 text-center">
+            <h1 className="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">About Safe Route AI</h1>
+            <p className="text-gray-500 dark:text-gray-400 text-lg font-normal leading-normal">Your trusted partner in navigating the world more safely.</p>
+          </div>
+          <div className="space-y-12">
+            <section>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Our Mission</h2>
+              <div className="flex flex-col md:flex-row items-center gap-6 p-6 bg-black/5 dark:bg-white/5 rounded-xl backdrop-blur-sm border border-white/10">
+                <div className="flex-shrink-0 text-primary">
+                  <span className="material-symbols-outlined !text-6xl">verified_user</span>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300">
+                  At Safe Route AI, our mission is to empower individuals to make safer travel choices, whether walking or driving. We leverage cutting-edge AI and real-time data to analyze routes for potential hazards, providing you with the safest possible path to your destination. We believe that everyone deserves to feel secure, and our technology is designed to provide peace of mind for every journey.
+                </p>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Your Privacy is Our Priority</h2>
+              <div className="flex flex-col md:flex-row items-center gap-6 p-6 bg-black/5 dark:bg-white/5 rounded-xl backdrop-blur-sm border border-white/10">
+                <div className="flex-shrink-0 text-primary">
+                  <span className="material-symbols-outlined !text-6xl">lock</span>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300">
+                  We are committed to protecting your privacy. Your location data is used only to provide and improve our safety services and is never shared with third parties without your explicit consent. All data is anonymized and encrypted to ensure your personal information remains secure. Your trust is the foundation of our service.
+                </p>
+              </div>
+            </section>
+            <section>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Contact Us</h2>
+              <div className="p-6 bg-black/5 dark:bg-white/5 rounded-xl text-center backdrop-blur-sm border border-white/10">
+                <p className="text-gray-600 dark:text-gray-300">
+                  Have questions, feedback, or need support? Our team is here to help.
+                </p>
+                <a className="mt-4 inline-flex items-center gap-2 text-primary font-semibold hover:underline" href="mailto:support@saferoute.ai">
+                  <span className="material-symbols-outlined">email</span>
+                  support@saferoute.ai
+                </a>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
     </div>
-  );
+  )
 }

@@ -1,106 +1,116 @@
 import { useState } from 'react'
-import MapView from '../components/Map'
-import RouteCard from '../components/RouteCard'
-import { getRouteOptions } from '../services/routeService'
-import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline'
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet'
+import 'leaflet/dist/leaflet.css'
+import L from 'leaflet'
+
+// Fix for default marker icon
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
+let DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
 
 export default function MapPage() {
-  const [q, setQ] = useState('')
-  const [mode, setMode] = useState<'walking' | 'driving'>('walking')
-  const [routes, setRoutes] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
+  const [mode, setMode] = useState('Walking')
 
-  async function handleSearch() {
-    if (!q) return
-    setLoading(true)
-    try {
-      const data = await getRouteOptions(q, mode)
-      setRoutes(data)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
+  // Mock route data
+  const routePath = [
+    [51.505, -0.09],
+    [51.51, -0.1],
+    [51.51, -0.12],
+  ] as [number, number][]
 
   return (
-    <div className="relative h-full flex flex-col md:flex-row overflow-hidden bg-sr-dark">
-      {/* Sidebar / Overlay for Search & Routes */}
-      <div className="w-full md:w-[450px] bg-sr-darker/95 backdrop-blur-xl border-r border-sr-muted/50 flex flex-col z-10 shadow-2xl">
-        <div className="p-6 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-white">Plan Your Route</h2>
-            <button className="p-2 text-sr-text-muted hover:text-white bg-sr-muted/30 rounded-lg transition-colors">
-              <AdjustmentsHorizontalIcon className="w-5 h-5" />
-            </button>
-          </div>
-
-          <div className="relative group">
-            <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-sr-text-muted group-focus-within:text-sr-green transition-colors" />
-            <input
-              value={q}
-              onChange={e => setQ(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSearch()}
-              placeholder="Where do you want to go?"
-              className="w-full bg-sr-muted/30 border border-sr-muted/50 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-sr-text-muted focus:outline-none focus:border-sr-green focus:ring-1 focus:ring-sr-green transition-all shadow-inner"
-            />
-          </div>
-
-          <div className="flex p-1.5 bg-sr-muted/30 rounded-2xl border border-sr-muted/30">
-            <button
-              onClick={() => setMode('walking')}
-              className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${mode === 'walking' ? 'bg-sr-green text-sr-darker shadow-lg' : 'text-sr-text-muted hover:text-white'}`}
-            >
-              Walking
-            </button>
-            <button
-              onClick={() => setMode('driving')}
-              className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${mode === 'driving' ? 'bg-sr-green text-sr-darker shadow-lg' : 'text-sr-text-muted hover:text-white'}`}
-            >
-              Driving
-            </button>
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
-          {loading ? (
-            <div className="flex flex-col items-center justify-center h-40 space-y-4">
-              <div className="w-8 h-8 border-4 border-sr-green border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-sr-text-muted animate-pulse">Analyzing safety data...</p>
-            </div>
-          ) : routes.length > 0 ? (
-            <>
-              <div className="flex items-center justify-between text-xs font-medium text-sr-text-muted uppercase tracking-wider mb-2">
-                <span>Suggested Routes</span>
-                <span>{routes.length} Found</span>
-              </div>
-              {routes.map(r => <RouteCard key={r.id} route={r} />)}
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-64 text-center p-6 border-2 border-dashed border-sr-muted/30 rounded-3xl">
-              <div className="w-16 h-16 bg-sr-muted/20 rounded-full flex items-center justify-center mb-4">
-                <MagnifyingGlassIcon className="w-8 h-8 text-sr-muted" />
-              </div>
-              <h3 className="text-lg font-bold text-white mb-2">No Routes Yet</h3>
-              <p className="text-sr-text-muted text-sm">Enter a destination to see AI-analyzed safe routes.</p>
-            </div>
-          )}
-        </div>
+    <div className="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-hidden font-display">
+      {/* Map Background */}
+      <div className="absolute inset-0 z-0">
+        <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={true} className="h-full w-full">
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <Marker position={[51.505, -0.09]}>
+            <Popup>
+              Start Point
+            </Popup>
+          </Marker>
+          <Marker position={[51.51, -0.12]}>
+            <Popup>
+              Destination
+            </Popup>
+          </Marker>
+          <Polyline positions={routePath} color="#13ec5b" weight={5} opacity={0.8} />
+        </MapContainer>
       </div>
 
-      {/* Map Area */}
-      <div className="flex-1 relative bg-sr-muted">
-        <MapView routes={routes} />
+      {/* UI Overlay */}
+      <div className="relative z-30 flex h-full grow flex-col pointer-events-none">
+        {/* Top Nav Bar */}
+        <header className="flex w-full items-start justify-between gap-4 p-4 md:p-6 pointer-events-auto">
+          {/* Left Section: Logo & Search */}
+          <div className="flex flex-1 flex-col items-start gap-3">
+            <div className="flex items-center gap-2 text-white drop-shadow-md">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-background-dark/50 ring-1 ring-white/10 backdrop-blur-md">
+                <span className="material-symbols-outlined text-primary">share_location</span>
+              </div>
+              <h1 className="text-white text-lg font-bold leading-tight tracking-[-0.015em] drop-shadow-md text-shadow-sm">Safe Route AI</h1>
+            </div>
+            <div className="w-full max-w-md shadow-lg">
+              <label className="flex flex-col min-w-40 h-12 w-full">
+                <div className="flex w-full flex-1 items-stretch rounded-xl h-full bg-background-dark/80 backdrop-blur-sm ring-1 ring-white/10">
+                  <div className="text-white/50 flex items-center justify-center pl-4">
+                    <span className="material-symbols-outlined">search</span>
+                  </div>
+                  <input className="flex w-full min-w-0 flex-1 resize-none overflow-hidden text-white focus:outline-0 focus:ring-2 focus:ring-primary border-none bg-transparent h-full placeholder:text-white/50 px-4 pl-2 text-base font-normal leading-normal" placeholder="Search for a destination..." />
+                </div>
+              </label>
+            </div>
+          </div>
 
-        {/* Map Overlay Controls */}
-        <div className="absolute top-6 right-6 flex flex-col gap-3">
-          <button className="w-10 h-10 bg-sr-darker/90 backdrop-blur text-white rounded-xl flex items-center justify-center shadow-lg hover:bg-sr-green hover:text-sr-darker transition-all">
-            <span className="font-bold text-lg">+</span>
-          </button>
-          <button className="w-10 h-10 bg-sr-darker/90 backdrop-blur text-white rounded-xl flex items-center justify-center shadow-lg hover:bg-sr-green hover:text-sr-darker transition-all">
-            <span className="font-bold text-lg">-</span>
-          </button>
-        </div>
+          {/* Right Section: Mode Toggle & Map Controls */}
+          <div className="flex flex-col items-end gap-3">
+            <div className="flex h-10 items-center justify-center rounded-xl bg-background-dark/80 p-1 backdrop-blur-sm shadow-lg ring-1 ring-white/10">
+              <label className={`flex cursor-pointer h-full grow items-center justify-center gap-2 overflow-hidden rounded-lg px-3 text-white text-sm font-medium leading-normal transition-colors ${mode === 'Walking' ? 'bg-primary shadow-lg text-background-dark' : ''}`}>
+                <span className="material-symbols-outlined text-base">directions_walk</span>
+                <span className="truncate hidden sm:inline">Walking</span>
+                <input checked={mode === 'Walking'} onChange={() => setMode('Walking')} className="invisible absolute w-0" name="route-mode" type="radio" value="Walking" />
+              </label>
+              <label className={`flex cursor-pointer h-full grow items-center justify-center gap-2 overflow-hidden rounded-lg px-3 text-white text-sm font-medium leading-normal transition-colors ${mode === 'Driving' ? 'bg-primary shadow-lg text-background-dark' : ''}`}>
+                <span className="material-symbols-outlined text-base">directions_car</span>
+                <span className="truncate hidden sm:inline">Driving</span>
+                <input checked={mode === 'Driving'} onChange={() => setMode('Driving')} className="invisible absolute w-0" name="route-mode" type="radio" value="Driving" />
+              </label>
+            </div>
+          </div>
+        </header>
+
+        <div className="flex-1"></div>
+
+        {/* Floating Summary Card */}
+        <footer className="p-4 md:p-6 flex justify-center pointer-events-auto">
+          <div className="w-full max-w-xl">
+            <div className="flex flex-col items-stretch justify-start rounded-xl bg-background-dark/80 backdrop-blur-sm shadow-lg ring-1 ring-white/10 overflow-hidden md:flex-row md:items-start">
+              <div className="flex w-full grow flex-col items-stretch justify-center gap-2 p-4">
+                <p className="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Selected Route Summary</p>
+                <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3 justify-between">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-white/70 text-sm font-normal leading-normal">Route is 95% low-risk. ETA: 12 min</p>
+                    <p className="text-white/70 text-sm font-normal leading-normal">Analyzing real-time safety data...</p>
+                  </div>
+                  <button className="flex min-w-[84px] max-w-[480px] w-full sm:w-auto cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-background-dark text-sm font-bold leading-normal tracking-wide transition-transform hover:scale-105">
+                    <span className="truncate">Start Navigation</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   )
