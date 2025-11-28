@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Safe Route AI - Route History</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24;
+            line-height: 1; /* Aligns icons better */
+        }
+    </style>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13ec5b",
+              "background-light": "#f6f8f6",
+              "background-dark": "#102216",
+            },
+            fontFamily: {
+              "display": ["Lexend", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-10 w-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm border-b border-white/10">
+<div class="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
+<div class="flex items-center gap-4 text-black dark:text-white">
+<span class="material-symbols-outlined text-primary text-3xl">share_location</span>
+<h2 class="text-lg font-bold tracking-[-0.015em]">Safe Route AI</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-black dark:text-white/70 hover:text-primary dark:hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium text-black dark:text-white/70 hover:text-primary dark:hover:text-primary transition-colors" href="#">New Route</a>
+<a class="text-sm font-medium text-primary dark:text-primary" href="#">History</a>
+<a class="text-sm font-medium text-black dark:text-white/70 hover:text-primary dark:hover:text-primary transition-colors" href="#">Profile</a>
+</nav>
+<button class="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-primary/20 text-black dark:text-white transition-colors hover:bg-primary/30">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+</button>
+</div>
+</header>
+<main class="flex w-full flex-1 flex-col items-center py-8 px-4 sm:px-6 lg:px-8">
+<div class="flex w-full max-w-4xl flex-col gap-6">
+<!-- PageHeading -->
+<div class="flex flex-wrap items-end justify-between gap-4">
+<div class="flex flex-col gap-2">
+<p class="text-4xl font-black tracking-[-0.033em] text-black dark:text-white">Route History</p>
+<p class="text-base font-normal text-black/60 dark:text-white/60">Review your past trips and AI-generated safety insights.</p>
+</div>
+</div>
+<!-- SearchBar & Chips -->
+<div class="flex flex-col gap-4">
+<div class="relative w-full">
+<span class="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-black/40 dark:text-white/40">search</span>
+<input class="w-full rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 py-3 pl-12 pr-4 text-base text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 focus:border-primary focus:ring-2 focus:ring-primary/50" placeholder="Search by location, date, or tag..." type="text"/>
+</div>
+<div class="flex flex-wrap gap-3">
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/20 px-4 text-sm font-medium text-primary dark:text-primary hover:bg-primary/30 transition-colors">All</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-lg border border-black/10 dark:border-white/10 bg-transparent px-4 text-sm font-medium text-black dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Walking</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-lg border border-black/10 dark:border-white/10 bg-transparent px-4 text-sm font-medium text-black dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Driving</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-lg border border-black/10 dark:border-white/10 bg-transparent px-4 text-sm font-medium text-black dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Safest</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-lg border border-black/10 dark:border-white/10 bg-transparent px-4 text-sm font-medium text-black dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Riskiest</button>
+</div>
+</div>
+<!-- Route List -->
+<div class="flex flex-col gap-4">
+<!-- List Item 1 -->
+<div class="flex flex-col sm:flex-row items-center gap-4 rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 p-4 transition-all hover:shadow-lg hover:border-primary/50 dark:hover:border-primary/50">
+<div class="h-24 w-full sm:h-28 sm:w-40 shrink-0 rounded-lg bg-cover bg-center" data-alt="A map view showing a route from downtown to a park." data-location="San Diego" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBoDPHsaataXLLeI5ltKMU3P4NImeUcZ-Xn2OyGsBk9QEd2LoJy0j77p7FgZUvGGZeZ0sKmgbi_eHxRkaizQEqkiAVj5BEAcVJrqasKpUjlqk0P2HCrt_J-xL0w_4zPVdXq-Er3OsJXLoYIpybdMryGlOEmzpQKh1U_1gESFUyU5pGNle1FUoJyEnIsd2G7VAyD9s0MWIf2taA7ESkQV_3XDLFQ1CXX2SG5f4i6uJUURnlOEuCg62E7X6K7EiXAly7PqiNBIsJICVyt");'></div>
+<div class="flex w-full flex-col gap-3">
+<div class="flex flex-col">
+<p class="text-lg font-bold text-black dark:text-white">From Downtown to North Park</p>
+<p class="text-sm text-black/60 dark:text-white/60">May 20, 2024 - 15 min - 2.5 mi</p>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-500"><span class="material-symbols-outlined !text-sm">verified_user</span>Safest Route Chosen</span>
+</div>
+</div>
+<a class="ml-auto shrink-0 text-black/50 dark:text-white/50 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-3xl">arrow_forward_ios</span>
+</a>
+</div>
+<!-- List Item 2 -->
+<div class="flex flex-col sm:flex-row items-center gap-4 rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 p-4 transition-all hover:shadow-lg hover:border-primary/50 dark:hover:border-primary/50">
+<div class="h-24 w-full sm:h-28 sm:w-40 shrink-0 rounded-lg bg-cover bg-center" data-alt="A map showing a driving route through a city at night." data-location="Brooklyn" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCMUGohEZ5MO6gNk0qI5Vta5KqzxFGxUKd6hILgSoyCEhodbodYQRlrMOJ5wkFbgaYGfHPvGc5GSYGrbHcNVcgfy_B1NHkrfb2uMO4cL4qXThw8lQHoWvWCtG7030bYQaU116pf18ZlUdKW3Hizzq4S2r6DfclgDOyN9bg9NDuCWQu8-wpuA_BNbBBR8cWXOnDhTSinmVQxDPtywCyrpwRK1vOJM4Fz1v7fbNcTOc56jyGo9fVh5nv7wihxVSgNdKRuAywItNb4QL2X");'></div>
+<div class="flex w-full flex-col gap-3">
+<div class="flex flex-col">
+<p class="text-lg font-bold text-black dark:text-white">Brooklyn Bridge to Prospect Park</p>
+<p class="text-sm text-black/60 dark:text-white/60">May 18, 2024 - 25 min - 5.1 mi</p>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="flex items-center gap-1.5 rounded-full bg-yellow-500/10 px-3 py-1 text-xs font-medium text-yellow-500"><span class="material-symbols-outlined !text-sm">warning</span>High Incident Zone</span>
+<span class="flex items-center gap-1.5 rounded-full bg-red-500/10 px-3 py-1 text-xs font-medium text-red-500"><span class="material-symbols-outlined !text-sm">dangerous</span>Speeding Detected</span>
+</div>
+</div>
+<a class="ml-auto shrink-0 text-black/50 dark:text-white/50 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-3xl">arrow_forward_ios</span>
+</a>
+</div>
+<!-- List Item 3 -->
+<div class="flex flex-col sm:flex-row items-center gap-4 rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 p-4 transition-all hover:shadow-lg hover:border-primary/50 dark:hover:border-primary/50">
+<div class="h-24 w-full sm:h-28 sm:w-40 shrink-0 rounded-lg bg-cover bg-center" data-alt="A map showing a short walking route in a suburban area." data-location="Austin" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCAu2qHBiLAXY1frj5E7mJPYBMLZK-CZ-TLqilXdyKzZu_lGoC0HTGPtD9e08dDKS-CoQupPLVMrbFoAXZtsF9kVtcWmyRs0dcm1bQz58qYBCyhfTPt5kdaQOhFjjFtw0yQ9uLFQuxmTxau77NCqS9fr34bLzj28h2Ta1AE7aC5oanC4jLolic9uajhdY2xlApwT1cjKVOZEGaNwDGTGvbjBM0tkcJuMdjUoqN5F4N-T2N4-xs4FL-JGi3wsD1GK3cIjL-pqeYuwiQk");'></div>
+<div class="flex w-full flex-col gap-3">
+<div class="flex flex-col">
+<p class="text-lg font-bold text-black dark:text-white">Morning Walk around Zilker</p>
+<p class="text-sm text-black/60 dark:text-white/60">May 15, 2024 - 30 min - 1.8 mi</p>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-500"><span class="material-symbols-outlined !text-sm">verified_user</span>Safest Route Chosen</span>
+</div>
+</div>
+<a class="ml-auto shrink-0 text-black/50 dark:text-white/50 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-3xl">arrow_forward_ios</span>
+</a>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-center gap-4 pt-6">
+<button class="flex h-10 items-center justify-center gap-2 rounded-lg border border-black/10 dark:border-white/10 bg-transparent px-4 text-sm font-medium text-black dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined">chevron_left</span> Previous
+                    </button>
+<button class="flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-background-dark hover:bg-primary/90 transition-colors">
+                        Next <span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+</body></html>
