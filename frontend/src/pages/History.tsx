@@ -41,14 +41,18 @@ export default function History() {
   })
 
   return (
-    <div className="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+    <div className="relative flex h-auto min-h-screen w-full flex-col bg-green-950 font-display text-gray-800 dark:text-gray-200">
       <main className="flex-1 p-6 lg:p-10">
         <div className="mx-auto max-w-5xl">
           {/* PageHeading */}
           <div className="flex flex-wrap justify-between gap-3 mb-6">
             <div className="flex flex-col gap-2">
-              <h1 className="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Route History</h1>
-              <p className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">Review your past journeys and safety reports.</p>
+              <h1 className="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+                Route History
+              </h1>
+              <p className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">
+                Review your past journeys and safety reports.
+              </p>
             </div>
           </div>
 
@@ -56,7 +60,7 @@ export default function History() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
             <div className="w-full sm:w-auto sm:max-w-xs">
               <label className="flex flex-col min-w-40 h-12 w-full">
-                <div className="flex w-full flex-1 items-stretch rounded-xl h-full bg-black/5 dark:bg-white/5">
+                <div className="flex w-full flex-1 items-stretch rounded-4xl h-full bg-black/5 dark:bg-white/5">
                   <div className="text-gray-500 dark:text-gray-400 flex items-center justify-center pl-4">
                     <span className="material-symbols-outlined">search</span>
                   </div>
@@ -70,11 +74,15 @@ export default function History() {
               </label>
             </div>
             <div className="flex gap-2">
-              {['All', 'Low', 'Moderate', 'High'].map(f => (
+              {["All", "Low", "Moderate", "High"].map((f) => (
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
-                  className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${filter === f ? 'bg-primary text-background-dark' : 'bg-black/5 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-black/10 dark:hover:bg-white/10'}`}
+                  className={`px-4 py-2 rounded-4xl text-sm font-bold transition-colors ${
+                    filter === f
+                      ? "bg-green-900 text-green-500"
+                      : "bg-primary text-background-dark hover:bg-black/10 dark:hover:bg-white/10"
+                  }`}
                 >
                   {f}
                 </button>
@@ -85,31 +93,52 @@ export default function History() {
           {/* List */}
           <div className="flex flex-col gap-4">
             {loading ? (
-              <p className="text-center text-gray-500">Loading history...</p>
+              <p className="text-center text-gray-500 animate-pulse">
+                Loading history...
+              </p>
             ) : filteredRoutes.length === 0 ? (
               <p className="text-center text-gray-500">No routes found.</p>
             ) : (
               filteredRoutes.map((route) => (
-                <div key={route._id} className="flex flex-col md:flex-row gap-4 p-4 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors">
+                <div
+                  key={route._id}
+                  className="flex flex-col md:flex-row gap-4 p-4 rounded-4xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                >
                   <div className="flex-1 flex flex-col gap-2">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">{route.startLocation} to {route.endLocation}</h3>
-                      <span className={`px-2 py-0.5 rounded text-xs font-bold ${route.riskLevel === 'Low' ? 'bg-green-500/20 text-green-500' :
-                          route.riskLevel === 'Moderate' ? 'bg-yellow-500/20 text-yellow-500' :
-                            'bg-red-500/20 text-red-500'
-                        }`}>
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                        {route.startLocation} to {route.endLocation}
+                      </h3>
+                      <span
+                        className={`px-2 py-0.5 rounded text-xs font-bold ${
+                          route.riskLevel === "Low"
+                            ? "bg-green-500/20 text-green-500"
+                            : route.riskLevel === "Moderate"
+                            ? "bg-yellow-500/20 text-yellow-500"
+                            : "bg-red-500/20 text-red-500"
+                        }`}
+                      >
                         {route.riskLevel} Risk
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{new Date(route.date).toLocaleDateString()} • {route.distance} • {route.duration}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {new Date(route.date).toLocaleDateString()} •{" "}
+                      {route.distance} • {route.duration}
+                    </p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Safety Score</p>
-                      <p className="text-xl font-black text-gray-900 dark:text-white">{route.safetyScore}/10</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Safety Score
+                      </p>
+                      <p className="text-xl font-black text-gray-900 dark:text-white">
+                        {route.safetyScore}/10
+                      </p>
                     </div>
                     <button className="p-2 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400">
-                      <span className="material-symbols-outlined">chevron_right</span>
+                      <span className="material-symbols-outlined">
+                        chevron_right
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -119,5 +148,5 @@ export default function History() {
         </div>
       </main>
     </div>
-  )
+  );
 }
