@@ -201,7 +201,7 @@ export default function RouteBreakdown() {
               {/* Right Column: Map */}
               <div className="w-full lg:w-3/5 flex flex-col min-h-[400px] lg:min-h-0">
                 <div className="flex p-4 h-full">
-                  <div className="w-full h-full bg-center bg-no-repeat bg-cover rounded-xl object-cover border border-black/10 dark:border-white/20">
+                  <div className="w-full h-full bg-center bg-no-repeat bg-cover rounded-3xl object-cover border border-black/10 dark:border-white/20">
                     <MapContainer
                       center={[51.505, -0.09]}
                       zoom={13}
