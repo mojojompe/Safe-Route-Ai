@@ -262,7 +262,7 @@ export default function RouteBreakdown() {
                       <span className="material-symbols-outlined">close</span>
                     </button>
 
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto pr-2">
                       <div className="flex items-center gap-3">
                         <div className="w-3 h-12 rounded-full" style={{ backgroundColor: selectedSegment.color }}></div>
                         <div>
@@ -271,17 +271,71 @@ export default function RouteBreakdown() {
                         </div>
                       </div>
 
-                      <div className="p-4 rounded-2xl bg-gray-50 dark:bg-[#1a241d] border border-black/5 dark:border-white/5">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-gray-600 dark:text-gray-300 font-medium">Safety Score</span>
-                          <span className="text-xl font-bold" style={{ color: selectedSegment.color }}>{selectedSegment.score}/10</span>
+                      {/* Key Stats */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="p-3 bg-gray-50 dark:bg-[#1a241d] rounded-xl border border-black/5 dark:border-white/5">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold">Safety Score</p>
+                          <p className="text-xl font-bold" style={{ color: selectedSegment.color }}>{selectedSegment.score}/10</p>
                         </div>
-                        <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                          {selectedSegment.reason}
+                        <div className="p-3 bg-gray-50 dark:bg-[#1a241d] rounded-xl border border-black/5 dark:border-white/5">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold">Est. Time</p>
+                          <p className="text-xl font-bold text-black dark:text-white">{selectedSegment.time || 'N/A'}</p>
+                        </div>
+                      </div>
+
+                      {/* Range */}
+                      <div className="p-4 rounded-2xl bg-gray-50 dark:bg-[#1a241d] border border-black/5 dark:border-white/5">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-1">Range</p>
+                        <p className="text-gray-800 dark:text-gray-200 font-medium leading-relaxed">
+                          {selectedSegment.range || 'Range details unavailable'}
                         </p>
                       </div>
 
-                      <div className="flex gap-3 mt-2">
+                      {/* Tips & Risks */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-2">Safety Tips</p>
+                          <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                            {selectedSegment.tips?.map((tip: string, i: number) => (
+                              <li key={i}>{tip}</li>
+                            )) || <li>No specific tips available.</li>}
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-2">Risk Factors</p>
+                          <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                            {selectedSegment.risks?.map((risk: string, i: number) => (
+                              <li key={i}>{risk}</li>
+                            )) || <li>No specific risks identified.</li>}
+                          </ul>
+                        </div>
+                      </div>
+
+                      {/* Landmarks & Junctions */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-2">Landmarks</p>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedSegment.landmarks?.map((lm: string, i: number) => (
+                              <span key={i} className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs rounded-md font-medium">
+                                {lm}
+                              </span>
+                            )) || <span className="text-sm text-gray-500">None nearby</span>}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-2">Key Junctions</p>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedSegment.junctions?.map((j: string, i: number) => (
+                              <span key={i} className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs rounded-md font-medium">
+                                {j}
+                              </span>
+                            )) || <span className="text-sm text-gray-500">None</span>}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3 mt-4 pt-4 border-t border-black/5 dark:border-white/10">
                         <button
                           onClick={() => setIsModalOpen(false)}
                           className="flex-1 py-3 px-4 rounded-xl font-bold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#28392e] hover:bg-gray-200 dark:hover:bg-[#3b5443] transition-colors"
