@@ -24,7 +24,8 @@ router.post('/options', async (req, res) => {
         const scoredRoutes = await Promise.all(routes.map(async (route: any, index: number) => {
             const scoreObj = await scoringService.scoreRoute(route.geometry, {
                 distance: route.distance / 1609.34, // meters to miles
-                mode
+                mode,
+                steps: route.legs[0].steps
             })
 
             return {
