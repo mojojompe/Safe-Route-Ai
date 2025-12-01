@@ -1,14 +1,78 @@
-import { useState } from 'react'
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  Polyline,
-} from "react-leaflet";
+import { useState, useEffect, useRef } from 'react'
+import Map, { Source, Layer, Marker } from 'react-map-gl'
+import 'mapbox-gl/dist/mapbox-gl.css'
+import { useLocation, Navigate } from 'react-router-dom'
+
+
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 
 export default function RouteBreakdown() {
   const [view, setView] = useState('segments')
+  const [isNavigating, setIsNavigating] = useState(false)
+  const [currentStepIndex, setCurrentStepIndex] = useState(0)
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null)
+
+  // Modal State
+  const [selectedSegment, setSelectedSegment] = useState<any>(null)
+  const [selectedSegmentIndex, setSelectedSegmentIndex] = useState(0)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const location = useLocation()
+  const { routeData, startQuery, destQuery } = location.state || {}
+  const mapRef = useRef<any>(null)
+
+  useEffect(() => {
+    if (routeData && routeData.geojson) {
+      setUserLocation(routeData.geojson.geometry.coordinates[0])
+    }
+  }, [routeData])
+
+  // Simulated Navigation Effect
+  useEffect(() => {
+    if (!isNavigating || !routeData || !routeData.steps) return
+
+    const interval = setInterval(() => {
+      setCurrentStepIndex(prev => {
+        const next = prev + 1
+        if (next >= routeData.steps.length) {
+          setIsNavigating(false)
+          return prev
+        }
+        // Move marker to next step location (simplified simulation)
+        const step = routeData.steps[next]
+        setUserLocation(step.maneuver.location)
+
+        // Fly map to new location
+        if (mapRef.current) {
+          mapRef.current.flyTo({
+            center: step.maneuver.location,
+            zoom: 17,
+            pitch: 60,
+            bearing: step.maneuver.bearing_after || 0
+          })
+        }
+        return next
+      })
+    }, 4000) // Change step every 4 seconds for demo
+
+    return () => clearInterval(interval)
+  }, [isNavigating, routeData])
+
+  if (!routeData) {
+    return <Navigate to="/map" />
+  }
+
+  const routeLayer = {
+    id: 'route',
+    type: 'line',
+    paint: {
+      'line-color': '#00d35a',
+      'line-width': 5,
+      'line-opacity': 0.8
+    }
+  }
+
+  const currentStep = routeData.steps ? routeData.steps[currentStepIndex] : null
 
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col bg-green-950 overflow-x-hidden font-display">
@@ -22,194 +86,256 @@ export default function RouteBreakdown() {
                 <div className="flex flex-wrap justify-between gap-3 px-4">
                   <div className="flex min-w-72 flex-col gap-2">
                     <p className="text-black dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
-                      Route Analysis
+                      {isNavigating ? "Live Navigation" : "Route Analysis"}
                     </p>
                     <p className="text-gray-600 dark:text-[#9db9a6] text-base font-normal leading-normal">
-                      Downtown to City Park
+                      {startQuery} to {destQuery}
                     </p>
                   </div>
                 </div>
 
+                {/* Live Instruction Card */}
+                {isNavigating && currentStep && (
+                  <div className="mx-4 p-6 bg-green-600 rounded-2xl shadow-lg text-white animate-pulse">
+                    <div className="flex items-center gap-4">
+                      <span className="material-symbols-outlined text-4xl">
+                        {currentStep.maneuver.type === 'turn' ?
+                          (currentStep.maneuver.modifier?.includes('left') ? 'turn_left' : 'turn_right') :
+                          'straight'}
+                      </span>
+                      <div>
+                        <p className="text-2xl font-bold">{currentStep.maneuver.instruction}</p>
+                        <p className="text-sm opacity-80">{Math.round(currentStep.distance)} meters</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Stats */}
-                <div className="flex flex-wrap gap-4 px-4">
-                  <div className="flex min-w-[120px] flex-1 flex-col gap-2 rounded-xl p-4 sm:p-6 border border-black/10 dark:border-[#3b5443] bg-white dark:bg-[#111813]">
-                    <p className="text-gray-800 dark:text-white text-base font-medium leading-normal">
-                      Overall Risk
-                    </p>
-                    <p className="text-black dark:text-white tracking-light text-2xl font-bold leading-tight">
-                      6.8 / 10
-                    </p>
+                {!isNavigating && (
+                  <div className="flex flex-wrap gap-4 px-4">
+                    <div className="flex min-w-[120px] flex-1 flex-col gap-2 rounded-xl p-4 sm:p-6 border border-black/10 dark:border-[#3b5443] bg-white dark:bg-[#111813]">
+                      <p className="text-gray-800 dark:text-white text-base font-medium leading-normal">
+                        Overall Risk
+                      </p>
+                      <p className="text-black dark:text-white tracking-light text-2xl font-bold leading-tight">
+                        {routeData.riskLevel}
+                      </p>
+                    </div>
+                    <div className="flex min-w-[120px] flex-1 flex-col gap-2 rounded-xl p-4 sm:p-6 border border-black/10 dark:border-[#3b5443] bg-white dark:bg-[#111813]">
+                      <p className="text-gray-800 dark:text-white text-base font-medium leading-normal">
+                        Distance
+                      </p>
+                      <p className="text-black dark:text-white tracking-light text-2xl font-bold leading-tight">
+                        {routeData.distance}
+                      </p>
+                    </div>
+                    <div className="flex min-w-[120px] flex-1 flex-col gap-2 rounded-xl p-4 sm:p-6 border border-black/10 dark:border-[#3b5443] bg-white dark:bg-[#111813]">
+                      <p className="text-gray-800 dark:text-white text-base font-medium leading-normal">
+                        Est. Time
+                      </p>
+                      <p className="text-black dark:text-white tracking-light text-2xl font-bold leading-tight">
+                        {routeData.duration}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex min-w-[120px] flex-1 flex-col gap-2 rounded-xl p-4 sm:p-6 border border-black/10 dark:border-[#3b5443] bg-white dark:bg-[#111813]">
-                    <p className="text-gray-800 dark:text-white text-base font-medium leading-normal">
-                      Distance
-                    </p>
-                    <p className="text-black dark:text-white tracking-light text-2xl font-bold leading-tight">
-                      2.5 mi
-                    </p>
-                  </div>
-                  <div className="flex min-w-[120px] flex-1 flex-col gap-2 rounded-xl p-4 sm:p-6 border border-black/10 dark:border-[#3b5443] bg-white dark:bg-[#111813]">
-                    <p className="text-gray-800 dark:text-white text-base font-medium leading-normal">
-                      Est. Time
-                    </p>
-                    <p className="text-black dark:text-white tracking-light text-2xl font-bold leading-tight">
-                      15 min
-                    </p>
-                  </div>
+                )}
+
+                {/* Controls */}
+                <div className="px-4">
+                  {!isNavigating ? (
+                    <button
+                      onClick={() => setIsNavigating(true)}
+                      className="w-full py-4 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl text-lg shadow-lg transition-transform hover:scale-105"
+                    >
+                      Start Live Navigation
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setIsNavigating(false)}
+                      className="w-full py-4 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-lg shadow-lg transition-transform hover:scale-105"
+                    >
+                      Stop Navigation
+                    </button>
+                  )}
                 </div>
 
                 {/* SegmentedButtons */}
-                <div className="flex px-4 py-3">
-                  <div className="flex h-10 flex-1 items-center justify-center rounded-xl bg-black/5 dark:bg-[#28392e] p-1">
-                    <label
-                      className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 text-sm font-medium leading-normal transition-all ${
-                        view === "segments"
+                {!isNavigating && (
+                  <div className="flex px-4 py-3">
+                    <div className="flex h-10 flex-1 items-center justify-center rounded-xl bg-black/5 dark:bg-[#28392e] p-1">
+                      <label
+                        className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 text-sm font-medium leading-normal transition-all ${view === "segments"
                           ? "bg-white dark:bg-[#111813] shadow-sm text-black dark:text-white"
                           : "text-gray-600 dark:text-[#9db9a6]"
-                      }`}
-                    >
-                      <span className="truncate">Route Segments</span>
-                      <input
-                        checked={view === "segments"}
-                        onChange={() => setView("segments")}
-                        className="invisible w-0"
-                        name="view-toggle"
-                        type="radio"
-                        value="Route Segments"
-                      />
-                    </label>
-                    <label
-                      className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 text-sm font-medium leading-normal transition-all ${
-                        view === "turn-by-turn"
+                          }`}
+                      >
+                        <span className="truncate">Route Segments</span>
+                        <input
+                          checked={view === "segments"}
+                          onChange={() => setView("segments")}
+                          className="invisible w-0"
+                          name="view-toggle"
+                          type="radio"
+                          value="Route Segments"
+                        />
+                      </label>
+                      <label
+                        className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 text-sm font-medium leading-normal transition-all ${view === "turn-by-turn"
                           ? "bg-white dark:bg-[#111813] shadow-sm text-black dark:text-white"
                           : "text-gray-600 dark:text-[#9db9a6]"
-                      }`}
-                    >
-                      <span className="truncate">Turn-by-turn</span>
-                      <input
-                        checked={view === "turn-by-turn"}
-                        onChange={() => setView("turn-by-turn")}
-                        className="invisible w-0"
-                        name="view-toggle"
-                        type="radio"
-                        value="Turn-by-turn"
-                      />
-                    </label>
+                          }`}
+                      >
+                        <span className="truncate">Turn-by-turn</span>
+                        <input
+                          checked={view === "turn-by-turn"}
+                          onChange={() => setView("turn-by-turn")}
+                          className="invisible w-0"
+                          name="view-toggle"
+                          type="radio"
+                          value="Turn-by-turn"
+                        />
+                      </label>
+                    </div>
                   </div>
-                </div>
+                )}
 
-                {/* Segment Cards List */}
+                {/* Lists */}
                 <div className="flex flex-col gap-4 px-4 overflow-y-auto max-h-[60vh]">
-                  {/* High Risk Segment Card */}
-                  <div className="flex w-full overflow rounded-xl bg-green-900 dark:bg-[#111813] shadow-lg p-y-1">
-                    <div className="w-2 bg-red-500"></div>
-                    <div className="flex flex-col gap-4 p-5 w-full">
-                      <div className="flex justify-between items-start gap-2">
-                        <div className="flex flex-col">
-                          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                            Segment 1 of 4
-                          </p>
-                          <h3 className="text-lg font-bold text-black dark:text-white">
-                            Oak St to Pine Ave
-                          </h3>
-                        </div>
-                        <div className="flex items-center gap-2 rounded-full bg-red-500/10 px-3 py-1 text-sm font-bold text-red-500">
-                          <span>8/10</span>
-                          <span className="material-symbols-outlined text-base">
-                            warning
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <span className="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full">
-                          Poor Lighting
-                        </span>
-                        <span className="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full">
-                          High Crime Rate
-                        </span>
-                      </div>
-                      <button className="flex items-center justify-center gap-2 rounded-lg bg-primary/20 dark:bg-primary/20 hover:bg-primary/30 dark:hover:bg-primary/30 px-4 py-2 text-sm font-bold text-primary dark:text-primary">
-                        <span className="material-symbols-outlined text-base">
-                          alt_route
-                        </span>
-                        <span>View Safer Detour</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Medium Risk Segment Card */}
-                  <div className="flex w-full overflow rounded-xl border border-black/10 dark:border-white/20 bg-white dark:bg-[#111813]">
-                    <div className="w-2 bg-orange-500"></div>
-                    <div className="flex flex-col gap-4 p-5 w-full">
-                      <div className="flex justify-between items-start gap-2">
-                        <div className="flex flex-col">
-                          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                            Segment 2 of 4
-                          </p>
-                          <h3 className="text-lg font-bold text-black dark:text-white">
-                            Pine Ave to Elm St
-                          </h3>
-                        </div>
-                        <div className="flex items-center gap-2 rounded-full bg-orange-500/10 px-3 py-1 text-sm font-bold text-orange-500">
-                          <span>5/10</span>
+                  {view === 'segments' && !isNavigating ? (
+                    routeData.segments?.map((segment: any, i: number) => (
+                      <div
+                        key={i}
+                        onClick={() => {
+                          setSelectedSegment(segment)
+                          setSelectedSegmentIndex(i)
+                          setIsModalOpen(true)
+                        }}
+                        className="flex w-full overflow rounded-xl border border-black/10 dark:border-white/20 bg-white dark:bg-[#111813] cursor-pointer hover:bg-gray-50 dark:hover:bg-[#1a241d] transition-colors"
+                      >
+                        <div className="w-2" style={{ backgroundColor: segment.color }}></div>
+                        <div className="flex flex-col gap-4 p-5 w-full">
+                          <div className="flex justify-between items-start gap-2">
+                            <div className="flex flex-col">
+                              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                Segment {i + 1}
+                              </p>
+                              <h3 className="text-lg font-bold text-black dark:text-white">
+                                {segment.title}
+                              </h3>
+                            </div>
+                            <div className="flex items-center gap-2 rounded-full px-3 py-1 text-sm font-bold" style={{ backgroundColor: `${segment.color}20`, color: segment.color }}>
+                              <span>{segment.score}/10</span>
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            <span className="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full">
+                              {segment.reason}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex flex-wrap gap-2">
-                        <span className="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full">
-                          Isolated Block
-                        </span>
+                    ))
+                  ) : (
+                    !isNavigating && (
+                      <div className="flex flex-col gap-2">
+                        {routeData.steps?.map((step: any, i: number) => (
+                          <div key={i} className="p-4 bg-white dark:bg-[#111813] rounded-xl border border-white/10 flex gap-3">
+                            <span className="font-bold text-green-500">{i + 1}.</span>
+                            <p className="text-sm text-gray-300">{step.maneuver.instruction}</p>
+                          </div>
+                        ))}
                       </div>
-                      <button className="flex items-center justify-center gap-2 rounded-lg bg-primary/20 dark:bg-primary/20 hover:bg-primary/30 dark:hover:bg-primary/30 px-4 py-2 text-sm font-bold text-primary dark:text-primary">
-                        <span className="material-symbols-outlined text-base">
-                          alt_route
-                        </span>
-                        <span>View Safer Detour</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Low Risk Segment Card */}
-                  <div className="flex w-full overflow rounded-xl border border-black/10 dark:border-white/20 bg-white dark:bg-[#111813]">
-                    <div className="w-2 bg-green-500"></div>
-                    <div className="flex flex-col gap-4 p-5 w-full">
-                      <div className="flex justify-between items-start gap-2">
-                        <div className="flex flex-col">
-                          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                            Segment 3 of 4
-                          </p>
-                          <h3 className="text-lg font-bold text-black dark:text-white">
-                            Elm St to Maple Blvd
-                          </h3>
-                        </div>
-                        <div className="flex items-center gap-2 rounded-full bg-green-500/10 px-3 py-1 text-sm font-bold text-green-500">
-                          <span>2/10</span>
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <span className="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full">
-                          Well Lit
-                        </span>
-                        <span className="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full">
-                          Busy Street
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                    )
+                  )}
                 </div>
               </div>
+
+              {/* Segment Modal */}
+              {isModalOpen && selectedSegment && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                  <div className="bg-white dark:bg-[#111813] rounded-3xl p-6 max-w-md w-full shadow-2xl border border-white/10 relative">
+                    <button
+                      onClick={() => setIsModalOpen(false)}
+                      className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:hover:text-white"
+                    >
+                      <span className="material-symbols-outlined">close</span>
+                    </button>
+
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-3 h-12 rounded-full" style={{ backgroundColor: selectedSegment.color }}></div>
+                        <div>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Segment {selectedSegmentIndex + 1}</p>
+                          <h2 className="text-2xl font-bold text-black dark:text-white">{selectedSegment.title}</h2>
+                        </div>
+                      </div>
+
+                      <div className="p-4 rounded-2xl bg-gray-50 dark:bg-[#1a241d] border border-black/5 dark:border-white/5">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-gray-600 dark:text-gray-300 font-medium">Safety Score</span>
+                          <span className="text-xl font-bold" style={{ color: selectedSegment.color }}>{selectedSegment.score}/10</span>
+                        </div>
+                        <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                          {selectedSegment.reason}
+                        </p>
+                      </div>
+
+                      <div className="flex gap-3 mt-2">
+                        <button
+                          onClick={() => setIsModalOpen(false)}
+                          className="flex-1 py-3 px-4 rounded-xl font-bold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#28392e] hover:bg-gray-200 dark:hover:bg-[#3b5443] transition-colors"
+                        >
+                          Close
+                        </button>
+                        {routeData.segments && selectedSegmentIndex < routeData.segments.length - 1 && (
+                          <button
+                            onClick={() => {
+                              const nextIndex = selectedSegmentIndex + 1
+                              setSelectedSegment(routeData.segments[nextIndex])
+                              setSelectedSegmentIndex(nextIndex)
+                            }}
+                            className="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-green-600 hover:bg-green-500 transition-colors flex items-center justify-center gap-2"
+                          >
+                            Next Segment <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Right Column: Map */}
               <div className="w-full lg:w-3/5 flex flex-col min-h-[400px] lg:min-h-0">
                 <div className="flex p-4 h-full">
-                  <div className="w-full h-full bg-center bg-no-repeat bg-cover rounded-3xl object-cover border border-black/10 dark:border-white/20">
-                    <MapContainer
-                      center={[51.505, -0.09]}
-                      zoom={13}
-                      scrollWheelZoom={true}
-                      className="h-full w-full rounded-3xl"
+                  <div className="w-full h-full bg-center bg-no-repeat bg-cover rounded-3xl object-cover border border-black/10 dark:border-white/20 overflow-hidden relative">
+                    <Map
+                      ref={mapRef}
+                      initialViewState={{
+                        longitude: routeData.geojson.geometry.coordinates[0][0],
+                        latitude: routeData.geojson.geometry.coordinates[0][1],
+                        zoom: 13
+                      }}
+                      style={{ width: '100%', height: '100%' }}
+                      mapStyle="mapbox://styles/mapbox/dark-v11"
+                      mapboxAccessToken={MAPBOX_TOKEN}
                     >
-                      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
-                    </MapContainer>
+                      <Source id="route" type="geojson" data={routeData.geojson}>
+                        <Layer {...routeLayer} />
+                      </Source>
+
+                      {/* Start/End Markers */}
+                      <Marker longitude={routeData.geojson.geometry.coordinates[0][0]} latitude={routeData.geojson.geometry.coordinates[0][1]} color="#00d35a" />
+                      <Marker longitude={routeData.geojson.geometry.coordinates[routeData.geojson.geometry.coordinates.length - 1][0]} latitude={routeData.geojson.geometry.coordinates[routeData.geojson.geometry.coordinates.length - 1][1]} color="#ef4444" />
+
+                      {/* User Location Marker (Navigation) */}
+                      {userLocation && (
+                        <Marker longitude={userLocation[0]} latitude={userLocation[1]}>
+                          <div className="h-6 w-6 bg-blue-500 rounded-full border-2 border-white shadow-lg animate-pulse"></div>
+                        </Marker>
+                      )}
+                    </Map>
                   </div>
                 </div>
               </div>

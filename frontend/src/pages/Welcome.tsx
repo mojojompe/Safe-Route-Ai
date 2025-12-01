@@ -1,7 +1,29 @@
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+
+import { useAuth } from '../context/AuthContext'
 
 export default function Welcome() {
   const nav = useNavigate()
+  const { signInWithGoogle, user } = useAuth()
+  const [loading, setLoading] = useState(false)
+
+  const handleStart = async () => {
+    if (user) {
+      nav('/map')
+      return
+    }
+
+    setLoading(true)
+    try {
+      await signInWithGoogle()
+      nav('/map')
+    } catch (error) {
+      console.error("Login failed", error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col bg-green-950 group/design-root overflow-x-hidden font-display">
@@ -37,10 +59,11 @@ export default function Welcome() {
                   </h2>
                 </div>
                 <button
-                  onClick={() => nav("/map")}
-                  className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-3xl h-14 px-8 bg-primary text-background-dark text-lg font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105 bg-green-500"
+                  onClick={handleStart}
+                  disabled={loading}
+                  className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-3xl h-14 px-8 bg-primary text-background-dark text-lg font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105 bg-green-500 disabled:opacity-50"
                 >
-                  <span className="truncate">Start</span>
+                  <span className="truncate">{loading ? 'Loading...' : 'Start'}</span>
                 </button>
               </div>
             </div>

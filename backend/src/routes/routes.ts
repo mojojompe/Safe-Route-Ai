@@ -1,28 +1,55 @@
 import { Router } from 'express'
+import axios from 'axios'
 import scoringService from '../services/scoring.js'
+
 const router = Router()
 
-// POST /api/route/options -> returns multiple route options (geojson segments, score etc)
 router.post('/options', async (req, res) => {
-  const { destination, mode } = req.body
-  // Here you should call your mapping provider to get route geometries (Mapbox Directions API / Google)
-  // For demo we create mocked routes. Then call scoringService to score each route.
-  const mockRoutes = [
-    { id: 'r1', geojson: {/*...*/ }, distance: '2.5 mi', eta: '15 min', mode },
-    { id: 'r2', geojson: {/*...*/ }, distance: '3.1 mi', eta: '18 min', mode },
-  ]
-  const scored = await Promise.all(mockRoutes.map(async r => {
-    const scoreObj = await scoringService.scoreRoute(r.geojson, { mode })
-    return { ...r, ...scoreObj }
-  }))
-  res.json({ routes: scored })
-})
+    const { start, destination, mode } = req.body
 
-// POST /api/route/score -> score a single route on demand
-router.post('/score', async (req, res) => {
-  const { geojson, mode } = req.body
-  const scoreObj = await scoringService.scoreRoute(geojson, { mode })
-  res.json(scoreObj)
+    try {
+        // Mapbox Directions API
+        const profile = mode === 'walking' ? 'walking' : 'driving'
+        // Request alternatives=true
+        const url = `https://api.mapbox.com/directions/v5/mapbox/${profile}/${start[0]},${start[1]};${destination[0]},${destination[1]}?geometries=geojson&steps=true&alternatives=true&access_token=${process.env.MAPBOX_ACCESS_TOKEN}`
+
+        const response = await axios.get(url)
+        const routes = response.data.routes
+
+        if (!routes || routes.length === 0) {
+            return res.status(404).json({ error: 'No route found' })
+        }
+
+        // Score all routes
+        const scoredRoutes = await Promise.all(routes.map(async (route: any, index: number) => {
+            const scoreObj = await scoringService.scoreRoute(route.geometry, {
+                distance: route.distance / 1609.34, // meters to miles
+                mode
+            })
+
+            return {
+                id: index,
+                geojson: {
+                    type: 'Feature',
+                    properties: {},
+                    geometry: route.geometry
+                },
+                distance: `${(route.distance / 1609.34).toFixed(1)} mi`,
+                duration: `${Math.round(route.duration / 60)} min`,
+                steps: route.legs[0].steps,
+                ...scoreObj
+            }
+        }))
+
+        // Sort by safety score (descending)
+        scoredRoutes.sort((a, b) => b.score - a.score)
+
+        res.json(scoredRoutes)
+
+    } catch (error) {
+        console.error("Routing error", error)
+        res.status(500).json({ error: 'Failed to generate route' })
+    }
 })
 
 export default router

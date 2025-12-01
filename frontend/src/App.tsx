@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import { AuthProvider } from './context/AuthContext'
 import Sidebar from './components/Sidebar'
 
 import Welcome from './pages/Welcome'
@@ -39,16 +40,18 @@ export default function App() {
   const location = useLocation()
 
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageTransition><Welcome /></PageTransition>} />
-        <Route path="/map" element={<Layout><PageTransition><MapPage /></PageTransition></Layout>} />
-        <Route path="/route-breakdown" element={<Layout><PageTransition><RouteBreakdown /></PageTransition></Layout>} />
-        <Route path="/history" element={<Layout><PageTransition><History /></PageTransition></Layout>} />
-        <Route path="/about" element={<Layout><PageTransition><About /></PageTransition></Layout>} />
-        <Route path="/safety-tips" element={<Layout><PageTransition><SafetyTips /></PageTransition></Layout>} />
-        <Route path="/emergency" element={<Layout><PageTransition><Emergency /></PageTransition></Layout>} />
-      </Routes>
-    </AnimatePresence>
+    <AuthProvider>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<PageTransition><Welcome /></PageTransition>} />
+          <Route path="/map" element={<Layout><PageTransition><MapPage /></PageTransition></Layout>} />
+          <Route path="/route-breakdown" element={<Layout><PageTransition><RouteBreakdown /></PageTransition></Layout>} />
+          <Route path="/history" element={<Layout><PageTransition><History /></PageTransition></Layout>} />
+          <Route path="/about" element={<Layout><PageTransition><About /></PageTransition></Layout>} />
+          <Route path="/safety-tips" element={<Layout><PageTransition><SafetyTips /></PageTransition></Layout>} />
+          <Route path="/emergency" element={<Layout><PageTransition><Emergency /></PageTransition></Layout>} />
+        </Routes>
+      </AnimatePresence>
+    </AuthProvider>
   )
 }

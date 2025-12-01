@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 
 interface RouteItem {
   _id: string
@@ -17,12 +20,14 @@ export default function History() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('All')
+  const [replayingId, setReplayingId] = useState<string | null>(null)
+
+  const nav = useNavigate()
 
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        // Assuming backend runs on port 4000
-        const res = await axios.get('http://localhost:4000/api/history')
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/history`)
         setRoutes(res.data)
       } catch (error) {
         console.error('Failed to fetch history', error)
@@ -32,6 +37,52 @@ export default function History() {
     }
     fetchHistory()
   }, [])
+
+  const handleReplay = async (route: RouteItem) => {
+    if (replayingId) return
+    setReplayingId(route._id)
+    try {
+      // 1. Geocode Start
+      const startRes = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(route.startLocation)}.json`, {
+        params: { access_token: MAPBOX_TOKEN, limit: 1 }
+      })
+      const startCoords = startRes.data.features[0]?.center
+
+      // 2. Geocode End
+      const endRes = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(route.endLocation)}.json`, {
+        params: { access_token: MAPBOX_TOKEN, limit: 1 }
+      })
+      const destCoords = endRes.data.features[0]?.center
+
+      if (!startCoords || !destCoords) {
+        alert('Could not find locations for this route.')
+        return
+      }
+
+      // 3. Fetch Route Options
+      const routeRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/route/options`, {
+        start: startCoords,
+        destination: destCoords,
+        mode: 'driving' // Default to driving or infer?
+      })
+
+      // 4. Navigate to Breakdown (using the first/best route)
+      const bestRoute = routeRes.data[0]
+      nav('/route-breakdown', {
+        state: {
+          routeData: bestRoute,
+          startQuery: route.startLocation,
+          destQuery: route.endLocation
+        }
+      })
+
+    } catch (error) {
+      console.error("Replay failed", error)
+      alert('Failed to replay route. Please try again.')
+    } finally {
+      setReplayingId(null)
+    }
+  }
 
   const filteredRoutes = routes.filter(route => {
     const matchesSearch = route.endLocation.toLowerCase().includes(search.toLowerCase()) ||
@@ -78,11 +129,10 @@ export default function History() {
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
-                  className={`px-4 py-2 rounded-4xl text-sm font-bold transition-colors ${
-                    filter === f
+                  className={`px-4 py-2 rounded-4xl text-sm font-bold transition-colors ${filter === f
                       ? "bg-green-900 text-green-500"
                       : "bg-primary text-background-dark hover:bg-black/10 dark:hover:bg-white/10"
-                  }`}
+                    }`}
                 >
                   {f}
                 </button>
@@ -110,13 +160,12 @@ export default function History() {
                         {route.startLocation} to {route.endLocation}
                       </h3>
                       <span
-                        className={`px-2 py-0.5 rounded text-xs font-bold ${
-                          route.riskLevel === "Low"
+                        className={`px-2 py-0.5 rounded text-xs font-bold ${route.riskLevel === "Low"
                             ? "bg-green-500/20 text-green-500"
                             : route.riskLevel === "Moderate"
-                            ? "bg-yellow-500/20 text-yellow-500"
-                            : "bg-red-500/20 text-red-500"
-                        }`}
+                              ? "bg-yellow-500/20 text-yellow-500"
+                              : "bg-red-500/20 text-red-500"
+                          }`}
                       >
                         {route.riskLevel} Risk
                       </span>
@@ -135,9 +184,13 @@ export default function History() {
                         {route.safetyScore}/10
                       </p>
                     </div>
-                    <button className="p-2 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400">
-                      <span className="material-symbols-outlined">
-                        chevron_right
+                    <button
+                      onClick={() => handleReplay(route)}
+                      disabled={replayingId === route._id}
+                      className="p-2 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 disabled:opacity-50"
+                    >
+                      <span className={`material-symbols-outlined ${replayingId === route._id ? 'animate-spin' : ''}`}>
+                        {replayingId === route._id ? 'refresh' : 'chevron_right'}
                       </span>
                     </button>
                   </div>
