@@ -4,6 +4,15 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import {
+  MdMyLocation,
+  MdLocationOn,
+  MdDirectionsWalk,
+  MdDirectionsCar,
+  MdAddCircle,
+  MdReport,
+  MdPublicOff
+} from 'react-icons/md'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 
@@ -195,7 +204,7 @@ export default function MapPage() {
   }
 
   return (
-    <div className="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-hidden font-display">
+    <div className="relative flex h-screen w-full flex-col bg-sr-dark overflow-hidden font-display">
       {/* Map Background */}
       <div className="absolute inset-0 z-0">
         <Map
@@ -267,7 +276,7 @@ export default function MapPage() {
         {/* Crosshair for Reporting */}
         {showReportMenu && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-            <span className="material-symbols-outlined text-4xl text-red-500 drop-shadow-lg">add_circle</span>
+            <MdAddCircle className="text-4xl text-red-500 drop-shadow-lg" />
           </div>
         )}
       </div>
@@ -283,7 +292,7 @@ export default function MapPage() {
               <div className="relative">
                 <div className="flex w-full items-center rounded-2xl bg-green-900 backdrop-blur-sm ring-1 ring-white/10">
                   <div className="text-green-500 flex items-center justify-center pl-4">
-                    <span className="material-symbols-outlined">my_location</span>
+                    <MdMyLocation />
                   </div>
                   <input
                     value={startQuery}
@@ -308,7 +317,7 @@ export default function MapPage() {
               <div className="relative">
                 <div className="flex w-full items-center rounded-2xl bg-green-900 backdrop-blur-sm ring-1 ring-white/10">
                   <div className="text-green-500 flex items-center justify-center pl-4">
-                    <span className="material-symbols-outlined">location_on</span>
+                    <MdLocationOn />
                   </div>
                   <input
                     value={destQuery}
@@ -344,8 +353,8 @@ export default function MapPage() {
             <div className="flex h-10 items-center justify-center rounded-3xl bg-green-900 p-1 backdrop-blur-sm shadow-lg ring-1 ring-white/10">
               {['walking', 'driving'].map(m => (
                 <label key={m} className={`flex cursor-pointer h-full items-center justify-center gap-2 rounded-2xl px-3 text-white text-sm font-medium transition-colors ${mode === m ? "bg-green-700 text-green-500" : ""}`}>
-                  <span className="material-symbols-outlined text-base">
-                    {m === 'walking' ? 'directions_walk' : 'directions_car'}
+                  <span className="text-base">
+                    {m === 'walking' ? <MdDirectionsWalk /> : <MdDirectionsCar />}
                   </span>
                   <span className="capitalize hidden sm:inline">{m}</span>
                   <input type="radio" checked={mode === m} onChange={() => setMode(m)} className="hidden" />
@@ -376,7 +385,7 @@ export default function MapPage() {
             onClick={() => setShowReportMenu(!showReportMenu)}
             className="h-14 w-14 rounded-full bg-red-500 text-white shadow-lg flex items-center justify-center hover:scale-105 transition-transform"
           >
-            <span className="material-symbols-outlined text-2xl">report</span>
+            <MdReport className="text-2xl" />
           </button>
         </div>
 
@@ -429,7 +438,7 @@ export default function MapPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className="bg-white dark:bg-green-950 rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30 mb-4">
-              <span className="material-symbols-outlined text-3xl text-red-600 dark:text-red-500">public_off</span>
+              <MdPublicOff className="text-3xl text-red-600 dark:text-red-500" />
             </div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Travel Restricted</h3>
             <p className="text-green-500 mb-6">

@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import { MdVerifiedUser, MdAltRoute, MdNotificationsActive } from 'react-icons/md'
 
 import { useAuth } from '../context/AuthContext'
 
@@ -26,11 +27,11 @@ export default function Welcome() {
   }
 
   return (
-    <div className="relative flex h-auto min-h-screen w-full flex-col bg-green-950 group/design-root overflow-x-hidden font-display">
+    <div className="relative flex h-auto min-h-screen w-full flex-col bg-sr-dark group/design-root overflow-x-hidden font-display">
       <div className="layout-container flex h-full grow flex-col">
         <div className="flex w-full flex-1 flex-col">
           <header className="flex items-center justify-between whitespace-nowrap px-4 py-3 sm:px-10 md:px-20 lg:px-40">
-            <div className="flex items-center gap-4 text-white bg-green-950">
+            <div className="flex items-center gap-4 text-white bg-sr-dark">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary">
                 <img src="/logo.svg" alt="Safe Route logo" />
               </div>
@@ -42,7 +43,7 @@ export default function Welcome() {
 
           <main className="flex flex-1 flex-col items-center">
             <div className="relative flex w-full flex-col items-center justify-center px-4 py-20 text-center sm:px-10 md:px-20 lg:px-40 lg:py-32">
-              <div className="absolute inset-0 z-0 opacity-10 dark:opacity-[0.07]">
+              <div className="absolute inset-0 z-0 opacity-10">
                 <img
                   alt="Abstract illustration of a city map with winding paths and location markers."
                   className="h-full w-full object-cover"
@@ -54,7 +55,7 @@ export default function Welcome() {
                   <h1 className="text-white font-black leading-tight lg:text-7xl md:text-5xl sm:text-3xl">
                     Welcome to Safe Route AI
                   </h1>
-                  <h2 className="text-base font-normal leading-normal text-slate-600 dark:text-slate-300 md:text-xl">
+                  <h2 className="text-base font-normal leading-normal text-slate-300 md:text-xl">
                     Find the safest route before you move.
                   </h2>
                 </div>
@@ -72,9 +73,7 @@ export default function Welcome() {
               <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 md:grid-cols-3">
                 <div className="flex flex-col gap-4 rounded-2xl border border-slate-200/50 bg-background-light p-9 text-center dark:border-slate-700/50 dark:bg-slate-900/20">
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/20 text-primary bg-green-900">
-                    <span className="material-symbols-outlined text-3xl text-green-500">
-                      verified_user
-                    </span>
+                    <MdVerifiedUser className="text-3xl text-green-500" />
                   </div>
                   <h3 className="text-xl font-bold text-slate-800 dark:text-white">
                     Enhanced Safety
@@ -87,9 +86,7 @@ export default function Welcome() {
 
                 <div className="flex flex-col gap-4 rounded-2xl border border-slate-200/50 bg-background-light p-9 text-center dark:border-slate-700/50 dark:bg-slate-900/20">
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-green-900 bg-primary/20 text-primary">
-                    <span className="material-symbols-outlined text-3xl text-green-500">
-                      route
-                    </span>
+                    <MdAltRoute className="text-3xl text-green-500" />
                   </div>
                   <h3 className="text-xl font-bold text-slate-800 dark:text-white">
                     Smart Navigation
@@ -102,9 +99,7 @@ export default function Welcome() {
 
                 <div className="flex flex-col gap-4 rounded-2xl border border-slate-200/50 bg-background-light p-9 text-center dark:border-slate-700/50 dark:bg-slate-900/20">
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/20 text-primary bg-green-900">
-                    <span className="material-symbols-outlined text-3xl text-green-500">
-                      notifications_active
-                    </span>
+                    <MdNotificationsActive className="text-3xl text-green-500" />
                   </div>
                   <h3 className="text-xl font-bold text-slate-800 dark:text-white">
                     Real-Time Alerts

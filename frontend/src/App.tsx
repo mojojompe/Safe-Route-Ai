@@ -13,7 +13,7 @@ import About from './pages/About'
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex bg-background-light dark:bg-background-dark text-gray-800 dark:text-white font-display">
+    <div className="min-h-screen flex bg-sr-dark text-white font-display">
       <Sidebar />
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <main className="flex-1 overflow-auto">

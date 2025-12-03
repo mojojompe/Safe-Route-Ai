@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { MdSearch, MdDirectionsWalk, MdDirectionsCar, MdNightlight } from 'react-icons/md'
 
 export default function SafetyTips() {
   const [activeTab, setActiveTab] = useState('Walking')
@@ -77,15 +78,15 @@ export default function SafetyTips() {
   ]
 
   return (
-    <div className="relative flex h-auto min-h-screen w-full flex-col bg-green-950 dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+    <div className="relative flex h-auto min-h-screen w-full flex-col bg-sr-dark font-display text-gray-200">
       <div className="flex h-full min-h-screen grow">
         <main className="flex-1 p-6 lg:p-10">
           <div className="mx-auto max-w-5xl">
             {/* PageHeading */}
             <div className="flex flex-wrap justify-between gap-3 mb-6">
               <div className="flex flex-col gap-2">
-                <h1 className="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Safety Tips</h1>
-                <p className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">Your guide to safer journeys on foot and by car.</p>
+                <h1 className="text-white text-4xl font-black leading-tight tracking-[-0.033em]">Safety Tips</h1>
+                <p className="text-gray-400 text-base font-normal leading-normal">Your guide to safer journeys on foot and by car.</p>
               </div>
             </div>
 
@@ -94,29 +95,29 @@ export default function SafetyTips() {
               {/* SearchBar */}
               <div className="w-full sm:w-auto sm:max-w-xs">
                 <label className="flex flex-col min-w-40 h-12 w-full">
-                  <div className="flex w-full flex-1 items-stretch px-3 rounded-4xl h-full bg-black/5 dark:bg-white/5">
-                    <div className="text-gray-500 dark:text-gray-400 flex items-center justify-center pl-4">
-                      <span className="material-symbols-outlined">search</span>
+                  <div className="flex w-full flex-1 items-stretch px-3 rounded-4xl h-full bg-white/5">
+                    <div className="text-gray-400 flex items-center justify-center pl-4">
+                      <MdSearch className="text-2xl" />
                     </div>
-                    <input className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden text-gray-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-gray-500 dark:placeholder:text-gray-400 pl-2 text-base font-normal leading-normal" placeholder="Search for a specific tip" />
+                    <input className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden text-white focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-gray-400 pl-2 text-base font-normal leading-normal" placeholder="Search for a specific tip" />
                   </div>
                 </label>
               </div>
               {/* Tabs */}
               <div className="w-full sm:w-auto">
-                <div className="flex border-b border-black/10 dark:border-white/10 w-full">
+                <div className="flex border-b border-white/10 w-full">
                   <button
                     onClick={() => setActiveTab('Walking')}
-                    className={`flex flex-1 items-center justify-center gap-2 border-b-[3px] pb-2.5 pt-2.5 sm:flex-initial sm:px-6 transition-colors ${activeTab === 'Walking' ? 'border-b-primary text-green-500' : 'border-b-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                    className={`flex flex-1 items-center justify-center gap-2 border-b-[3px] pb-2.5 pt-2.5 sm:flex-initial sm:px-6 transition-colors ${activeTab === 'Walking' ? 'border-b-primary text-green-500' : 'border-b-transparent text-gray-400 hover:text-gray-300'}`}
                   >
-                    <span className={`material-symbols-outlined ${activeTab === 'Walking' ? 'fill' : ''}`}>directions_walk</span>
+                    <MdDirectionsWalk className={activeTab === 'Walking' ? 'fill-current' : ''} />
                     <p className="text-sm font-bold leading-normal tracking-[0.015em]">Walking</p>
                   </button>
                   <button
                     onClick={() => setActiveTab('Driving')}
-                    className={`flex flex-1 items-center justify-center gap-2 border-b-[3px] pb-2.5 pt-2.5 sm:flex-initial sm:px-6 transition-colors ${activeTab === 'Driving' ? 'border-b-primary text-green-500' : 'border-b-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                    className={`flex flex-1 items-center justify-center gap-2 border-b-[3px] pb-2.5 pt-2.5 sm:flex-initial sm:px-6 transition-colors ${activeTab === 'Driving' ? 'border-b-primary text-green-500' : 'border-b-transparent text-gray-400 hover:text-gray-300'}`}
                   >
-                    <span className={`material-symbols-outlined ${activeTab === 'Driving' ? 'fill' : ''}`}>directions_car</span>
+                    <MdDirectionsCar className={activeTab === 'Driving' ? 'fill-current' : ''} />
                     <p className="text-sm font-bold leading-normal tracking-[0.015em]">Driving</p>
                   </button>
                 </div>
@@ -126,14 +127,14 @@ export default function SafetyTips() {
             {/* ImageGrid as Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {tips.filter(t => t.category === activeTab).map((tip, i) => (
-                <div key={i} className="flex flex-col gap-3 rounded-3xl py- bg-black/5 dark:bg-white/5 py-10 px-4 transition-all hover:bg-black/10 dark:hover:bg-white/10">
+                <div key={i} className="flex flex-col gap-3 rounded-3xl py- bg-white/5 py-10 px-4 transition-all hover:bg-white/10">
                   <div className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg" style={{ backgroundImage: `url("${tip.image}")` }}></div>
                   <div>
-                    <p className="text-gray-900 dark:text-white text-base font-medium leading-normal">{tip.title}</p>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal mt-1">{tip.description}</p>
+                    <p className="text-white text-base font-medium leading-normal">{tip.title}</p>
+                    <p className="text-gray-400 text-sm font-normal leading-normal mt-1">{tip.description}</p>
                     {tip.contextual && (
                       <div className="mt-2 inline-flex items-center gap-1 rounded-4xl bg-green-900 text-green-500 px-3 py-1 font-medium text-xs">
-                        <span className="material-symbols-outlined text-sm">nightlight</span>
+                        <MdNightlight className="text-sm" />
                         Contextual Tip
                       </div>
                     )}
