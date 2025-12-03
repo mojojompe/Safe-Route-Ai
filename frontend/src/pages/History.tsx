@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { MdSearch, MdChevronRight, MdRefresh } from 'react-icons/md'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 
@@ -92,16 +93,17 @@ export default function History() {
   })
 
   return (
-    <div className="relative flex h-auto min-h-screen w-full flex-col bg-green-950 font-display text-gray-800 dark:text-gray-200">
+
+    <div className="relative flex h-auto min-h-screen w-full flex-col bg-sr-dark font-display text-gray-200">
       <main className="flex-1 p-6 lg:p-10">
         <div className="mx-auto max-w-5xl">
           {/* PageHeading */}
           <div className="flex flex-wrap justify-between gap-3 mb-6">
             <div className="flex flex-col gap-2">
-              <h1 className="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+              <h1 className="text-white text-4xl font-black leading-tight tracking-[-0.033em]">
                 Route History
               </h1>
-              <p className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">
+              <p className="text-gray-400 text-base font-normal leading-normal">
                 Review your past journeys and safety reports.
               </p>
             </div>
@@ -111,14 +113,14 @@ export default function History() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
             <div className="w-full sm:w-auto sm:max-w-xs">
               <label className="flex flex-col min-w-40 h-12 w-full">
-                <div className="flex w-full flex-1 items-stretch rounded-4xl h-full bg-black/5 dark:bg-white/5">
-                  <div className="text-gray-500 dark:text-gray-400 flex items-center justify-center pl-4">
-                    <span className="material-symbols-outlined">search</span>
+                <div className="flex w-full flex-1 items-stretch rounded-4xl h-full bg-white/5">
+                  <div className="text-gray-400 flex items-center justify-center pl-4">
+                    <MdSearch className="text-2xl" />
                   </div>
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-gray-500 dark:placeholder:text-gray-400 pl-2 text-base font-normal leading-normal"
+                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-xl text-white focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-gray-400 pl-2 text-base font-normal leading-normal"
                     placeholder="Search routes..."
                   />
                 </div>
@@ -130,8 +132,8 @@ export default function History() {
                   key={f}
                   onClick={() => setFilter(f)}
                   className={`px-4 py-2 rounded-4xl text-sm font-bold transition-colors ${filter === f
-                      ? "bg-green-900 text-green-500"
-                      : "bg-primary text-background-dark hover:bg-black/10 dark:hover:bg-white/10"
+                    ? "bg-green-900 text-green-500"
+                    : "bg-primary text-sr-dark hover:bg-white/10"
                     }`}
                 >
                   {f}
@@ -161,10 +163,10 @@ export default function History() {
                       </h3>
                       <span
                         className={`px-2 py-0.5 rounded text-xs font-bold ${route.riskLevel === "Low"
-                            ? "bg-green-500/20 text-green-500"
-                            : route.riskLevel === "Moderate"
-                              ? "bg-yellow-500/20 text-yellow-500"
-                              : "bg-red-500/20 text-red-500"
+                          ? "bg-green-500/20 text-green-500"
+                          : route.riskLevel === "Moderate"
+                            ? "bg-yellow-500/20 text-yellow-500"
+                            : "bg-red-500/20 text-red-500"
                           }`}
                       >
                         {route.riskLevel} Risk
@@ -189,8 +191,8 @@ export default function History() {
                       disabled={replayingId === route._id}
                       className="p-2 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 disabled:opacity-50"
                     >
-                      <span className={`material-symbols-outlined ${replayingId === route._id ? 'animate-spin' : ''}`}>
-                        {replayingId === route._id ? 'refresh' : 'chevron_right'}
+                      <span className={`text-2xl ${replayingId === route._id ? 'animate-spin' : ''}`}>
+                        {replayingId === route._id ? <MdRefresh /> : <MdChevronRight />}
                       </span>
                     </button>
                   </div>

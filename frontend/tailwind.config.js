@@ -11,10 +11,11 @@ export default {
                 'sr-muted': '#1c3329',
                 'sr-text': '#e2e8f0',
                 'sr-text-muted': '#94a3b8',
+                // Aliases for compatibility
+                'background-dark': '#0a1f16',
+                'background-light': '#ffffff', // Keeping for reference but unused
                 // Colors from provided code.html
                 primary: "#13ec5b",
-                "background-light": "#f6f8f6",
-                "background-dark": "#102216",
             },
             fontFamily: {
                 sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -29,5 +30,6 @@ export default {
             }
         }
     },
+    darkMode: 'class',
     plugins: [],
 }
