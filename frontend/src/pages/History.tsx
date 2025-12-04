@@ -159,11 +159,11 @@ export default function History() {
               filteredRoutes.map((route) => (
                 <div
                   key={route._id}
-                  className="flex flex-col md:flex-row gap-4 p-4 rounded-4xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                  className="flex flex-col md:flex-row gap-4 p-4 rounded-4xl bg-white/5 hover:bg-white/10 transition-colors"
                 >
                   <div className="flex-1 flex flex-col gap-2">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                      <h3 className="text-lg font-bold text-white">
                         {route.startLocation} to {route.endLocation}
                       </h3>
                       <span
@@ -177,24 +177,24 @@ export default function History() {
                         {route.riskLevel} Risk
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-gray-400">
                       {new Date(route.date).toLocaleDateString()} •{" "}
                       {route.distance} • {route.duration}
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-xs text-gray-400">
                         Safety Score
                       </p>
-                      <p className="text-xl font-black text-gray-900 dark:text-white">
+                      <p className="text-xl font-black text-white">
                         {route.safetyScore}/10
                       </p>
                     </div>
                     <button
                       onClick={() => handleReplay(route)}
                       disabled={replayingId === route._id}
-                      className="p-2 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 disabled:opacity-50"
+                      className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 disabled:opacity-50"
                     >
                       <span className={`text-2xl ${replayingId === route._id ? 'animate-spin' : ''}`}>
                         {replayingId === route._id ? <MdRefresh /> : <MdChevronRight />}
