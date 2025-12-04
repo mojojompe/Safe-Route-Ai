@@ -257,7 +257,7 @@ export default function MapPage() {
   }
 
   return (
-    <div className="relative flex h-screen w-full flex-col bg-sr-dark overflow-hidden font-display">
+    <div className="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-hidden font-display">
       {/* Welcome Overlay */}
       {showWelcome && user && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md animate-fade-in-out pointer-events-none">

@@ -27,11 +27,11 @@ export default function Welcome() {
   }
 
   return (
-    <div className="relative flex h-auto min-h-screen w-full flex-col bg-sr-dark group/design-root overflow-x-hidden font-display">
+    <div className="relative flex h-auto min-h-screen w-full flex-col bg-green-950 group/design-root overflow-x-hidden font-display">
       <div className="layout-container flex h-full grow flex-col">
         <div className="flex w-full flex-1 flex-col">
           <header className="flex items-center justify-between whitespace-nowrap px-4 py-3 sm:px-10 md:px-20 lg:px-40">
-            <div className="flex items-center gap-4 text-white bg-sr-dark">
+            <div className="flex items-center gap-4 text-white bg-green-950">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary">
                 <img src="/logo.svg" alt="Safe Route logo" />
               </div>
@@ -43,7 +43,7 @@ export default function Welcome() {
 
           <main className="flex flex-1 flex-col items-center">
             <div className="relative flex w-full flex-col items-center justify-center px-4 py-20 text-center sm:px-10 md:px-20 lg:px-40 lg:py-32">
-              <div className="absolute inset-0 z-0 opacity-10">
+              <div className="absolute inset-0 z-0 opacity-10 dark:opacity-[0.07]">
                 <img
                   alt="Abstract illustration of a city map with winding paths and location markers."
                   className="h-full w-full object-cover"
@@ -55,7 +55,7 @@ export default function Welcome() {
                   <h1 className="text-white font-black leading-tight lg:text-7xl md:text-5xl sm:text-3xl">
                     Welcome to Safe Route AI
                   </h1>
-                  <h2 className="text-base font-normal leading-normal text-slate-300 md:text-xl">
+                  <h2 className="text-base font-normal leading-normal text-slate-600 dark:text-slate-300 md:text-xl">
                     Find the safest route before you move.
                   </h2>
                 </div>
