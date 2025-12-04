@@ -314,9 +314,9 @@ export default function MapPage() {
               closeOnClick={false}
               className="z-50"
             >
-              <div className="p-2 min-w-[150px] text-gray-900">
+              <div className="p-2 min-w-[150px] text-white">
                 <h3 className="font-bold capitalize mb-1">{selectedReport.type}</h3>
-                <p className="text-sm text-gray-600 mb-2">{selectedReport.description}</p>
+                <p className="text-sm text-gray-300 mb-2">{selectedReport.description}</p>
                 <button
                   onClick={() => handleDeleteReport(selectedReport._id)}
                   className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white text-xs font-bold rounded hover:bg-red-600 w-full justify-center"
@@ -536,11 +536,11 @@ export default function MapPage() {
       {/* Country Modal */}
       {showCountryModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-green-950 rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30 mb-4">
-              <MdPublicOff className="text-3xl text-red-600 dark:text-red-500" />
+          <div className="bg-green-950 rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-900/30 mb-4">
+              <MdPublicOff className="text-3xl text-red-500" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Travel Restricted</h3>
+            <h3 className="text-xl font-bold text-white mb-2">Travel Restricted</h3>
             <p className="text-green-500 mb-6">
               You cannot plan a route to a different country. Please select a destination within the same country.
             </p>

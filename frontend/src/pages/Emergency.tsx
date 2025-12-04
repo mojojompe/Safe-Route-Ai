@@ -1,3 +1,5 @@
+//NOT BEING USED.
+
 import { MdLocalPolice, MdLocalHospital, MdPerson, MdCall } from 'react-icons/md'
 
 export default function Emergency() {
