@@ -32,8 +32,8 @@ export default function Sidebar() {
       )}
       <aside
         className={`fixed md:static flex flex-col w-64 md:w-64 inset-y-0 left-0 z-50 transform 
-        transition-transform duration-300 bg-sr-dark p-4 
-        border-r border-white/10 h-screen md:sticky md:top-0 
+        transition-transform duration-300 bg-background-light dark:bg-green-950 p-4 
+        border-r border-black/10 dark:border-white/10 h-screen md:sticky md:top-0 
         ${open ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
         <div className="flex flex-col gap-4">
@@ -42,7 +42,7 @@ export default function Sidebar() {
               <img src="/logo.svg" alt="Safe Route Logo" />
             </div>
             <div className="flex flex-col">
-              <h1 className="text-white text-base font-medium leading-normal">
+              <h1 className="text-gray-900 dark:text-white text-base font-medium leading-normal">
                 Safe Route Ai
               </h1>
             </div>
@@ -50,9 +50,10 @@ export default function Sidebar() {
           <nav className="flex flex-col gap-2 mt-4">
             <Link
               to="/"
-              className={`flex items-center gap-3 px-3 py-2 rounded-4xl font-extrabold transition-colors ${isActive("/")
+              className={`flex items-center gap-3 px-3 py-2 rounded-4xl font-extrabold transition-colors ${
+                isActive("/")
                   ? "bg-green-800 border-3xl text-green-500"
-                  : "text-gray-400"
+                  : "text-gray-500 dark:text-gray-400"
                 }`}
             >
               <MdHome className={`text-2xl ${isActive("/") ? "fill-current" : ""}`} />
@@ -60,9 +61,10 @@ export default function Sidebar() {
             </Link>
             <Link
               to="/map"
-              className={`flex items-center gap-3 px-3 py-2 rounded-4xl font-extrabold transition-colors ${isActive("/map")
+              className={`flex items-center gap-3 px-3 py-2 rounded-4xl font-extrabold transition-colors ${
+                isActive("/map")
                   ? "bg-green-800 border-3xl text-green-500"
-                  : "text-gray-400 hover:bg-white/5"
+                  : "text-gray-500 dark:text-gray-400"
                 }`}
             >
               <MdMap className={`text-2xl ${isActive("/map") ? "fill-current" : ""}`} />
@@ -70,9 +72,10 @@ export default function Sidebar() {
             </Link>
             <Link
               to="/route-breakdown"
-              className={`flex items-center gap-3 px-3 py-2 rounded-4xl font-extrabold transition-colors ${isActive("/route-breakdown")
+              className={`flex items-center gap-3 px-3 py-2 rounded-4xl font-extrabold transition-colors ${
+                isActive("/route-breakdown")
                   ? "bg-green-800 border-3xl text-green-500"
-                  : "text-gray-400 hover:bg-white/5"
+                  : "text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5"
                 }`}
             >
               <MdAltRoute className={`text-2xl ${isActive("/route-breakdown") ? "fill-current" : ""}`} />
@@ -82,9 +85,10 @@ export default function Sidebar() {
             </Link>
             <Link
               to="/safety-tips"
-              className={`flex items-center gap-3 px-3 py-2 rounded-4xl font-extrabold transition-colors ${isActive("/safety-tips")
+              className={`flex items-center gap-3 px-3 py-2 rounded-4xl font-extrabold transition-colors ${
+                isActive("/safety-tips")
                   ? "bg-green-800 border-3xl text-green-500"
-                  : "text-gray-400 hover:bg-white/5"
+                  : "text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5"
                 }`}
             >
               <MdSecurity className={`text-2xl ${isActive("/safety-tips") ? "fill-current" : ""}`} />
@@ -92,9 +96,10 @@ export default function Sidebar() {
             </Link>
             <Link
               to="/history"
-              className={`flex items-center gap-3 px-3 py-2 rounded-4xl font-extrabold transition-colors ${isActive("/history")
+              className={`flex items-center gap-3 px-3 py-2 rounded-4xl font-extrabold transition-colors ${
+                isActive("/history")
                   ? "bg-green-800 border-3xl text-green-500"
-                  : "text-gray-400 hover:bg-white/5"
+                  : "text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5"
                 }`}
             >
               <MdHistory className={`text-2xl ${isActive("/history") ? "fill-current" : ""}`} />
@@ -102,9 +107,10 @@ export default function Sidebar() {
             </Link>
             <Link
               to="/about"
-              className={`flex items-center gap-3 px-3 py-2 rounded-4xl font-extrabold transition-colors ${isActive("/about")
-                  ? "bg-green-800 text-green-500"
-                  : "text-gray-400 hover:bg-white/5"
+              className={`flex items-center gap-3 px-3 py-2 rounded-4xl font-extrabold transition-colors ${
+                isActive("/about")
+                  ? "bg-green-800 border-3xl text-green-500"
+                  : "text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5"
                 }`}
             >
               <MdInfo className={`text-2xl ${isActive("/about") ? "fill-current" : ""}`} />

@@ -76,7 +76,7 @@ export default function RouteBreakdown() {
   const currentStep = routeData.steps ? routeData.steps[currentStepIndex] : null
 
   return (
-    <div className="relative flex h-auto min-h-screen w-full flex-col bg-sr-dark overflow-x-hidden font-display">
+    <div className="relative flex h-auto min-h-screen w-full flex-col bg-green-950 overflow-x-hidden font-display">
       <div className="layout-container flex h-full grow flex-col">
         <div className="px-4 sm:px-8 md:px-12 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
           <div className="layout-content-container flex flex-col w-full max-w-7xl flex-1">
@@ -86,10 +86,10 @@ export default function RouteBreakdown() {
                 {/* PageHeading */}
                 <div className="flex flex-wrap justify-between gap-3 px-4">
                   <div className="flex min-w-72 flex-col gap-2">
-                    <p className="text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+                    <p className="text-black dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
                       {isNavigating ? "Live Navigation" : "Route Analysis"}
                     </p>
-                    <p className="text-[#9db9a6] text-base font-normal leading-normal">
+                    <p className="text-gray-600 dark:text-[#9db9a6] text-base font-normal leading-normal">
                       {startQuery} to {destQuery}
                     </p>
                   </div>
@@ -115,27 +115,27 @@ export default function RouteBreakdown() {
                 {/* Stats */}
                 {!isNavigating && (
                   <div className="flex flex-wrap gap-4 px-4">
-                    <div className="flex min-w-[120px] flex-1 flex-col gap-2 rounded-xl p-4 sm:p-6 border border-[#3b5443] bg-[#111813]">
-                      <p className="text-white text-base font-medium leading-normal">
+                    <div className="flex min-w-[120px] flex-1 flex-col gap-2 rounded-xl p-4 sm:p-6 border border-black/10 dark:border-[#3b5443] bg-white dark:bg-[#111813]">
+                      <p className="text-gray-800 dark:text-white text-base font-medium leading-normal">
                         Overall Risk
                       </p>
-                      <p className="text-white tracking-light text-2xl font-bold leading-tight">
+                      <p className="text-black dark:text-white tracking-light text-2xl font-bold leading-tight">
                         {routeData.riskLevel}
                       </p>
                     </div>
-                    <div className="flex min-w-[120px] flex-1 flex-col gap-2 rounded-xl p-4 sm:p-6 border border-[#3b5443] bg-[#111813]">
-                      <p className="text-white text-base font-medium leading-normal">
+                    <div className="flex min-w-[120px] flex-1 flex-col gap-2 rounded-xl p-4 sm:p-6 border border-black/10 dark:border-[#3b5443] bg-white dark:bg-[#111813]">
+                      <p className="text-gray-800 dark:text-white text-base font-medium leading-normal">
                         Distance
                       </p>
-                      <p className="text-white tracking-light text-2xl font-bold leading-tight">
+                      <p className="text-black dark:text-white tracking-light text-2xl font-bold leading-tight">
                         {routeData.distance}
                       </p>
                     </div>
-                    <div className="flex min-w-[120px] flex-1 flex-col gap-2 rounded-xl p-4 sm:p-6 border border-[#3b5443] bg-[#111813]">
-                      <p className="text-white text-base font-medium leading-normal">
+                    <div className="flex min-w-[120px] flex-1 flex-col gap-2 rounded-xl p-4 sm:p-6 border border-black/10 dark:border-[#3b5443] bg-white dark:bg-[#111813]">
+                      <p className="text-gray-800 dark:text-white text-base font-medium leading-normal">
                         Est. Time
                       </p>
-                      <p className="text-white tracking-light text-2xl font-bold leading-tight">
+                      <p className="text-black dark:text-white tracking-light text-2xl font-bold leading-tight">
                         {routeData.duration}
                       </p>
                     </div>
@@ -164,12 +164,12 @@ export default function RouteBreakdown() {
                 {/* SegmentedButtons */}
                 {!isNavigating && (
                   <div className="flex px-4 py-3">
-                    <div className="flex h-10 flex-1 items-center justify-center rounded-xl bg-[#28392e] p-1">
+                    <div className="flex h-10 flex-1 items-center justify-center rounded-xl bg-black/5 dark:bg-[#28392e] p-1">
                       <label
                         className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 text-sm font-medium leading-normal transition-all ${view === "segments"
-                          ? "bg-[#111813] shadow-sm text-white"
-                          : "text-[#9db9a6]"
-                          }`}
+                          ? "bg-white dark:bg-[#111813] shadow-sm text-black dark:text-white"
+                          : "text-gray-600 dark:text-[#9db9a6]"
+                        }`}
                       >
                         <span className="truncate">Route Segments</span>
                         <input
@@ -183,8 +183,8 @@ export default function RouteBreakdown() {
                       </label>
                       <label
                         className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 text-sm font-medium leading-normal transition-all ${view === "turn-by-turn"
-                          ? "bg-[#111813] shadow-sm text-white"
-                          : "text-[#9db9a6]"
+                          ? "bg-white dark:bg-[#111813] shadow-sm text-black dark:text-white"
+                          : "text-gray-600 dark:text-[#9db9a6]"
                           }`}
                       >
                         <span className="truncate">Turn-by-turn</span>
@@ -212,16 +212,16 @@ export default function RouteBreakdown() {
                           setSelectedSegmentIndex(i)
                           setIsModalOpen(true)
                         }}
-                        className="flex w-full overflow rounded-xl border border-white/20 bg-[#111813] cursor-pointer hover:bg-[#1a241d] transition-colors"
+                        className="flex w-full overflow rounded-xl border border-black/10 dark:border-white/20 bg-white dark:bg-[#111813] cursor-pointer hover:bg-gray-50 dark:hover:bg-[#1a241d] transition-colors"
                       >
                         <div className="w-2" style={{ backgroundColor: segment.color }}></div>
                         <div className="flex flex-col gap-4 p-5 w-full">
                           <div className="flex justify-between items-start gap-2">
                             <div className="flex flex-col">
-                              <p className="text-sm font-medium text-gray-400">
+                              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                                 Segment {i + 1}
                               </p>
-                              <h3 className="text-lg font-bold text-white">
+                              <h3 className="text-lg font-bold text-black dark:text-white">
                                 {segment.title}
                               </h3>
                             </div>
@@ -230,7 +230,7 @@ export default function RouteBreakdown() {
                             </div>
                           </div>
                           <div className="flex flex-wrap gap-2">
-                            <span className="text-xs font-medium bg-gray-700 text-gray-200 px-2 py-1 rounded-full">
+                            <span className="text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full">
                               {segment.reason}
                             </span>
                           </div>
@@ -241,7 +241,7 @@ export default function RouteBreakdown() {
                     !isNavigating && (
                       <div className="flex flex-col gap-2">
                         {routeData.steps?.map((step: any, i: number) => (
-                          <div key={i} className="p-4 bg-[#111813] rounded-xl border border-white/10 flex gap-3">
+                          <div key={i} className="p-4 bg-white dark:bg-[#111813] rounded-xl border border-white/10 flex gap-3">
                             <span className="font-bold text-green-500">{i + 1}.</span>
                             <p className="text-sm text-gray-300">{step.maneuver.instruction}</p>
                           </div>
@@ -255,10 +255,10 @@ export default function RouteBreakdown() {
               {/* Segment Modal */}
               {isModalOpen && selectedSegment && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-                  <div className="bg-[#111813] rounded-3xl p-6 max-w-md w-full shadow-2xl border border-white/10 relative">
+                  <div className="bg-white dark:bg-[#111813] rounded-3xl p-6 max-w-md w-full shadow-2xl border border-white/10 relative">
                     <button
                       onClick={() => setIsModalOpen(false)}
-                      className="absolute top-4 right-4 text-gray-500 hover:text-white"
+                      className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:hover:text-white"
                     >
                       <MdClose />
                     </button>
@@ -267,27 +267,25 @@ export default function RouteBreakdown() {
                       <div className="flex items-center gap-3">
                         <div className="w-3 h-12 rounded-full" style={{ backgroundColor: selectedSegment.color }}></div>
                         <div>
-                          <p className="text-sm text-gray-400">Segment {selectedSegmentIndex + 1}</p>
-                          <h2 className="text-2xl font-bold text-white">{selectedSegment.title}</h2>
-                        </div>
+                          </div>
                       </div>
 
                       {/* Key Stats */}
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="p-3 bg-[#1a241d] rounded-xl border border-white/5">
-                          <p className="text-xs text-gray-400 uppercase font-bold">Safety Score</p>
+                        <div className="p-3 bg-gray-50 dark:bg-[#1a241d] rounded-xl border border-black/5 dark:border-white/5">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold">Safety Score</p>
                           <p className="text-xl font-bold" style={{ color: selectedSegment.color }}>{selectedSegment.score}/10</p>
                         </div>
-                        <div className="p-3 bg-[#1a241d] rounded-xl border border-white/5">
-                          <p className="text-xs text-gray-400 uppercase font-bold">Est. Time</p>
-                          <p className="text-xl font-bold text-white">{selectedSegment.time || 'N/A'}</p>
+                        <div className="p-3 bg-gray-50 dark:bg-[#1a241d] rounded-xl border border-black/5 dark:border-white/5">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold">Est. Time</p>
+                          <p className="text-xl font-bold text-black dark:text-white">{selectedSegment.time || 'N/A'}</p>
                         </div>
                       </div>
 
                       {/* Range */}
-                      <div className="p-4 rounded-2xl bg-[#1a241d] border border-white/5">
-                        <p className="text-xs text-gray-400 uppercase font-bold mb-1">Range</p>
-                        <p className="text-gray-200 font-medium leading-relaxed">
+                      <div className="p-4 rounded-2xl bg-gray-50 dark:bg-[#1a241d] border border-black/5 dark:border-white/5">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-1">Range</p>
+                        <p className="text-gray-800 dark:text-gray-200 font-medium leading-relaxed">
                           {selectedSegment.range || 'Range details unavailable'}
                         </p>
                       </div>
@@ -295,16 +293,16 @@ export default function RouteBreakdown() {
                       {/* Tips & Risks */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <p className="text-xs text-gray-400 uppercase font-bold mb-2">Safety Tips</p>
-                          <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-2">Safety Tips</p>
+                          <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 space-y-1">
                             {selectedSegment.tips?.map((tip: string, i: number) => (
                               <li key={i}>{tip}</li>
                             )) || <li>No specific tips available.</li>}
                           </ul>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-400 uppercase font-bold mb-2">Risk Factors</p>
-                          <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-2">Risk Factors</p>
+                          <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 space-y-1">
                             {selectedSegment.risks?.map((risk: string, i: number) => (
                               <li key={i}>{risk}</li>
                             )) || <li>No specific risks identified.</li>}
@@ -315,20 +313,20 @@ export default function RouteBreakdown() {
                       {/* Landmarks & Junctions */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <p className="text-xs text-gray-400 uppercase font-bold mb-2">Landmarks</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-2">Landmarks</p>
                           <div className="flex flex-wrap gap-2">
                             {selectedSegment.landmarks?.map((lm: string, i: number) => (
-                              <span key={i} className="px-2 py-1 bg-blue-900/30 text-blue-300 text-xs rounded-md font-medium">
+                              <span key={i} className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs rounded-md font-medium">
                                 {lm}
                               </span>
                             )) || <span className="text-sm text-gray-500">None nearby</span>}
                           </div>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-400 uppercase font-bold mb-2">Key Junctions</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-2">Key Junctions</p>
                           <div className="flex flex-wrap gap-2">
                             {selectedSegment.junctions?.map((j: string, i: number) => (
-                              <span key={i} className="px-2 py-1 bg-purple-900/30 text-purple-300 text-xs rounded-md font-medium">
+                              <span key={i} className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs rounded-md font-medium">
                                 {j}
                               </span>
                             )) || <span className="text-sm text-gray-500">None</span>}
@@ -336,10 +334,10 @@ export default function RouteBreakdown() {
                         </div>
                       </div>
 
-                      <div className="flex gap-3 mt-4 pt-4 border-t border-white/10">
+                      <div className="flex gap-3 mt-4 pt-4 border-t border-black/5 dark:border-white/10">
                         <button
                           onClick={() => setIsModalOpen(false)}
-                          className="flex-1 py-3 px-4 rounded-xl font-bold text-gray-300 bg-[#28392e] hover:bg-[#3b5443] transition-colors"
+                          className="flex-1 py-3 px-4 rounded-xl font-bold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#28392e] hover:bg-gray-200 dark:hover:bg-[#3b5443] transition-colors"
                         >
                           Close
                         </button>
