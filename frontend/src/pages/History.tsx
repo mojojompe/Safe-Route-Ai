@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { MdSearch, MdChevronRight, MdRefresh } from 'react-icons/md'
+import { useAuth } from '../context/AuthContext'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 
@@ -23,12 +24,16 @@ export default function History() {
   const [filter, setFilter] = useState('All')
   const [replayingId, setReplayingId] = useState<string | null>(null)
 
+  const { user } = useAuth()
   const nav = useNavigate()
 
   useEffect(() => {
     const fetchHistory = async () => {
+      if (!user) return
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/history`)
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/history`, {
+          params: { userId: user.uid }
+        })
         setRoutes(res.data)
       } catch (error) {
         console.error('Failed to fetch history', error)
@@ -37,7 +42,7 @@ export default function History() {
       }
     }
     fetchHistory()
-  }, [])
+  }, [user])
 
   const handleReplay = async (route: RouteItem) => {
     if (replayingId) return

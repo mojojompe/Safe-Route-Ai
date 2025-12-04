@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import Map, { Marker, Source, Layer, NavigationControl, GeolocateControl } from 'react-map-gl'
+import Map, { Marker, Source, Layer, NavigationControl, GeolocateControl, Popup } from 'react-map-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
@@ -11,7 +11,8 @@ import {
   MdDirectionsCar,
   MdAddCircle,
   MdReport,
-  MdPublicOff
+  MdPublicOff,
+  MdDelete
 } from 'react-icons/md'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
@@ -38,6 +39,28 @@ export default function MapPage() {
 
   const nav = useNavigate()
   const { user } = useAuth()
+
+  // Welcome Message State
+  const [showWelcome, setShowWelcome] = useState(false)
+
+  useEffect(() => {
+    if (user) {
+      const lastWelcome = localStorage.getItem(`lastWelcome_${user.uid}`)
+      const today = new Date().toDateString()
+      if (lastWelcome !== today) {
+        setShowWelcome(true)
+        localStorage.setItem(`lastWelcome_${user.uid}`, today)
+        setTimeout(() => setShowWelcome(false), 2000)
+      }
+    }
+  }, [user])
+
+  // Push Notification Permission
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission !== 'granted') {
+      Notification.requestPermission()
+    }
+  }, [])
 
   // Persistence: Load state from localStorage on mount
   useEffect(() => {
@@ -169,19 +192,38 @@ export default function MapPage() {
     }
   }
 
+  // Simulate Route Completion for Notification
+  const handleFinishNavigation = () => {
+    if (Notification.permission === 'granted' && user) {
+      new Notification("Route Completed", {
+        body: `Dear ${user.displayName || 'User'}, your route from ${startQuery} to ${destQuery} has been completed.`,
+        icon: '/logo.svg'
+      })
+    }
+    // Reset route or navigate home/history? For now just alert or log
+    alert("Navigation Finished!")
+    setRoutes([])
+    setStartQuery('')
+    setDestQuery('')
+    setStartCoords(null)
+    setDestCoords(null)
+  }
+
   const [reports, setReports] = useState<any[]>([])
   const [showReportMenu, setShowReportMenu] = useState(false)
+  const [selectedReport, setSelectedReport] = useState<any>(null)
 
   // Fetch reports
-  useEffect(() => {
-    const fetchReports = async () => {
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/reports`)
-        setReports(res.data)
-      } catch (error) {
-        console.error("Failed to fetch reports", error)
-      }
+  const fetchReports = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/reports`)
+      setReports(res.data)
+    } catch (error) {
+      console.error("Failed to fetch reports", error)
     }
+  }
+
+  useEffect(() => {
     fetchReports()
   }, [])
 
@@ -203,8 +245,31 @@ export default function MapPage() {
     }
   }
 
+  const handleDeleteReport = async (id: string) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/reports/${id}`)
+      setReports(prev => prev.filter(r => r._id !== id))
+      setSelectedReport(null)
+    } catch (error) {
+      console.error("Failed to delete report", error)
+      alert("Failed to delete report")
+    }
+  }
+
   return (
     <div className="relative flex h-screen w-full flex-col bg-sr-dark overflow-hidden font-display">
+      {/* Welcome Overlay */}
+      {showWelcome && user && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md animate-fade-in-out pointer-events-none">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-6xl font-black text-white mb-2 drop-shadow-lg">
+              Welcome, <span className="text-green-500">{user.displayName?.split(' ')[0] || 'Traveler'}</span>
+            </h1>
+            <p className="text-gray-300 text-lg">Stay safe on your journey.</p>
+          </div>
+        </div>
+      )}
+
       {/* Map Background */}
       <div className="absolute inset-0 z-0">
         <Map
@@ -226,14 +291,41 @@ export default function MapPage() {
               key={report._id}
               longitude={report.location.coordinates[0]}
               latitude={report.location.coordinates[1]}
+              onClick={(e: any) => {
+                e.originalEvent.stopPropagation()
+                setSelectedReport(report)
+              }}
             >
-              <div className="text-2xl" title={report.type}>
+              <div className="text-2xl cursor-pointer hover:scale-110 transition-transform" title={report.type}>
                 {report.type === 'accident' ? '💥' :
                   report.type === 'police' ? '👮' :
                     report.type === 'hazard' ? '⚠️' : '📍'}
               </div>
             </Marker>
           ))}
+
+          {selectedReport && (
+            <Popup
+              longitude={selectedReport.location.coordinates[0]}
+              latitude={selectedReport.location.coordinates[1]}
+              anchor="bottom"
+              onClose={() => setSelectedReport(null)}
+              closeButton={true}
+              closeOnClick={false}
+              className="z-50"
+            >
+              <div className="p-2 min-w-[150px] text-gray-900">
+                <h3 className="font-bold capitalize mb-1">{selectedReport.type}</h3>
+                <p className="text-sm text-gray-600 mb-2">{selectedReport.description}</p>
+                <button
+                  onClick={() => handleDeleteReport(selectedReport._id)}
+                  className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white text-xs font-bold rounded hover:bg-red-600 w-full justify-center"
+                >
+                  <MdDelete /> Remove
+                </button>
+              </div>
+            </Popup>
+          )}
 
           {/* Render Routes */}
           {routes.map((route, index) => {
@@ -419,12 +511,20 @@ export default function MapPage() {
                         Safety Score: <span className={`font-bold ${routes[selectedRouteIndex].score >= 7 ? 'text-green-400' : 'text-yellow-400'}`}>{routes[selectedRouteIndex].score}/10</span>
                       </p>
                     </div>
-                    <button
-                      onClick={handleStartNavigation}
-                      className="flex min-w-[84px] w-full sm:w-auto cursor-pointer items-center justify-center overflow-hidden rounded-2xl h-10 px-3 bg-green-700 text-green-500 text-sm font-bold transition-transform hover:scale-105"
-                    >
-                      <span className="truncate">Start Navigation</span>
-                    </button>
+                    <div className="flex gap-2 w-full sm:w-auto">
+                      <button
+                        onClick={handleStartNavigation}
+                        className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl h-10 px-3 bg-green-700 text-green-500 text-sm font-bold transition-transform hover:scale-105"
+                      >
+                        Start
+                      </button>
+                      <button
+                        onClick={handleFinishNavigation}
+                        className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl h-10 px-3 bg-white/10 text-white text-sm font-bold transition-transform hover:scale-105 hover:bg-white/20"
+                      >
+                        Finish
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

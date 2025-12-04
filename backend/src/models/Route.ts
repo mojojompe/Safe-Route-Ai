@@ -26,6 +26,10 @@ const routeSchema = new mongoose.Schema({
         enum: ['Low', 'Moderate', 'High'],
         required: true,
     },
+    userId: {
+        type: String,
+        required: true,
+    },
     date: {
         type: Date,
         default: Date.now,

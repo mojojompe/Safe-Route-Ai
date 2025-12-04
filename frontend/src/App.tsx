@@ -1,6 +1,6 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { AuthProvider } from './context/AuthContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import Sidebar from './components/Sidebar'
 
 import Welcome from './pages/Welcome'
@@ -36,6 +36,14 @@ const PageTransition = ({ children }: { children: React.ReactNode }) => (
   </motion.div>
 )
 
+// Wrapper to redirect if logged in
+function WelcomeWrapper() {
+  const { user, loading } = useAuth()
+  if (loading) return null // Or a loader
+  if (user) return <Navigate to="/map" replace />
+  return <PageTransition><Welcome /></PageTransition>
+}
+
 export default function App() {
   const location = useLocation()
 
@@ -43,7 +51,7 @@ export default function App() {
     <AuthProvider>
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<PageTransition><Welcome /></PageTransition>} />
+          <Route path="/" element={<WelcomeWrapper />} />
           <Route path="/map" element={<Layout><PageTransition><MapPage /></PageTransition></Layout>} />
           <Route path="/route-breakdown" element={<Layout><PageTransition><RouteBreakdown /></PageTransition></Layout>} />
           <Route path="/history" element={<Layout><PageTransition><History /></PageTransition></Layout>} />

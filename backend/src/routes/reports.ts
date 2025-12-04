@@ -33,4 +33,15 @@ router.post('/', async (req, res) => {
     }
 })
 
+// Delete a report
+router.delete('/:id', async (req, res) => {
+    try {
+        const { id } = req.params
+        await Report.findByIdAndDelete(id)
+        res.json({ message: 'Report deleted' })
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete report' })
+    }
+})
+
 export default router
