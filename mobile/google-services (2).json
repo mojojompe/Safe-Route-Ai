@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "642242894936",
+    "project_id": "safe-route-ai-1",
+    "storage_bucket": "safe-route-ai-1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:642242894936:android:50cce549a6f351814ffe2d",
+        "android_client_info": {
+          "package_name": "com.saferouteai.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "642242894936-lf7tqq0qje95jjva0rkofcecp1iedj7p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5TlCvR3b6B6AAznTIEAgTeXM5Jienc1Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "642242894936-lf7tqq0qje95jjva0rkofcecp1iedj7p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
