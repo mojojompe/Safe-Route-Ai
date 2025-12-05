@@ -1,0 +1,81 @@
+# Frontend Page Descriptions
+
+This document provides a detailed description of each page component located in `src/pages`.
+
+## 1. Welcome (Welcome.tsx)
+**Purpose**: The landing page for the application.
+**Features**:
+- Displays application branding and value proposition ("Find the safest route before you move").
+- "Start" button that triggers Google Sign-In via Firebase.
+- Redirects authenticated users to the Map page.
+- Highlights key features: Enhanced Safety, Smart Navigation, and Real-Time Alerts.
+
+## 2. Map Page (MapPage.tsx)
+**Purpose**: The core interface for route planning and exploration.
+**Features**:
+- **Interactive Map**: Uses Mapbox GL to display the map.
+- **Route Planning**: Inputs for Start and Destination locations with autocomplete suggestions.
+- **Mode Selection**: Toggle between "Walking" and "Driving" modes.
+- **Route Options**: Displays multiple route alternatives with Distance, Duration, and Safety Scores (0-10).
+- **Visual Cues**: Color-coded routes (Green=Safest, Yellow=Standard, Red=High Risk).
+- **Navigation**: "Start" button to proceed to Route Breakdown.
+- **Reporting**: Floating action button to report accidents, police presence, or hazards.
+- **Inter-Country Restriction**: Prevents planning routes between different countries.
+- **Welcome Overlay**: Greets the user upon login.
+
+## 3. Route Breakdown (RouteBreakdown.tsx)
+**Purpose**: Provides detailed analysis and navigation for a selected route.
+**Features**:
+- **Route Segments**: Breaks down the route into colored segments based on safety.
+- **Detailed Modal**: Clicking a segment opens a modal with:
+    - Safety Score and Risk Level.
+    - Specific Risk Factors and Safety Tips.
+    - Landmarks and Key Junctions.
+    - Estimated Time and Range.
+- **Turn-by-Turn**: List view of navigation instructions.
+- **Live Navigation Simulation**: "Start Live Navigation" button simulates movement along the route with dynamic instructions.
+- **Stats**: Displays Overall Risk, Total Distance, and Estimated Time.
+
+## 4. History (History.tsx)
+**Purpose**: Displays a log of past journeys.
+**Features**:
+- **List View**: Shows past routes with Date, Start/End locations, and Risk Level.
+- **Filtering**: Filter routes by Risk Level (All, Low, Moderate, High).
+- **Search**: Search history by location name.
+- **Replay**: "Replay" button to re-load a past route onto the map/breakdown view.
+- **Safety Score**: Displays the safety score for each historical route.
+
+## 5. Safety Tips (SafetyTips.tsx)
+**Purpose**: Educational resource for travel safety.
+**Features**:
+- **Categorized Tips**: Tabs for "Walking" and "Driving" safety tips.
+- **Search**: Filter tips by keyword.
+- **Visual Cards**: Each tip includes an image, title, and description.
+- **Contextual Indicators**: Highlights tips relevant to specific conditions (e.g., "Contextual Tip" for night safety).
+
+## 6. About (About.tsx)
+**Purpose**: Information about the application and organization.
+**Features**:
+- **Mission Statement**: Explains the goal of empowering safer travel choices.
+- **Privacy Policy**: Summary of data usage and privacy commitments.
+- **Contact Info**: Support email link.
+
+## 7. Resources (Resources.tsx)
+**Purpose**: Quick reference for safety checklists.
+**Features**:
+- **Safety Checklist**: Bullet points for general safety (e.g., "Share your route").
+- **Driving Tips**: Advice for safe driving practices.
+
+## 8. Profile (Profile.tsx)
+**Status**: *Not currently used in main navigation.*
+**Purpose**: User account management.
+**Features**:
+- Displays user avatar, name, and email.
+- Buttons for "Edit Profile", "Change Password", and "Sign Out" (UI only).
+
+## 9. Emergency (Emergency.tsx)
+**Status**: *Not currently used in main navigation.*
+**Purpose**: Quick access to emergency services.
+**Features**:
+- **Quick Dial**: Buttons to call Police (911) and Medical services.
+- **Emergency Contacts**: UI to manage personal emergency contacts (e.g., "Mom").
