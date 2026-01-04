@@ -45,7 +45,7 @@ export default function Welcome() {
             <div className="relative flex w-full flex-col items-center justify-center px-4 py-20 text-center sm:px-10 md:px-20 lg:px-40 lg:py-32">
               <div className="absolute inset-0 z-0 opacity-10 dark:opacity-[0.07]">
                 <img
-                  alt="Abstract illustration of a city map with winding paths and location markers."
+                  alt="Illustration of a city map with winding paths and location markers."
                   className="h-full w-full object-cover"
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvrXYkB7K80BQntCMUiPE0jWZRTAljOOItuRJedFlDYft2zfLBiK96p0GU7RuDAZfVTTqpQMT4hYsAbGmW71IR_2O-zPQXdfQRaiou6K50IzULiBenimeiygMj8eoJywTohj8v6JcgP4V_GguOaqGnG7aDu6IYsQ-uUKNqdqnkIqKiGHSHP_sPYieWwhgDzwxX-OWoMaDaVEzCVa_3ArTiwY93Gy3ujTT-QZoy8S1rIE-wOBqDUVGhmSU13cqaqxSVAbxfHaY27QSC"
                 />
