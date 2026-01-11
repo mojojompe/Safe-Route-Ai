@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Welcome to Safe Route AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#00FF7F", // Bright Green
+            "background-light": "#F5F5F5",
+            "background-dark": "#0B1A13",
+          },
+          fontFamily: {
+            display: ["Poppins", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "1rem", // 16px
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    body {
+      font-family: "Poppins", sans-serif;
+      min-height: max(884px, 100dvh);
+    }
+    .map-bg {
+      background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuB8rEe-DZyra1wVWve4bAPR9QCu8umnhP6UyVE1iDYMFFf7Agbc7GHwoioEO0i_huFKglxNNPe7Q4YJmsBtF-I6UFLjTDHGuY-wvkkrJSw_Mg6KeXv41PmjyGzkm1aBQ5I87mtyrFOlmSMwpF3jF69FZZdnU32gXKzs5Df4Hr3gHj84tS0MQICl5USvV62TcxsYvLXiBQtJYBO0be-RJ2h0w6GPeHa9Ab5hBPoWUqWcVmY0y6Cl9n_os9yo-RfaGTX5McUYL1gsKb6f);
+      background-size: 300px;
+      background-repeat: space;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark font-display">
+<div class="min-h-screen flex flex-col justify-between text-white p-6">
+<header class="flex items-center space-x-2">
+<div class="w-8 h-8 flex items-center justify-center bg-primary rounded-full">
+<span class="material-icons-outlined text-background-dark">shield</span>
+</div>
+<span class="font-semibold text-lg text-white">Safe Route AI</span>
+</header>
+<main class="flex-grow flex flex-col justify-center items-center text-center -mt-16 px-4 map-bg">
+<h1 class="text-4xl md:text-5xl font-bold leading-tight text-white">
+        Welcome to Safe Route AI
+      </h1>
+<p class="mt-4 text-base md:text-lg text-gray-300 max-w-md">
+        Find the safest route before you move.
+      </p>
+</main>
+<footer class="pb-8">
+<button class="w-full bg-primary text-background-dark font-bold py-4 px-6 rounded-full text-lg shadow-lg shadow-primary/20 hover:bg-opacity-90 transition-all duration-300">
+        Next
+      </button>
+</footer>
+</div>
+
+</body></html>

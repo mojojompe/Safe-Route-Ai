@@ -1,134 +1,178 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { auth } from '../../src/firebase';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Mail, Lock, User, Chrome } from 'lucide-react-native';
+import React, { useState } from "react";
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    Alert,
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    Image,
+} from "react-native";
+import { Stack, useRouter } from "expo-router";
+import { useAuth } from "../../src/context/AuthContext";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Mail, Lock, User as UserIcon } from "lucide-react-native";
 
 export default function SignupScreen() {
     const router = useRouter();
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const { signupWithEmail } = useAuth();
+
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleSignup = async () => {
         if (!name || !email || !password) {
-            Alert.alert('Error', 'Please fill in all fields');
+            Alert.alert("Error", "Please fill in all fields");
             return;
         }
+
         setLoading(true);
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            await updateProfile(userCredential.user, { displayName: name });
+            await signupWithEmail(email, password, name);
         } catch (error: any) {
-            Alert.alert('Signup Failed', error.message);
+            Alert.alert("Signup Failed", error.message);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-neutral-950">
+        <SafeAreaView className="flex-1 bg-[#071B11]">
             <Stack.Screen options={{ headerShown: false }} />
+
+            {/* Back Button */}
+            <TouchableOpacity
+                onPress={() => router.back()}
+                className="absolute top-6 left-4 z-20"
+            >
+                <Text className="text-white text-4xl">{`‹`}</Text>
+            </TouchableOpacity>
+
             <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
                 className="flex-1"
             >
-                <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24 }}>
-
-                    <View className="items-center mb-10">
-                        <View className="bg-emerald-500/10 p-4 rounded-full mb-4">
-                            <User size={40} color="#10b981" />
-                        </View>
-                        <Text className="text-3xl font-bold text-white">Create Account</Text>
-                        <Text className="text-gray-400 mt-2">Join us for safer journeys</Text>
-                    </View>
-
-                    <View className="space-y-4">
-                        {/* Name Input */}
-                        <View>
-                            <Text className="text-gray-300 mb-2 ml-1">Full Name</Text>
-                            <View className="flex-row items-center bg-neutral-900 border border-neutral-800 rounded-xl px-4 h-14 focus:border-emerald-500">
-                                <User size={20} color="#9ca3af" />
-                                <TextInput
-                                    className="flex-1 text-white ml-3 text-base"
-                                    placeholder="John Doe"
-                                    placeholderTextColor="#6b7280"
-                                    value={name}
-                                    onChangeText={setName}
-                                />
-                            </View>
-                        </View>
-
-                        {/* Email Input */}
-                        <View>
-                            <Text className="text-gray-300 mb-2 ml-1">Email Address</Text>
-                            <View className="flex-row items-center bg-neutral-900 border border-neutral-800 rounded-xl px-4 h-14 focus:border-emerald-500">
-                                <Mail size={20} color="#9ca3af" />
-                                <TextInput
-                                    className="flex-1 text-white ml-3 text-base"
-                                    placeholder="name@example.com"
-                                    placeholderTextColor="#6b7280"
-                                    value={email}
-                                    onChangeText={setEmail}
-                                    autoCapitalize="none"
-                                    keyboardType="email-address"
-                                />
-                            </View>
-                        </View>
-
-                        {/* Password Input */}
-                        <View>
-                            <Text className="text-gray-300 mb-2 ml-1">Password</Text>
-                            <View className="flex-row items-center bg-neutral-900 border border-neutral-800 rounded-xl px-4 h-14 focus:border-emerald-500">
-                                <Lock size={20} color="#9ca3af" />
-                                <TextInput
-                                    className="flex-1 text-white ml-3 text-base"
-                                    placeholder="Create a password"
-                                    placeholderTextColor="#6b7280"
-                                    value={password}
-                                    onChangeText={setPassword}
-                                    secureTextEntry
-                                />
-                            </View>
-                        </View>
-
-                        <TouchableOpacity
-                            onPress={handleSignup}
-                            disabled={loading}
-                            className="bg-emerald-600 h-14 rounded-xl items-center justify-center shadow-lg shadow-emerald-500/20 mt-6"
+                <ScrollView
+                    contentContainerStyle={{
+                        paddingHorizontal: 26,
+                        paddingTop: 100,
+                        paddingBottom: 40,
+                    }}
+                    showsVerticalScrollIndicator={false}
+                >
+                    {/* Floating Logo Circle */}
+                    <View className="items-center mb-6">
+                        <View
+                            className="w-20 h-20 rounded-full bg-[#0d3b27] border border-[#0f5a3c] items-center justify-center"
                         >
-                            {loading ? (
-                                <ActivityIndicator color="white" />
-                            ) : (
-                                <Text className="text-white font-bold text-lg">Sign Up</Text>
-                            )}
-                        </TouchableOpacity>
-
-                        <View className="flex-row items-center justify-center my-6">
-                            <View className="h-[1px] bg-neutral-800 flex-1" />
-                            <Text className="text-gray-500 mx-4">Or sign up with</Text>
-                            <View className="h-[1px] bg-neutral-800 flex-1" />
+                            <Image
+                                source={require("../../assets/images/icon.png")}
+                                style={{ width: 38, height: 38, tintColor: "#00d35a" }}
+                                resizeMode="contain"
+                            />
                         </View>
-
-                        <TouchableOpacity
-                            onPress={() => Alert.alert("Coming Soon", "Google Sign-In")}
-                            className="flex-row items-center justify-center bg-neutral-900 border border-neutral-800 h-14 rounded-xl space-x-3"
-                        >
-                            <Chrome size={20} color="white" />
-                            <Text className="text-white font-semibold text-base">Sign up with Google</Text>
-                        </TouchableOpacity>
                     </View>
 
-                    <View className="flex-row justify-center mt-8">
-                        <Text className="text-gray-400">Already have an account? </Text>
-                        <TouchableOpacity onPress={() => router.back()}>
-                            <Text className="text-emerald-500 font-bold">Log In</Text>
-                        </TouchableOpacity>
+                    {/* Title */}
+                    <Text className="text-white text-center text-4xl font-extrabold">
+                        Create Your Account
+                    </Text>
+
+                    <Text className="text-gray-300 text-center mt-2 text-lg px-5 leading-6">
+                        Join Safe Route AI to find the safest paths.
+                    </Text>
+
+                    {/* FULL NAME INPUT */}
+                    <View className="mt-10">
+                        <Text className="text-gray-200 mb-2 ml-1 font-medium">
+                            Full Name
+                        </Text>
+                        <View className="flex-row items-center bg-[#0c1f17] border border-[#132d24] rounded-2xl px-4 h-14">
+                            <UserIcon size={20} color="#9ca3af" />
+                            <TextInput
+                                className="flex-1 text-white ml-3 text-base"
+                                placeholder="Enter your full name"
+                                placeholderTextColor="#9ca3af"
+                                value={name}
+                                onChangeText={setName}
+                            />
+                        </View>
                     </View>
 
+                    {/* EMAIL */}
+                    <View className="mt-6">
+                        <Text className="text-gray-200 mb-2 ml-1 font-medium">
+                            Email Address
+                        </Text>
+                        <View className="flex-row items-center bg-[#0c1f17] border border-[#132d24] rounded-2xl px-4 h-14">
+                            <Mail size={20} color="#9ca3af" />
+                            <TextInput
+                                className="flex-1 text-white ml-3 text-base"
+                                placeholder="you@example.com"
+                                placeholderTextColor="#9ca3af"
+                                autoCapitalize="none"
+                                keyboardType="email-address"
+                                value={email}
+                                onChangeText={setEmail}
+                            />
+                        </View>
+                    </View>
+
+                    {/* PASSWORD */}
+                    <View className="mt-6">
+                        <Text className="text-gray-200 mb-2 ml-1 font-medium">
+                            Password
+                        </Text>
+                        <View className="flex-row items-center bg-[#0c1f17] border border-[#132d24] rounded-2xl px-4 h-14">
+                            <Lock size={20} color="#9ca3af" />
+                            <TextInput
+                                className="flex-1 text-white ml-3 text-base"
+                                placeholder="Create a strong password"
+                                placeholderTextColor="#9ca3af"
+                                secureTextEntry
+                                value={password}
+                                onChangeText={setPassword}
+                            />
+                        </View>
+                    </View>
+
+                    {/* SIGN UP BUTTON */}
+                    <TouchableOpacity
+                        onPress={handleSignup}
+                        disabled={loading}
+                        className="bg-[#00d35a] h-14 rounded-3xl items-center justify-center mt-8"
+                        style={{
+                            shadowColor: "#00d35a",
+                            shadowOpacity: 0.35,
+                            shadowOffset: { width: 0, height: 10 },
+                            shadowRadius: 20,
+                            elevation: 10,
+                        }}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color="white" />
+                        ) : (
+                            <Text className="text-[#071B11] font-bold text-lg">Sign Up</Text>
+                        )}
+                    </TouchableOpacity>
+
+                    {/* FOOTER LINK */}
+                    <View className="mt-10 items-center">
+                        <Text className="text-gray-300 text-base">
+                            Already have an account?{" "}
+                            <Text
+                                onPress={() => router.push("/(auth)/login")}
+                                className="text-[#00d35a] font-bold"
+                            >
+                                Log In
+                            </Text>
+                        </Text>
+                    </View>
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>

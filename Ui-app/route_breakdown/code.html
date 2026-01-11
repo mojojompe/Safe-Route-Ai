@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Route Breakdown - Safe Route AI</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#23FF7B",
+            "background-light": "#F3F4F6", // Light Gray for light mode
+            "background-dark": "#0B1510", // Dark Green for dark mode
+            "card-light": "#FFFFFF",
+            "card-dark": "rgba(35, 255, 123, 0.05)",
+            "text-light": "#1F2937",
+            "text-dark": "#E5E7EB",
+            "text-muted-light": "#6B7280",
+            "text-muted-dark": "#9CA3B0"
+          },
+          fontFamily: {
+            display: ["Urbanist", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "1rem", // 16px
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .material-icons, .material-icons-outlined {
+      font-size: 24px;
+      line-height: 1;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark min-h-screen">
+<div class="p-4 md:p-6 lg:p-8">
+<header class="flex justify-between items-center mb-6">
+<div class="flex items-center gap-2">
+<span class="material-icons text-primary">shield</span>
+<span class="font-bold text-lg text-text-light dark:text-white">Safe Route AI</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="bg-card-light dark:bg-card-dark p-2 rounded-full text-text-muted-light dark:text-text-muted-dark">
+<span class="material-icons-outlined">share</span>
+</button>
+<button class="bg-card-light dark:bg-card-dark p-2 rounded-full text-text-muted-light dark:text-text-muted-dark">
+<span class="material-icons-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<main>
+<h1 class="text-3xl font-bold text-text-light dark:text-white">Route Analysis</h1>
+<p class="text-text-muted-light dark:text-text-muted-dark mb-6">Downtown to City Park</p>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="flex flex-col gap-4">
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-card-light dark:bg-card-dark p-4 rounded-lg backdrop-blur-sm border border-white/10">
+<p class="text-sm text-text-muted-light dark:text-text-muted-dark mb-1">Overall Risk</p>
+<p class="text-2xl font-bold text-text-light dark:text-white">6.8 <span class="text-base font-normal">/ 10</span></p>
+</div>
+<div class="bg-card-light dark:bg-card-dark p-4 rounded-lg backdrop-blur-sm border border-white/10">
+<p class="text-sm text-text-muted-light dark:text-text-muted-dark mb-1">Distance</p>
+<p class="text-2xl font-bold text-text-light dark:text-white">2.5 mi</p>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark p-4 rounded-lg backdrop-blur-sm border border-white/10">
+<p class="text-sm text-text-muted-light dark:text-text-muted-dark mb-1">Est. Time</p>
+<p class="text-2xl font-bold text-text-light dark:text-white">15 min</p>
+</div>
+<div class="flex items-center bg-card-light dark:bg-card-dark p-1 rounded-lg border border-white/10">
+<button class="flex-1 py-2 px-4 rounded-md bg-primary text-background-dark dark:text-background-dark font-semibold">Route Segments</button>
+<button class="flex-1 py-2 px-4 rounded-md text-text-muted-light dark:text-text-muted-dark font-semibold">Turn-by-turn</button>
+</div>
+<div class="flex flex-col gap-4">
+<div class="bg-card-light dark:bg-card-dark p-4 rounded-lg backdrop-blur-sm border border-red-500/50">
+<div class="flex justify-between items-start mb-3">
+<div>
+<p class="text-xs text-text-muted-light dark:text-text-muted-dark">Segment 1 of 4</p>
+<p class="text-lg font-bold text-text-light dark:text-white">Oak St to Pine Ave</p>
+</div>
+<div class="bg-red-500/20 text-red-400 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
+<span>8/10</span>
+<span class="text-xs">warning</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="bg-gray-200 dark:bg-gray-700 text-xs text-text-light dark:text-text-dark px-2 py-1 rounded-full">Poor Lighting</span>
+<span class="bg-gray-200 dark:bg-gray-700 text-xs text-text-light dark:text-text-dark px-2 py-1 rounded-full">High Crime Rate</span>
+</div>
+<button class="w-full text-center text-primary font-semibold flex items-center justify-center gap-2">
+<span class="material-icons-outlined text-base">alt_route</span>
+<span>View Safer Detour</span>
+</button>
+</div>
+<div class="bg-card-light dark:bg-card-dark p-4 rounded-lg backdrop-blur-sm border border-orange-500/50">
+<div class="flex justify-between items-start mb-3">
+<div>
+<p class="text-xs text-text-muted-light dark:text-text-muted-dark">Segment 2 of 4</p>
+<p class="text-lg font-bold text-text-light dark:text-white">Pine Ave to Elm St</p>
+</div>
+<div class="bg-orange-500/20 text-orange-400 text-xs font-bold px-2 py-1 rounded-full">5/10</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="bg-gray-200 dark:bg-gray-700 text-xs text-text-light dark:text-text-dark px-2 py-1 rounded-full">Isolated Block</span>
+</div>
+<button class="w-full text-center text-primary font-semibold flex items-center justify-center gap-2">
+<span class="material-icons-outlined text-base">alt_route</span>
+<span>View Safer Detour</span>
+</button>
+</div>
+<div class="bg-card-light dark:bg-card-dark p-4 rounded-lg backdrop-blur-sm border border-green-500/50">
+<div class="flex justify-between items-start mb-3">
+<div>
+<p class="text-xs text-text-muted-light dark:text-text-muted-dark">Segment 3 of 4</p>
+<p class="text-lg font-bold text-text-light dark:text-white">Elm St to Maple Blvd</p>
+</div>
+<div class="bg-green-500/20 text-green-400 text-xs font-bold px-2 py-1 rounded-full">2/10</div>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="bg-gray-200 dark:bg-gray-700 text-xs text-text-light dark:text-text-dark px-2 py-1 rounded-full">Well Lit</span>
+<span class="bg-gray-200 dark:bg-gray-700 text-xs text-text-light dark:text-text-dark px-2 py-1 rounded-full">Busy Street</span>
+</div>
+</div>
+</div>
+</div>
+<div class="relative min-h-[400px] lg:min-h-0">
+<img alt="Map showing a route from one point to another, with segments highlighted in yellow and red to indicate risk levels." class="w-full h-full object-cover rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXEPHB0zLklAvp5BQ5cRrQUGD2acPDiDY6OlCKu6ECryqVmBpMsKvRIs33vBRORyuoktWSbeKK8MB1NUPKvvRw1yMjFrTMo9M7sIFTfTd5fmQFI8ouAPUCeI4kjigpp3b_qqhgZGem4PfXax975COgushTK3bUgZBY4WWwZZnNCCGKQ_IgDXEHyv2RxJ_Z3ECrDraYQXFNTHOu4_XCEJBnPGmozaWZNFVyJxWEAii0T5PzdOsPdxSTTizGzIg60kRwJGp6rZl9WMdN"/>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

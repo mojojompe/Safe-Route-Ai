@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Enhanced Safety Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#22C55E",
+            "background-light": "#F9FAFB",
+            "background-dark": "#0B120F",
+          },
+          fontFamily: {
+            display: ["Sora", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "1.25rem",
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark font-display text-gray-200">
+<div class="flex flex-col h-screen">
+<header class="flex justify-end items-center px-4 pt-10 sm:px-6">
+<button class="text-gray-400 font-semibold text-sm hover:text-white">Skip</button>
+</header>
+<main class="flex-grow flex flex-col items-center justify-center text-center px-6 -mt-8">
+<div class="flex items-center justify-center w-36 h-36 bg-primary/10 rounded-full">
+<div class="flex items-center justify-center w-24 h-24 bg-primary/20 rounded-full">
+<span class="material-icons-outlined text-primary text-5xl">
+          verified_user
+        </span>
+</div>
+</div>
+<h1 class="text-3xl font-bold mt-10 text-white">Enhanced Safety</h1>
+<p class="mt-4 text-gray-400 max-w-sm">
+      Our AI analyzes real-time data to guide you through the safest paths, avoiding high-risk areas.
+    </p>
+</main>
+<footer class="px-6 pb-12">
+<div class="flex justify-center items-center space-x-2 mb-8">
+<div class="w-2 h-2 bg-gray-700 rounded-full"></div>
+<div class="w-4 h-2 bg-primary rounded-full"></div>
+<div class="w-2 h-2 bg-gray-700 rounded-full"></div>
+<div class="w-2 h-2 bg-gray-700 rounded-full"></div>
+</div>
+<button class="w-full bg-primary text-white font-bold py-4 rounded-full text-lg shadow-lg shadow-primary/20 hover:bg-green-600 active:scale-95 transition-transform duration-150 ease-in-out">
+      Next
+    </button>
+</footer>
+</div>
+
+</body></html>

@@ -4,18 +4,20 @@ import MapView, { Marker, Polyline, PROVIDER_GOOGLE, PROVIDER_DEFAULT } from 're
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Search, Navigation } from 'lucide-react-native';
+import { Search, Navigation, Car, Footprints, AlertTriangle, CloudRain, Construction, Siren } from 'lucide-react-native';
 import { getRouteOptions, RouteOption, saveRouteToHistory } from '../../src/services/routeService';
 import { useRouteContext } from '../../src/context/RouteContext';
 import { useAuth } from '../../src/context/AuthContext';
+import GlassView from '../../components/ui/GlassView';
+import Animated, { FadeInDown, FadeInUp, FadeInRight } from 'react-native-reanimated';
 
 const { width, height } = Dimensions.get('window');
 
-// Dark Map Style JSON
+// Dark Map Style JSON (Cleaned up specific colors if needed, keeping standard Dark for now)
 const DARK_MAP_STYLE = [
     {
         "elementType": "geometry",
-        "stylers": [{ "color": "#212121" }]
+        "stylers": [{ "color": "#121A15" }] // User Dark BG
     },
     {
         "elementType": "labels.icon",
@@ -40,33 +42,9 @@ const DARK_MAP_STYLE = [
         "stylers": [{ "color": "#9e9e9e" }]
     },
     {
-        "featureType": "administrative.land_parcel",
-        "stylers": [{ "visibility": "off" }]
-    },
-    {
-        "featureType": "administrative.locality",
-        "elementType": "labels.text.fill",
-        "stylers": [{ "color": "#bdbdbd" }]
-    },
-    {
-        "featureType": "poi",
-        "elementType": "labels.text.fill",
-        "stylers": [{ "color": "#757575" }]
-    },
-    {
         "featureType": "poi.park",
         "elementType": "geometry",
         "stylers": [{ "color": "#181818" }]
-    },
-    {
-        "featureType": "poi.park",
-        "elementType": "labels.text.fill",
-        "stylers": [{ "color": "#616161" }]
-    },
-    {
-        "featureType": "poi.park",
-        "elementType": "labels.text.stroke",
-        "stylers": [{ "color": "#1b1b1b" }]
     },
     {
         "featureType": "road",
@@ -74,51 +52,20 @@ const DARK_MAP_STYLE = [
         "stylers": [{ "color": "#2c2c2c" }]
     },
     {
-        "featureType": "road",
-        "elementType": "labels.text.fill",
-        "stylers": [{ "color": "#8a8a8a" }]
-    },
-    {
-        "featureType": "road.arterial",
-        "elementType": "geometry",
-        "stylers": [{ "color": "#373737" }]
-    },
-    {
-        "featureType": "road.highway",
-        "elementType": "geometry",
-        "stylers": [{ "color": "#3c3c3c" }]
-    },
-    {
-        "featureType": "road.highway.controlled_access",
-        "elementType": "geometry",
-        "stylers": [{ "color": "#4e4e4e" }]
-    },
-    {
-        "featureType": "road.local",
-        "elementType": "labels.text.fill",
-        "stylers": [{ "color": "#616161" }]
-    },
-    {
-        "featureType": "transit",
-        "elementType": "labels.text.fill",
-        "stylers": [{ "color": "#757575" }]
-    },
-    {
         "featureType": "water",
         "elementType": "geometry",
         "stylers": [{ "color": "#000000" }]
-    },
-    {
-        "featureType": "water",
-        "elementType": "labels.text.fill",
-        "stylers": [{ "color": "#3d3d3d" }]
     }
 ];
+
+type TravelMode = 'walking' | 'driving';
 
 export default function MapScreen() {
     const mapRef = useRef<MapView>(null);
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
+    const [startLocation, setStartLocation] = useState('Current Location');
     const [destination, setDestination] = useState('');
+    const [travelMode, setTravelMode] = useState<TravelMode>('walking');
     const [routes, setRoutes] = useState<RouteOption[]>([]);
     const [loading, setLoading] = useState(false);
     const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
@@ -153,7 +100,9 @@ export default function MapScreen() {
         setLoading(true);
         setDestinationQuery(destination);
         try {
-            const options = await getRouteOptions(destination, 'walking');
+            // Note: Currently passing startLocation only for display in history, 
+            // as backend calculation assumes current location relative to destination for now.
+            const options = await getRouteOptions(destination, travelMode);
             setRoutes(options);
             if (options.length > 0) {
                 // Default select first
@@ -168,7 +117,7 @@ export default function MapScreen() {
                         longitude: c[0]
                     }));
                     mapRef.current?.fitToCoordinates(coordinates, {
-                        edgePadding: { top: 50, right: 20, bottom: 200, left: 20 },
+                        edgePadding: { top: 150, right: 20, bottom: 200, left: 20 },
                         animated: true,
                     });
                 }
@@ -183,104 +132,191 @@ export default function MapScreen() {
 
     const selectedRoute = routes.find(r => r.id === selectedRouteId);
 
+    const reportHazard = (type: string) => {
+        Alert.alert("Report Hazard", `Report ${type} at current location?`, [
+            { text: "Cancel", style: "cancel" },
+            { text: "Report", onPress: () => Alert.alert("Success", "Hazard reported to community.") }
+        ]);
+    };
+
     return (
-        <View className="flex-1 bg-neutral-950">
-            <MapView
-                ref={mapRef}
-                style={{ width: '100%', height: '100%' }}
-                provider={PROVIDER_DEFAULT}
-                customMapStyle={DARK_MAP_STYLE}
-                showsUserLocation
-                showsMyLocationButton={false}
+    <View className="flex-1 bg-[#071B11]">
+        {/* MAP */}
+        <MapView
+            ref={mapRef}
+            style={{ width: "100%", height: "100%" }}
+            provider={PROVIDER_DEFAULT}
+            customMapStyle={DARK_MAP_STYLE}
+            showsUserLocation
+            showsMyLocationButton={false}
+        >
+            {routes.map(route => {
+                const coords = route.geojson?.coordinates?.map((c: any) => ({
+                    latitude: c[1],
+                    longitude: c[0]
+                })) || [];
+
+                const isSelected = route.id === selectedRouteId;
+                const color =
+                    route.color === "green" ? "#00D35A" :
+                    route.color === "red" ? "#ef4444" :
+                    "#eab308";
+
+                return (
+                    <Polyline
+                        key={route.id}
+                        coordinates={coords}
+                        strokeColor={color}
+                        strokeWidth={isSelected ? 6 : 4}
+                        zIndex={isSelected ? 10 : 1}
+                        tappable
+                        onPress={() => setSelectedRouteId(route.id)}
+                    />
+                );
+            })}
+        </MapView>
+
+        {/* TOP FLOATING SEARCH + TOGGLES */}
+        <View className="absolute top-10 left-4 right-4 z-50">
+            <GlassView
+                intensity={80}
+                className="rounded-3xl px-4 py-4 border border-white/10 bg-white/20 shadow-lg"
             >
-                {routes.map(route => {
-                    const coords = route.geojson?.coordinates?.map((c: any) => ({
-                        latitude: c[1],
-                        longitude: c[0]
-                    })) || [];
-
-                    const isSelected = route.id === selectedRouteId;
-                    const color = route.color === 'green' ? '#10b981' : route.color === 'red' ? '#ef4444' : '#eab308';
-
-                    return (
-                        <Polyline
-                            key={route.id}
-                            coordinates={coords}
-                            strokeColor={color}
-                            strokeWidth={isSelected ? 6 : 4}
-                            zIndex={isSelected ? 10 : 1}
-                            onPress={() => setSelectedRouteId(route.id)}
-                            tappable
-                        />
-                    )
-                })}
-            </MapView>
-
-            {/* Floating Inputs */}
-            <View className="absolute top-14 left-4 right-4 z-50">
-                <View className="bg-neutral-900/90 rounded-2xl p-4 shadow-xl border border-neutral-800">
-                    <View className="flex-row items-center bg-black/40 rounded-xl px-3 h-10 mb-3">
-                        <View className="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-3" />
-                        <Text className="text-gray-400 text-sm">Current Location</Text>
-                    </View>
-
-                    <View className="flex-row items-center bg-neutral-800 rounded-xl px-3 h-12">
-                        <Search size={20} color="#9ca3af" />
-                        <TextInput
-                            className="flex-1 text-white ml-2"
-                            placeholder="Where to?"
-                            placeholderTextColor="#6b7280"
-                            value={destination}
-                            onChangeText={setDestination}
-                            onSubmitEditing={handleSearch}
-                            returnKeyType="search"
-                        />
-                    </View>
-
-                    {loading && <ActivityIndicator className="mt-4" color="#10b981" />}
+                {/* START LOCATION INPUT — same logic */}
+                <View className="flex-row items-center bg-white/25 rounded-2xl px-4 h-12 mb-3 border border-white/10">
+                    <View className="w-3 h-3 bg-[#00D35A] rounded-full mr-3" />
+                    <TextInput
+                        className="flex-1 text-white font-medium"
+                        placeholder="Start Location"
+                        placeholderTextColor="#d1d5db"
+                        value={startLocation}
+                        onChangeText={setStartLocation}
+                    />
                 </View>
-            </View>
 
-            {/* Route Info Card (Bottom) */}
-            {selectedRoute && (
-                <View className="absolute bottom-5 left-4 right-4 bg-neutral-900 rounded-2xl p-5 border border-neutral-800 shadow-xl z-50">
-                    <View className="flex-row justify-between items-start mb-2">
-                        <View>
-                            <Text className="text-white font-bold text-xl uppercase tracking-wider">{selectedRoute.mode}</Text>
-                            <Text className={`font-bold mt-1 ${selectedRoute.color === 'green' ? 'text-emerald-500' : 'text-yellow-500'}`}>
-                                {selectedRoute.color === 'green' ? 'Safest Route' : 'Warning: Risks Detected'}
-                            </Text>
-                        </View>
-                        <View className="bg-neutral-800 px-3 py-1 rounded-lg">
-                            <Text className="text-white font-mono">{selectedRoute.distance}</Text>
-                        </View>
-                    </View>
+                {/* DESTINATION INPUT — same logic */}
+                <View className="flex-row items-center bg-white/40 rounded-2xl px-4 h-12 mb-4 border border-white/10">
+                    <Search size={18} color="#000" />
+                    <TextInput
+                        className="flex-1 text-black ml-3 font-semibold"
+                        placeholder="Where to?"
+                        placeholderTextColor="#374151"
+                        value={destination}
+                        onChangeText={setDestination}
+                        onSubmitEditing={handleSearch}
+                        returnKeyType="search"
+                    />
+                </View>
 
-                    <View className="flex-row items-center mt-2">
-                        <View className="flex-row items-center mr-6">
-                            <Text className="text-gray-400 mr-2">ETA</Text>
-                            <Text className="text-white font-bold">{selectedRoute.eta}</Text>
-                        </View>
-                        <View className="flex-row items-center">
-                            <Text className="text-gray-400 mr-2">Score</Text>
-                            <Text className="text-white font-bold">{selectedRoute.score}/100</Text>
-                        </View>
-                    </View>
+                {/* TRAVEL MODE TOGGLE — same logic */}
+                <View className="flex-row bg-white/30 rounded-full p-1">
+                    <TouchableOpacity
+                        onPress={() => setTravelMode("walking")}
+                        className={`flex-1 flex-row items-center justify-center h-10 rounded-full 
+                            ${travelMode === "walking" ? "bg-[#00D35A]" : ""}
+                        `}
+                    >
+                        <Footprints
+                            size={18}
+                            color={travelMode === "walking" ? "#000" : "#fff"}
+                        />
+                        <Text
+                            className={`ml-2 font-bold ${
+                                travelMode === "walking" ? "text-black" : "text-white"
+                            }`}
+                        >
+                            Walking
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => setTravelMode("driving")}
+                        className={`flex-1 flex-row items-center justify-center h-10 rounded-full 
+                            ${travelMode === "driving" ? "bg-[#00D35A]" : ""}
+                        `}
+                    >
+                        <Car
+                            size={18}
+                            color={travelMode === "driving" ? "#000" : "#fff"}
+                        />
+                        <Text
+                            className={`ml-2 font-bold ${
+                                travelMode === "driving" ? "text-black" : "text-white"
+                            }`}
+                        >
+                            Driving
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+
+                {loading && (
+                    <ActivityIndicator
+                        style={{ marginTop: 10 }}
+                        color="#00D35A"
+                    />
+                )}
+            </GlassView>
+        </View>
+
+        {/* RIGHT FLOATING BUTTONS */}
+        <View className="absolute top-[40%] right-4 space-y-3 z-50">
+            {["+", "-", "loc"].map((b, idx) => (
+                <GlassView
+                    key={idx}
+                    intensity={80}
+                    className="w-12 h-12 bg-white/25 rounded-full border border-white/10 items-center justify-center"
+                >
+                    {b === "loc" ? (
+                        <Navigation size={20} color="white" />
+                    ) : (
+                        <Text className="text-white text-2xl font-bold">{b}</Text>
+                    )}
+                </GlassView>
+            ))}
+        </View>
+
+        {/* BOTTOM ROUTE SUMMARY CARD — SAME LOGIC */}
+        {selectedRoute && (
+            <View className="absolute bottom-6 left-4 right-4 z-50">
+                <GlassView
+                    intensity={90}
+                    className="rounded-3xl p-6 bg-white/20 border border-white/10 shadow-xl"
+                >
+                    <Text className="text-white text-xl font-bold mb-1">
+                        Selected Route Summary
+                    </Text>
+
+                    <Text className="text-white/80 font-medium mb-1">
+                        Route is {selectedRoute.score}% low-risk. ETA: {selectedRoute.eta}
+                    </Text>
+
+                    <Text className="text-white/60 text-sm mb-5">
+                        Analyzing real-time safety data…
+                    </Text>
 
                     <TouchableOpacity
                         onPress={async () => {
                             if (user && selectedRoute) {
-                                // Save history in background
-                                saveRouteToHistory(user.uid, selectedRoute, 'Current Location', destinationQuery || destination);
+                                saveRouteToHistory(
+                                    user.uid,
+                                    selectedRoute,
+                                    startLocation,
+                                    destinationQuery || destination
+                                );
                             }
-                            router.push('/(tabs)/breakdown');
+                            router.push("/(tabs)/breakdown");
                         }}
-                        className="bg-emerald-600 mt-4 h-12 rounded-xl items-center justify-center"
+                        className="bg-[#00D35A] h-14 rounded-full flex-row items-center justify-center"
                     >
-                        <Text className="text-white font-bold text-base">Start Navigation / See Breakdown</Text>
+                        <Text className="text-black font-bold text-lg mr-2">
+                            Start Navigation
+                        </Text>
+                        <Navigation size={20} color="black" />
                     </TouchableOpacity>
-                </View>
-            )}
-        </View>
-    );
+                </GlassView>
+            </View>
+        )}
+    </View>
+);
+
 }

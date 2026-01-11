@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Route History</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#34D399", // A vibrant green
+              "background-light": "#F9FAFB", // Light gray
+              "background-dark": "#0D1A16", // Dark green-ish black
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "1rem", // 16px
+            },
+          },
+        },
+      };
+    </script>
+<style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      .material-icons-outlined {
+        font-size: 24px;
+        line-height: 1;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex flex-col h-screen text-gray-900 dark:text-gray-100">
+<header class="sticky top-0 z-10 p-4 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 2C11.3913 2 10.7924 2.17929 10.2727 2.51868C9.75308 2.85807 9.33589 3.34281 9.07129 3.9188C8.80669 4.49479 8.7066 5.13828 8.78446 5.7708C8.86232 6.40332 9.11529 6.99908 9.51502 7.48528L11.29 9.58C10.7001 10.2638 10.2525 11.0531 9.98 11.9L4.93 11.12C4.35787 11.033 3.79153 11.1396 3.29813 11.4255C2.80473 11.7115 2.40822 12.1643 2.15814 12.722C1.90807 13.2797 1.81525 13.9113 1.89201 14.5323C1.96877 15.1533 2.21175 15.7423 2.59258 16.2294C2.97341 16.7166 3.47766 17.0811 4.04943 17.2759C4.62121 17.4707 5.23932 17.4883 5.82282 17.3262C6.40632 17.164 6.93175 16.8286 7.33924 16.3653C7.74674 15.902 8.02114 15.3331 8.13 14.73L8.91 9.69C9.75685 9.96253 10.6462 10.0938 11.55 10.07C12.1833 10.0707 12.8126 9.9513 13.39 9.72L15.52 11.52C15.011 12.0673 14.6403 12.7231 14.4393 13.4371C14.2383 14.1511 14.2132 14.9015 14.3663 15.6262C14.5195 16.3509 14.847 17.0298 15.3214 17.6035C15.7958 18.1772 16.3999 18.6277 17.0812 18.9188C17.7624 19.2098 18.5003 19.3333 19.2273 19.2783C19.9542 19.2233 20.6502 18.9912 21.2536 18.6044C21.857 18.2176 22.3486 17.6901 22.6841 17.0683C23.0196 16.4465 23.1887 15.753 23.17 15.05L21.05 4.54C20.9634 4.0536 20.7231 3.6063 20.3642 3.2678C20.0053 2.9293 19.548 2.71963 19.05 2.66L8.55 4.79C8.36155 5.04351 8.13621 5.25893 7.88 5.43L4.51 3.32C4.94979 2.80918 5.50106 2.42253 6.11559 2.20325C6.73012 1.98398 7.38883 1.94042 8.01931 2.07844C8.64979 2.21646 9.22987 2.53086 9.70271 2.98391C10.1756 3.43697 10.5234 4.01166 10.71 4.65L12 4.29L19.78 2.2C19.352 2.06015 18.8951 1.99839 18.44 2.019C17.09 2.1 15.82 2.65 14.83 3.56L12.7 2.15C12.4795 2.05381 12.2429 2.00004 12 2Z" fill="#34D399"></path>
+</svg>
+<span class="text-lg font-bold text-gray-800 dark:text-white">Safe Route AI</span>
+</div>
+<div class="flex items-center space-x-4">
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300" href="#">Dashboard</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300" href="#">New Route</a>
+<a class="text-sm font-bold text-primary" href="#">History</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300" href="#">Profile</a>
+</div>
+<div class="relative">
+<span class="material-icons-outlined text-gray-600 dark:text-gray-300">notifications</span>
+<span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-background-light dark:ring-background-dark"></span>
+</div>
+</div>
+</header>
+<main class="flex-1 p-4 overflow-y-auto">
+<div class="max-w-md mx-auto">
+<h1 class="text-3xl font-bold text-gray-900 dark:text-white">Route History</h1>
+<p class="mt-1 text-gray-500 dark:text-gray-400">Review your past trips and AI-generated safety insights.</p>
+<div class="relative mt-6">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3">
+<span class="material-icons-outlined text-gray-500 dark:text-gray-400">search</span>
+</span>
+<input class="w-full pl-10 pr-4 py-3 bg-gray-100/80 dark:bg-white/10 text-gray-900 dark:text-gray-200 border-transparent rounded-lg focus:ring-primary focus:border-primary placeholder-gray-500 dark:placeholder-gray-400 backdrop-blur-sm" placeholder="Search by location, date, or tag..." type="text"/>
+</div>
+<div class="flex space-x-2 mt-4 overflow-x-auto pb-2">
+<button class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-full flex-shrink-0">All</button>
+<button class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-200/50 dark:bg-white/10 rounded-full flex-shrink-0">Walking</button>
+<button class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-200/50 dark:bg-white/10 rounded-full flex-shrink-0">Driving</button>
+<button class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-200/50 dark:bg-white/10 rounded-full flex-shrink-0">Safest</button>
+<button class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-200/50 dark:bg-white/10 rounded-full flex-shrink-0">Riskiest</button>
+</div>
+<div class="space-y-4 mt-6">
+<div class="bg-gray-500/10 dark:bg-white/5 p-4 rounded-lg flex items-center space-x-4 backdrop-blur-sm">
+<img alt="Map thumbnail for route from Downtown to North Park" class="w-20 h-20 rounded-md object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAart2SBye3di7u-Ew0Q8F8rUl4entuJF106SAJSVf5CVSYZyrWaoPmX5w3pNQPwvk4-QJ3rbTUu-DeEp-9ML9kq4v07HQL9YRLrZhnPmxTBNIXmP9Ogt0YFpwNv2y5uxQaRNHP-OB4gsraObzOTj7ZjEpCn9-UD87Ssridqc58vdJ_lcnOULHlZJeb-pDFAVB132Xnr8lY3jLytiyC28HDezcA3dZZuG2TdQygnoYSdJyIvARxgBFfanennu2ygpaMabA3Ih1Nua3"/>
+<div class="flex-1">
+<h3 class="font-semibold text-gray-900 dark:text-white">From Downtown to North Park</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400">May 20, 2024 - 15 min - 2.5 mi</p>
+<div class="mt-2 inline-flex items-center space-x-1 px-2 py-1 bg-green-100 dark:bg-green-900/50 rounded-full text-xs font-medium text-green-700 dark:text-green-300">
+<span class="material-icons-outlined text-sm">verified_user</span>
+<span>Safest Route Chosen</span>
+</div>
+</div>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500">chevron_right</span>
+</div>
+<div class="bg-gray-500/10 dark:bg-white/5 p-4 rounded-lg flex items-center space-x-4 backdrop-blur-sm">
+<img alt="Map thumbnail for route from Brooklyn Bridge to Prospect Park" class="w-20 h-20 rounded-md object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqbSBFNl9QXbO0cUU9AK7SHJSdensENLOdkTDDThIAn76Fprtn3aeG2yhD73dX-cKeBgjRnjtzhz168rXFS6UP34CR4Op2MF5fqegWDiYZzeugZpS6O8AQ41MeL_OPc2zCKBWlgHr7l-Kt3Lj29aF9g3iHIW_5tnGBNajjpfjs8Ud9aFxJ9u3hcc5QaMXQxdE0n7XFNCSBHIbEVg7o6lh0jHUzJQ7E2vng4TKmjGuisizeI-HPlIKM-jG_hBBRBsMy1wxCoeTNI-Tj"/>
+<div class="flex-1">
+<h3 class="font-semibold text-gray-900 dark:text-white">Brooklyn Bridge to Prospect Park</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400">May 18, 2024 - 25 min - 5.1 mi</p>
+<div class="flex flex-wrap gap-2 mt-2">
+<div class="inline-flex items-center space-x-1 px-2 py-1 bg-yellow-100 dark:bg-yellow-900/50 rounded-full text-xs font-medium text-yellow-800 dark:text-yellow-300">
+<span class="material-icons-outlined text-sm">warning_amber</span>
+<span>High Incident Zone</span>
+</div>
+<div class="inline-flex items-center space-x-1 px-2 py-1 bg-red-100 dark:bg-red-900/50 rounded-full text-xs font-medium text-red-700 dark:text-red-300">
+<span class="material-icons-outlined text-sm">speed</span>
+<span>Speeding Detected</span>
+</div>
+</div>
+</div>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500">chevron_right</span>
+</div>
+<div class="bg-gray-500/10 dark:bg-white/5 p-4 rounded-lg flex items-center space-x-4 backdrop-blur-sm">
+<img alt="Map thumbnail for route of a morning walk around Zilker" class="w-20 h-20 rounded-md object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFs52HsVzIH4ycxIu3bpFaXik_u15XqhPqKRo-S21B-JI5InG3PDSuSZEQ5vKi-Ulujpj4kKIyNV-lpuj2p9pC4ZYXhR3ccSgBG-7bdSqVbQv14DWKGfDgGjMqIDRtG1fdAtqbEOKkn0yeBpBlOmKB9RXatijwAfpweR31pfwanoQciXEpB2z1RlfhY_iv2VT06R202onu825ZmdUPZQK3jsEPrOIfPdedhkV689jGpqhoCVN_TD30elmRuefhtT8296dQOjNb5Dvq"/>
+<div class="flex-1">
+<h3 class="font-semibold text-gray-900 dark:text-white">Morning Walk around Zilker</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400">May 15, 2024 - 30 min - 1.8 mi</p>
+<div class="mt-2 inline-flex items-center space-x-1 px-2 py-1 bg-green-100 dark:bg-green-900/50 rounded-full text-xs font-medium text-green-700 dark:text-green-300">
+<span class="material-icons-outlined text-sm">verified_user</span>
+<span>Safest Route Chosen</span>
+</div>
+</div>
+<span class="material-icons-outlined text-gray-400 dark:text-gray-500">chevron_right</span>
+</div>
+</div>
+<div class="flex justify-between items-center mt-8">
+<button class="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-200/50 dark:bg-white/10 rounded-full">
+<span class="material-icons-outlined">chevron_left</span>
+<span>Previous</span>
+</button>
+<button class="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-white bg-primary rounded-full">
+<span>Next</span>
+<span class="material-icons-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

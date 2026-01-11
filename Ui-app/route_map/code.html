@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Route Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#32CD32", // Bright Green
+              "background-light": "#F0F4F8", // A light grey for the base
+              "background-dark": "#121A15", // The dark green from the screenshots
+            },
+            fontFamily: {
+              display: ["Poppins", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "1rem", // 16px
+            },
+          },
+        },
+      };
+    </script>
+<style>
+        .material-icons {
+            font-size: 24px;
+            line-height: 1;
+        }
+        .backdrop-blur-custom {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative h-screen w-screen overflow-hidden" id="app">
+<img alt="A stylized map of Los Angeles with various routes highlighted in green, yellow, and red." class="absolute inset-0 h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8xaIXPFPGs3XkM35xS9syyT45W1W_XoRk4fdp5HemayB5y5XBquMTxWbQTnM8nbu8lC1F-ChOlE4jnD06Yj-vZ-fkln_3z0KCGyUtKg32yeLSOzScDVWGKig-oFqdz1FCrcOZDMkLRQ21hlS2h_a3ufRTNCM8ns7pB76Mc2O8lKAvF1N3T_XcQ5jIejZUGnRqJnWwXFi0H_hwjc0eyHtzV-m8vkGcg4-luLhAw3MxMSYgk1tKNF2gMy_EettBeVhbCwEoohU7Wxr1"/>
+<div class="absolute inset-0 flex flex-col justify-between p-4 space-y-4">
+<div class="flex items-center justify-between gap-4">
+<div class="flex-grow flex items-center gap-3 px-4 py-3 rounded-full bg-white/20 dark:bg-black/30 backdrop-blur-custom border border-white/10 dark:border-black/20 shadow-lg">
+<span class="material-icons text-white/80 dark:text-white/60">search</span>
+<input class="w-full bg-transparent text-white placeholder-white/80 dark:placeholder-white/60 focus:outline-none border-none p-0" placeholder="Search for a destination..." type="text"/>
+</div>
+<div class="flex items-center shrink-0 bg-white/20 dark:bg-black/30 backdrop-blur-custom border border-white/10 dark:border-black/20 rounded-full p-1 shadow-lg">
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-black text-sm font-medium">
+<span class="material-icons !text-lg">directions_walk</span>
+                        Walking
+                    </button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-white/80 text-sm font-medium">
+<span class="material-icons !text-lg">directions_car</span>
+                        Driving
+                    </button>
+</div>
+</div>
+<div class="absolute top-1/2 right-4 -translate-y-1/2 flex flex-col gap-2">
+<div class="flex flex-col bg-white/20 dark:bg-black/30 backdrop-blur-custom border border-white/10 dark:border-black/20 rounded-full shadow-lg overflow-hidden">
+<button class="p-3 text-white">
+<span class="material-icons">add</span>
+</button>
+<div class="h-px w-full bg-white/10 dark:bg-black/20"></div>
+<button class="p-3 text-white">
+<span class="material-icons">remove</span>
+</button>
+</div>
+<button class="p-3 bg-white/20 dark:bg-black/30 backdrop-blur-custom border border-white/10 dark:border-black/20 rounded-full shadow-lg text-white">
+<span class="material-icons">my_location</span>
+</button>
+</div>
+<div class="bg-gray-800/50 dark:bg-black/50 backdrop-blur-custom border border-white/10 dark:border-black/20 rounded-2xl p-4 shadow-2xl">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h2 class="text-lg font-bold text-white">Selected Route Summary</h2>
+<p class="text-sm text-gray-300 dark:text-gray-400">Route is 95% low-risk. ETA: 12 min</p>
+</div>
+</div>
+<p class="text-xs text-gray-300 dark:text-gray-400 mb-4">Analyzing real-time safety data...</p>
+<button class="w-full bg-primary text-black font-bold py-3 px-6 rounded-full flex items-center justify-center gap-2 text-lg transition-transform active:scale-95">
+                    Start Navigation
+                    <span class="material-icons">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+
+</body></html>

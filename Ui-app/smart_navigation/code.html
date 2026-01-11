@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Smart Navigation</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#34D399", // A bright green, from the design
+              "background-light": "#F9FAFB", // A very light gray for light mode
+              "background-dark": "#0A1713", // The dark green from the design
+            },
+            fontFamily: {
+              display: ["Poppins", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "1rem", // 16px
+            },
+          },
+        },
+      };
+    </script>
+<style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark font-display">
+<div class="flex flex-col h-screen p-6 text-white">
+<header class="flex justify-between items-center mb-16">
+<div class="flex items-center gap-2">
+<span class="material-icons text-primary" style="font-size: 24px;">shield</span>
+<span class="font-semibold text-lg text-white">Safe Route AI</span>
+</div>
+<a class="text-sm font-medium text-gray-400" href="#">Skip</a>
+</header>
+<main class="flex-grow flex flex-col justify-center items-center text-center">
+<div class="mb-8 p-6 bg-primary/20 rounded-full">
+<span class="material-icons text-primary" style="font-size: 48px;">route</span>
+</div>
+<h1 class="text-3xl font-bold mb-4 text-white">Smart Navigation</h1>
+<p class="text-gray-300 max-w-sm">
+            Get optimized routes for both walking and driving, balancing speed with unparalleled safety.
+        </p>
+</main>
+<footer class="w-full">
+<div class="flex justify-center items-center gap-2 mb-8">
+<div class="w-2 h-2 rounded-full bg-gray-600"></div>
+<div class="w-2 h-2 rounded-full bg-gray-600"></div>
+<div class="w-4 h-2 rounded-full bg-primary"></div>
+</div>
+<button class="w-full bg-primary text-background-dark font-semibold py-4 rounded-xl shadow-lg shadow-primary/30 hover:bg-emerald-500 transition-colors duration-300">
+            Get Started
+        </button>
+</footer>
+</div>
+
+</body></html>
