@@ -14,7 +14,7 @@ export const userService = {
 
             // Assuming your backend has an endpoint to create/update users
             // We verify the token in the backend usually, but here we send data + token auth header
-            const response = await api.post('/users/sync', userData, {
+            const response = await api.post('/auth/login', userData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

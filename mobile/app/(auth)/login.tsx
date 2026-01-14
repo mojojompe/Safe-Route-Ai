@@ -14,11 +14,13 @@ import {
 import { Stack, useRouter } from 'expo-router';
 import { useAuth } from '../../src/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Mail, Lock, Chrome } from 'lucide-react-native';
+import { Mail, Lock } from 'lucide-react-native';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function LoginScreen() {
     const router = useRouter();
     const { loginWithEmail, loginWithGoogle } = useAuth();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -50,51 +52,96 @@ export default function LoginScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-[#071B11]">
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#072613' }}>
             <Stack.Screen options={{ headerShown: false }} />
 
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                className="flex-1"
+                style={{ flex: 1 }}
             >
                 <ScrollView
+                    showsVerticalScrollIndicator={false}
                     contentContainerStyle={{
                         paddingHorizontal: 24,
-                        paddingTop: 60,
+                        paddingTop: 64,
                         paddingBottom: 40,
                     }}
-                    showsVerticalScrollIndicator={false}
                 >
-                    {/* Logo Circle */}
-                    <View className="items-center mb-8">
+                    {/* LOGO */}
+                    <View style={{ alignItems: 'center', marginBottom: 32 }}>
                         <View
-                            className="w-20 h-20 rounded-full border border-[#0f3a2a] items-center justify-center"
+                            style={{
+                                width: 72,
+                                height: 72,
+                                borderRadius: 36,
+                                backgroundColor: '#0d3b27',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                shadowColor: '#00d35a',
+                                shadowOpacity: 0.25,
+                                shadowRadius: 12,
+                                shadowOffset: { width: 0, height: 6 },
+                                elevation: 6,
+                            }}
                         >
                             <Image
                                 source={require('../../assets/images/icon.png')}
-                                style={{ width: 36, height: 36, tintColor: '#00d35a' }}
+                                style={{
+                                    width: 32,
+                                    height: 32,
+                                    tintColor: '#00d35a',
+                                }}
                                 resizeMode="contain"
                             />
                         </View>
                     </View>
 
-                    {/* Headings */}
-                    <Text className="text-4xl font-extrabold text-white text-center">
+                    {/* TITLE */}
+                    <Text
+                        style={{
+                            color: '#ffffff',
+                            fontSize: 28,
+                            fontWeight: '700',
+                            textAlign: 'center',
+                        }}
+                    >
                         Welcome Back
                     </Text>
 
-                    <Text className="text-gray-300 text-center mt-2 text-base">
+                    <Text
+                        style={{
+                            color: '#9ca3af',
+                            textAlign: 'center',
+                            marginTop: 6,
+                            fontSize: 14,
+                        }}
+                    >
                         Log in to continue to Safe Route AI
                     </Text>
 
-                    {/* Email Input */}
-                    <View className="mt-10">
-                        <View className="flex-row items-center bg-[#0c261a] border border-[#113425] rounded-2xl px-4 h-14">
-                            <Mail size={20} color="#9ca3af" />
+                    {/* EMAIL */}
+                    <View style={{ marginTop: 36 }}>
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                height: 52,
+                                borderRadius: 16,
+                                paddingHorizontal: 16,
+                                backgroundColor: '#0f291e',
+                            }}
+                        >
+                            <Mail size={18} color="#6b7280" />
                             <TextInput
-                                className="flex-1 text-white ml-3 text-base"
+                                style={{
+                                    flex: 1,
+                                    marginLeft: 12,
+                                    color: '#ffffff',
+                                    fontSize: 15,
+                                    fontWeight: '500',
+                                }}
                                 placeholder="Email or Username"
-                                placeholderTextColor="#9ca3af"
+                                placeholderTextColor="#6b7280"
                                 value={email}
                                 onChangeText={setEmail}
                                 autoCapitalize="none"
@@ -102,14 +149,29 @@ export default function LoginScreen() {
                         </View>
                     </View>
 
-                    {/* Password Input */}
-                    <View className="mt-6">
-                        <View className="flex-row items-center bg-[#0c261a] border border-[#113425] rounded-2xl px-4 h-14">
-                            <Lock size={20} color="#9ca3af" />
+                    {/* PASSWORD */}
+                    <View style={{ marginTop: 16 }}>
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                height: 52,
+                                borderRadius: 16,
+                                paddingHorizontal: 16,
+                                backgroundColor: '#0f291e',
+                            }}
+                        >
+                            <Lock size={18} color="#6b7280" />
                             <TextInput
-                                className="flex-1 text-white ml-3 text-base"
+                                style={{
+                                    flex: 1,
+                                    marginLeft: 12,
+                                    color: '#ffffff',
+                                    fontSize: 15,
+                                    fontWeight: '500',
+                                }}
                                 placeholder="Password"
-                                placeholderTextColor="#9ca3af"
+                                placeholderTextColor="#6b7280"
                                 secureTextEntry
                                 value={password}
                                 onChangeText={setPassword}
@@ -117,61 +179,124 @@ export default function LoginScreen() {
                         </View>
                     </View>
 
-                    {/* Forgot password */}
+                    {/* FORGOT PASSWORD */}
                     <TouchableOpacity
-                        onPress={() => Alert.alert("Reset Password", "Coming soon!")}
-                        className="mt-3 items-end"
+                        style={{ marginTop: 10, alignItems: 'flex-end' }}
+                        onPress={() =>
+                            Alert.alert('Reset Password', 'Coming soon!')
+                        }
                     >
-                        <Text className="text-[#00d35a] font-medium">
+                        <Text
+                            style={{
+                                color: '#00d35a',
+                                fontSize: 13,
+                                fontWeight: '600',
+                            }}
+                        >
                             Forgot Password?
                         </Text>
                     </TouchableOpacity>
 
-                    {/* Login Button */}
+                    {/* LOGIN BUTTON */}
                     <TouchableOpacity
                         onPress={handleLogin}
                         disabled={loading}
-                        className="bg-[#00d35a] h-14 rounded-3xl mt-8 items-center justify-center shadow-lg"
                         style={{
+                            height: 54,
+                            borderRadius: 16,
+                            backgroundColor: '#00d35a',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginTop: 28,
                             shadowColor: '#00d35a',
                             shadowOpacity: 0.4,
-                            shadowOffset: { width: 0, height: 8 },
-                            shadowRadius: 16,
-                            elevation: 10,
+                            shadowRadius: 10,
+                            shadowOffset: { width: 0, height: 4 },
+                            elevation: 6,
                         }}
                     >
                         {loading ? (
-                            <ActivityIndicator color="white" />
+                            <ActivityIndicator color="#071B11" />
                         ) : (
-                            <Text className="text-[#071B11] font-bold text-lg">
+                            <Text
+                                style={{
+                                    color: '#071B11',
+                                    fontWeight: '700',
+                                    fontSize: 16,
+                                }}
+                            >
                                 Log In
                             </Text>
                         )}
                     </TouchableOpacity>
 
-                    {/* Divider */}
-                    <View className="flex-row items-center justify-center my-8">
-                        <View className="flex-1 h-[1px] bg-white/10" />
-                        <Text className="text-gray-300 mx-3">Or continue with</Text>
-                        <View className="flex-1 h-[1px] bg-white/10" />
+                    {/* DIVIDER */}
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            marginVertical: 28,
+                        }}
+                    >
+                        <View style={{ flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,0.1)' }} />
+                        <Text style={{ color: '#9ca3af', marginHorizontal: 12, fontSize: 13 }}>
+                            Or continue with
+                        </Text>
+                        <View style={{ flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,0.1)' }} />
                     </View>
 
-                    {/* Google Login */}
+                    {/* GOOGLE SIGN IN */}
                     <TouchableOpacity
                         onPress={handleGoogleLogin}
-                        className="flex-row items-center justify-center bg-[#0c261a] border border-[#113425] h-14 rounded-2xl space-x-3"
+                        disabled={loading}
+                        style={{
+                            height: 52,
+                            borderRadius: 16,
+                            backgroundColor: '#1C2E26',
+                            borderWidth: 1,
+                            borderColor: '#2e4c3b',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
                     >
-                        <Chrome size={20} color="white" />
-                        <Text className="text-white font-semibold text-base">
-                            Sign in with Google
+                        <AntDesign name="google" size={18} color="#ffffff" />
+                        <Text
+                            style={{
+                                color: '#ffffff',
+                                fontWeight: '600',
+                                fontSize: 15,
+                                marginLeft: 10,
+                            }}
+                        >
+                            Google
                         </Text>
                     </TouchableOpacity>
 
-                    {/* Sign Up Link */}
-                    <View className="flex-row justify-center mt-10">
-                        <Text className="text-gray-300">Don't have an account? </Text>
-                        <TouchableOpacity onPress={() => router.push('/(auth)/signup')}>
-                            <Text className="text-[#00d35a] font-bold">Sign Up</Text>
+                    {/* SIGN UP */}
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            marginTop: 32,
+                        }}
+                    >
+                        <Text style={{ color: '#9ca3af', fontSize: 13 }}>
+                            Don't have an account?
+                        </Text>
+                        <TouchableOpacity
+                            onPress={() => router.push('/(auth)/signup')}
+                        >
+                            <Text
+                                style={{
+                                    color: '#00d35a',
+                                    fontWeight: '700',
+                                    fontSize: 13,
+                                    marginLeft: 4,
+                                }}
+                            >
+                                Sign Up
+                            </Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
