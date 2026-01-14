@@ -21,6 +21,7 @@ type AuthContextType = {
     loginWithEmail: (email: string, pass: string) => Promise<void>;
     signupWithEmail: (email: string, pass: string, name: string) => Promise<void>;
     loginWithGoogle: () => Promise<void>;
+    resetPassword: (email: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -30,6 +31,7 @@ const AuthContext = createContext<AuthContextType>({
     loginWithEmail: async () => { },
     signupWithEmail: async () => { },
     loginWithGoogle: async () => { },
+    resetPassword: async () => { },
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -92,6 +94,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const resetPassword = async (email: string) => {
+        await import('firebase/auth').then(({ sendPasswordResetEmail }) =>
+            sendPasswordResetEmail(auth, email)
+        );
+    };
+
     const logout = async () => {
         try {
             await GoogleSignin.signOut(); // Sign out from Google as well
@@ -108,7 +116,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             logout,
             loginWithEmail,
             signupWithEmail,
-            loginWithGoogle
+            loginWithGoogle,
+            resetPassword
         }}>
             {children}
         </AuthContext.Provider>
