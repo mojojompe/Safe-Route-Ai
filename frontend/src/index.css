@@ -1,23 +1,59 @@
 @import "tailwindcss";
 
-/* global tweaks to match the images */
+@theme {
+  --color-sr-dark: #0a1f16;
+  --color-sr-darker: #05140d;
+  --color-sr-green: #00d35a;
+  --color-sr-green-dim: #00a345;
+  --color-sr-muted: #e2e8f0;
+  --color-sr-text: #1a202c;
+  --color-sr-text-muted: #718096;
+
+  --font-display: "Lexend", "sans-serif";
+  --font-sans: "Inter", "system-ui", "sans-serif";
+
+  --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
+  --background-image-hero-glow: conic-gradient(from 180deg at 50% 50%, #00d35a33 0deg, transparent 180deg);
+
+  --shadow-glow: 0 0 20px -5px rgba(0, 211, 90, 0.3);
+
+  --animate-scroll: scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite;
+
+  @keyframes scroll {
+    to {
+      transform: translate(calc(-50% - 0.5rem));
+    }
+  }
+}
+
+/* Global Styles */
+@layer base {
+  body {
+    @apply bg-white text-gray-900 antialiased font-sans overflow-x-hidden;
+  }
+}
 
 @layer utilities {
   .glass {
-    background-color: rgba(5, 20, 13, 0.8);
-    backdrop-filter: blur(12px);
-    border: 1px solid #1c3329;
+    @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-lg;
+    /* Dark mode support if needed later, but focusing on white theme now */
   }
 
   .glass-card {
-    background-image: linear-gradient(to bottom right, rgba(28, 51, 41, 0.4), rgba(5, 20, 13, 0.4));
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(28, 51, 41, 0.5);
+    background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     transition: all 300ms;
   }
 
   .glass-card:hover {
     border-color: rgba(0, 211, 90, 0.3);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+  }
+
+  .glass-dark {
+    @apply bg-black/60 backdrop-blur-xl border border-white/10 text-white;
   }
 }
 
@@ -28,15 +64,15 @@
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #05140d;
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #1c3329;
+  background-color: #cbd5e0;
   border-radius: 9999px;
   transition: background-color 150ms;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0, 211, 90, 0.5);
+  background-color: #00d35a;
 }

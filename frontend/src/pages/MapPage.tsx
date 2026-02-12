@@ -257,7 +257,7 @@ export default function MapPage() {
   }
 
   return (
-    <div className="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-hidden font-display">
+    <div className="relative flex h-screen w-full flex-col bg-white dark:bg-sr-dark overflow-hidden font-sans">
       {/* Welcome Overlay */}
       {showWelcome && user && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md animate-fade-in-out pointer-events-none">
@@ -276,7 +276,7 @@ export default function MapPage() {
           {...viewState}
           onMove={(evt: any) => setViewState(evt.viewState)}
           style={{ width: '100%', height: '100%' }}
-          mapStyle="mapbox://styles/mapbox/dark-v11"
+          mapStyle="mapbox://styles/mapbox/light-v11"
           mapboxAccessToken={MAPBOX_TOKEN}
         >
           <GeolocateControl position="top-right" />
@@ -382,22 +382,22 @@ export default function MapPage() {
             <div className="w-full shadow-lg flex flex-col gap-2">
               {/* Start Input */}
               <div className="relative">
-                <div className="flex w-full items-center rounded-2xl bg-green-900 backdrop-blur-sm ring-1 ring-white/10">
-                  <div className="text-green-500 flex items-center justify-center pl-4">
+                <div className="flex w-full items-center rounded-2xl bg-white/80 dark:bg-sr-dark/80 backdrop-blur-md shadow-sm ring-1 ring-gray-200 dark:ring-white/10 group focus-within:ring-sr-green/50 transition-all">
+                  <div className="text-sr-green flex items-center justify-center pl-4">
                     <MdMyLocation />
                   </div>
                   <input
                     value={startQuery}
                     onChange={e => setStartQuery(e.target.value)}
                     onFocus={() => setActiveInput('start')}
-                    className="flex w-full bg-transparent p-3 text-white placeholder:text-green-500/70 focus:outline-none"
+                    className="flex w-full bg-transparent p-3 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none"
                     placeholder="Enter start point..."
                   />
                 </div>
                 {activeInput === 'start' && suggestions.length > 0 && (
-                  <div className="absolute top-full mt-1 w-full bg-green-950 rounded-xl shadow-xl overflow-hidden z-50">
+                  <div className="absolute top-full mt-1 w-full bg-white dark:bg-sr-dark rounded-xl shadow-xl overflow-hidden z-50 border border-gray-100 dark:border-white/5">
                     {suggestions.map(s => (
-                      <button key={s.id} onClick={() => handleSelect(s)} className="w-full text-left p-3 hover:bg-green-900 text-white text-sm border-b border-white/5 last:border-0">
+                      <button key={s.id} onClick={() => handleSelect(s)} className="w-full text-left p-3 hover:bg-gray-50 dark:hover:bg-white/5 text-gray-700 dark:text-gray-200 text-sm border-b border-gray-100 dark:border-white/5 last:border-0 transition-colors">
                         {s.place_name}
                       </button>
                     ))}
@@ -407,22 +407,22 @@ export default function MapPage() {
 
               {/* Destination Input */}
               <div className="relative">
-                <div className="flex w-full items-center rounded-2xl bg-green-900 backdrop-blur-sm ring-1 ring-white/10">
-                  <div className="text-green-500 flex items-center justify-center pl-4">
+                <div className="flex w-full items-center rounded-2xl bg-white/80 dark:bg-sr-dark/80 backdrop-blur-md shadow-sm ring-1 ring-gray-200 dark:ring-white/10 group focus-within:ring-sr-green/50 transition-all">
+                  <div className="text-sr-green flex items-center justify-center pl-4">
                     <MdLocationOn />
                   </div>
                   <input
                     value={destQuery}
                     onChange={e => setDestQuery(e.target.value)}
                     onFocus={() => setActiveInput('dest')}
-                    className="flex w-full bg-transparent p-3 text-white placeholder:text-green-500/70 focus:outline-none"
+                    className="flex w-full bg-transparent p-3 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none"
                     placeholder="Enter destination..."
                   />
                 </div>
                 {activeInput === 'dest' && suggestions.length > 0 && (
-                  <div className="absolute top-full mt-1 w-full bg-green-950 rounded-xl shadow-xl overflow-hidden z-50">
+                  <div className="absolute top-full mt-1 w-full bg-white dark:bg-sr-dark rounded-xl shadow-xl overflow-hidden z-50 border border-gray-100 dark:border-white/5">
                     {suggestions.map(s => (
-                      <button key={s.id} onClick={() => handleSelect(s)} className="w-full text-left p-3 hover:bg-green-900 text-white text-sm border-b border-white/5 last:border-0">
+                      <button key={s.id} onClick={() => handleSelect(s)} className="w-full text-left p-3 hover:bg-gray-50 dark:hover:bg-white/5 text-gray-700 dark:text-gray-200 text-sm border-b border-gray-100 dark:border-white/5 last:border-0 transition-colors">
                         {s.place_name}
                       </button>
                     ))}
@@ -433,7 +433,7 @@ export default function MapPage() {
               <button
                 onClick={handlePlanRoute}
                 disabled={!startCoords || !destCoords || loading}
-                className="w-full py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-2xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 bg-sr-green hover:bg-sr-green-dim text-white font-bold rounded-2xl transition-all shadow-[0_4px_10px_rgba(0,211,90,0.3)] hover:shadow-[0_6px_15px_rgba(0,211,90,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
               >
                 {loading ? 'Planning...' : 'Plan Route'}
               </button>
@@ -442,9 +442,9 @@ export default function MapPage() {
 
           {/* Right Section: Mode Toggle */}
           <div className="flex flex-col items-end gap-3">
-            <div className="flex h-10 items-center justify-center rounded-3xl bg-green-900 p-1 backdrop-blur-sm shadow-lg ring-1 ring-white/10">
+            <div className="flex h-10 items-center justify-center rounded-3xl bg-white/80 dark:bg-sr-dark/80 p-1 backdrop-blur-sm shadow-sm ring-1 ring-gray-200 dark:ring-white/10">
               {['walking', 'driving'].map(m => (
-                <label key={m} className={`flex cursor-pointer h-full items-center justify-center gap-2 rounded-2xl px-3 text-white text-sm font-medium transition-colors ${mode === m ? "bg-green-700 text-green-500" : ""}`}>
+                <label key={m} className={`flex cursor-pointer h-full items-center justify-center gap-2 rounded-2xl px-3 text-sm font-medium transition-all ${mode === m ? "bg-sr-green text-white shadow-sm" : "text-gray-500 hover:text-sr-green"}`}>
                   <span className="text-base">
                     {m === 'walking' ? <MdDirectionsWalk /> : <MdDirectionsCar />}
                   </span>
@@ -485,10 +485,10 @@ export default function MapPage() {
         {routes.length > 0 && (
           <footer className="p-4 md:p-6 flex justify-center pointer-events-auto">
             <div className="w-full max-w-xl">
-              <div className="flex flex-col items-stretch justify-start rounded-3xl bg-green-900 backdrop-blur-sm shadow-lg ring-1 ring-white/10 overflow-hidden md:flex-row md:items-start">
+              <div className="flex flex-col items-stretch justify-start rounded-3xl bg-white/90 dark:bg-sr-dark/90 backdrop-blur-xl shadow-2xl ring-1 ring-gray-200 dark:ring-white/10 overflow-hidden md:flex-row md:items-start transition-all">
                 <div className="flex w-full grow flex-col items-stretch justify-center gap-2 p-4">
                   <div className="flex justify-between items-center">
-                    <p className="text-whitesmoke text-lg font-bold leading-tight tracking-[-0.015em]">
+                    <p className="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
                       Route Options ({routes.length})
                     </p>
                     <div className="flex gap-1">
@@ -496,7 +496,7 @@ export default function MapPage() {
                         <button
                           key={i}
                           onClick={() => setSelectedRouteIndex(i)}
-                          className={`h-2 w-2 rounded-full ${i === selectedRouteIndex ? 'bg-white' : 'bg-white/30'}`}
+                          className={`h-2 w-2 rounded-full transition-all ${i === selectedRouteIndex ? 'bg-sr-green w-4' : 'bg-gray-300 dark:bg-white/30'}`}
                         />
                       ))}
                     </div>
@@ -504,23 +504,23 @@ export default function MapPage() {
 
                   <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3 justify-between">
                     <div className="flex flex-col gap-1">
-                      <p className="text-white/70 text-sm font-normal leading-normal">
+                      <p className="text-gray-600 dark:text-white/70 text-sm font-normal leading-normal">
                         {routes[selectedRouteIndex].distance} • {routes[selectedRouteIndex].duration}
                       </p>
-                      <p className="text-white/70 text-sm font-normal leading-normal">
-                        Safety Score: <span className={`font-bold ${routes[selectedRouteIndex].score >= 7 ? 'text-green-400' : 'text-yellow-400'}`}>{routes[selectedRouteIndex].score}/10</span>
+                      <p className="text-gray-600 dark:text-white/70 text-sm font-normal leading-normal">
+                        Safety Score: <span className={`font-bold ${routes[selectedRouteIndex].score >= 7 ? 'text-sr-green' : 'text-yellow-500'}`}>{routes[selectedRouteIndex].score}/10</span>
                       </p>
                     </div>
                     <div className="flex gap-2 w-full sm:w-auto">
                       <button
                         onClick={handleStartNavigation}
-                        className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl h-10 px-3 bg-green-700 text-green-500 text-sm font-bold transition-transform hover:scale-105"
+                        className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl h-10 px-6 bg-sr-green hover:bg-sr-green-dim text-white text-sm font-bold transition-all hover:scale-105 shadow-lg shadow-sr-green/20"
                       >
                         Start
                       </button>
                       <button
                         onClick={handleFinishNavigation}
-                        className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl h-10 px-3 bg-white/10 text-white text-sm font-bold transition-transform hover:scale-105 hover:bg-white/20"
+                        className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl h-10 px-6 bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white text-sm font-bold transition-all hover:scale-105 hover:bg-gray-200 dark:hover:bg-white/20"
                       >
                         Finish
                       </button>
