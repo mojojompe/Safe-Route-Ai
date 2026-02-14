@@ -353,7 +353,7 @@ export default function Welcome() {
                                 src="/Download.png"
                                 alt="Download App"
                                 loading="lazy"
-                                className="relative z-10 w-full max-h-[550px] object-contain rounded-full shadow-2xl transform transition-transform hover:scale-[1.02] hover:rotate-3 duration-500"
+                                className="relative z-10 w-full max-h-[550px] object-contain rounded-3xl shadow-2xl transform transition-transform hover:scale-[1.02] hover:rotate-3 duration-500"
                             />
                         </div>
                     </div>
@@ -591,7 +591,7 @@ export default function Welcome() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: 0.8, duration: 0.8 }}
-                            className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12"
+                            className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 py-4"
                         >
                             {[
                                 { number: "1K+", label: "Active Users" },
@@ -627,17 +627,6 @@ export default function Welcome() {
                     </motion.div>
                 </div>
 
-                {/* Scroll Indicator */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1, y: [0, 10, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20"
-                >
-                    <div className="w-6 h-10 border-2 border-white/30 rounded-full flex items-start justify-center p-2">
-                        <div className="w-1 h-2 bg-sr-green rounded-full" />
-                    </div>
-                </motion.div>
             </section>
 
             <Footer />
