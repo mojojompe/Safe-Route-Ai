@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import createGlobe from "cobe";
 import { useSpring } from "react-spring";
 
@@ -10,16 +10,16 @@ export interface GlobeMarker {
     label?: string;
 }
 
-export function Globe3D({ markers, config, onMarkerClick, onMarkerHover }: {
+export function Globe3D({ markers, config }: {
     markers: GlobeMarker[];
     config?: any;
     onMarkerClick?: (marker: GlobeMarker) => void;
     onMarkerHover?: (marker: GlobeMarker | null) => void;
 }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const pointerInteracting = useRef(null);
-    const pointerInteractionMovement = useRef(0);
-    const [{ r }, api] = useSpring(() => ({
+    // const pointerInteracting = useRef(null);
+    // const pointerInteractionMovement = useRef(0);
+    const [{ r }] = useSpring(() => ({
         r: 0,
         config: {
             mass: 1,
