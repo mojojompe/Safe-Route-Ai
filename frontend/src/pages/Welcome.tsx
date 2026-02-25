@@ -8,6 +8,7 @@ import { InfiniteMovingCards } from '../components/ui/infinite-moving-cards'
 import { Globe3D } from '../components/ui/3d-globe'
 import type { GlobeMarker } from '../components/ui/3d-globe'
 import WorldMap from '../components/ui/world-map'
+import { PageTransition } from '../components/ui/PageTransition'
 
 export default function Welcome() {
     const nav = useNavigate()
@@ -15,8 +16,6 @@ export default function Welcome() {
     const [loading, setLoading] = useState(false)
     const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null)
     const videoRef = useRef<HTMLVideoElement>(null)
-    const hero2VideoRef = useRef<HTMLVideoElement>(null)
-    const containerRef = useRef<HTMLDivElement>(null)
 
     const handleStart = async () => {
         if (user) {
@@ -100,7 +99,7 @@ export default function Welcome() {
     const blur = useTransform(blurAmount, (value) => `blur(${value}px)`);
 
     return (
-        <div ref={containerRef} className="bg-white dark:bg-black min-h-screen font-sans selection:bg-sr-green/30 text-gray-900 dark:text-gray-100">
+        <PageTransition className="bg-white dark:bg-black min-h-screen font-sans selection:bg-sr-green/30 text-gray-900 dark:text-gray-100">
             <Navbar />
 
             {/* --- HERO SECTION --- */}
@@ -228,11 +227,6 @@ export default function Welcome() {
                                     phi: 0, theta: 0, dark: 0, diffuse: 1.2, mapSamples: 16000, mapBrightness: 6, baseColor: [1, 1, 1], markerColor: [0, 0.8, 0.3], glowColor: [0.8, 1, 0.8], markers: [],
                                 }}
                             />
-                            {/* Floating Phone Image (Simulated Overlay) - user asked for phone image here too/instead?
-                         The prompt said: "Let the about section be a split screen with this 3d map on the right side and below the text on mobile".
-                         It also said: "Use these pictures for the about and Mission & vision sections @[frontend/public/Phone.png]@[frontend/public/Safety.png]"
-                         I will check if I should effectively combine them. Maybe the phone shows the app, floating near the globe?
-                      */}
                             <motion.img
                                 src="/New Phone.png"
                                 alt="App on Phone"
@@ -523,7 +517,6 @@ export default function Welcome() {
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80 z-10" />
                     <video
-                        ref={hero2VideoRef}
                         autoPlay
                         loop
                         muted
@@ -626,10 +619,9 @@ export default function Welcome() {
                         </motion.div>
                     </motion.div>
                 </div>
-
             </section>
 
             <Footer />
-        </div>
+        </PageTransition>
     )
 }

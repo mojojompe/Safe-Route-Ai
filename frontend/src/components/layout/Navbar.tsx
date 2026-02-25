@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../lib/utils";
-import { Menu11Icon, Cancel01Icon } from "hugeicons-react";
+import { MdMenu, MdClose } from "react-icons/md";
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -71,9 +71,9 @@ export default function Navbar() {
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 >
                     {mobileMenuOpen ? (
-                        <Cancel01Icon size={24} />
+                        <MdClose size={24} />
                     ) : (
-                        <Menu11Icon size={24} />
+                        <MdMenu size={24} />
                     )}
                 </button>
             </div>
