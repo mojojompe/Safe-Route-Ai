@@ -84,7 +84,7 @@ export default function RouteBreakdown() {
     return () => clearInterval(interval)
   }, [isNavigating, routeData])
 
-  // Share with static map image
+  // Share with static map IMAGE (not just a link)
   const handleShare = useCallback(async () => {
     const coords = routeData?.geojson?.geometry?.coordinates
     let staticMapUrl = ''
@@ -92,7 +92,6 @@ export default function RouteBreakdown() {
     if (coords && MAPBOX_TOKEN) {
       const start = coords[0]
       const end = coords[coords.length - 1]
-      // Build path overlay for static map
       const pathCoords = coords.filter((_: any, i: number) => i % Math.max(1, Math.floor(coords.length / 50)) === 0)
       const pathStr = pathCoords.map((c: number[]) => `${c[0]},${c[1]}`).join(',')
       staticMapUrl = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/` +
@@ -109,17 +108,27 @@ export default function RouteBreakdown() {
       `⚠️ Risk Level: ${routeData?.riskLevel}`,
       `🛣️ Distance: ${routeData?.distance}`,
       `⏱️ Duration: ${routeData?.duration}`,
-      staticMapUrl ? `\n🗺️ Map Preview: ${staticMapUrl}` : '',
-    ].filter(Boolean).join('\n')
+    ].join('\n')
 
     if (navigator.share) {
       try {
+        // Try to fetch the map image and share it as a file
+        if (staticMapUrl) {
+          const resp = await fetch(staticMapUrl)
+          const blob = await resp.blob()
+          const file = new File([blob], 'safe-route.jpg', { type: 'image/jpeg' })
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ title: 'Safe Route Ai', text: shareText, files: [file] })
+            return
+          }
+        }
+        // Fallback: share without image
         await navigator.share({ title: 'Safe Route Ai — Route Breakdown', text: shareText, url: window.location.href })
         return
       } catch { /* fall through to clipboard */ }
     }
     try {
-      await navigator.clipboard.writeText(`${shareText}\n\n${window.location.href}`)
+      await navigator.clipboard.writeText(shareText)
       setShowShareToast('Copied to clipboard!')
       setTimeout(() => setShowShareToast(null), 3000)
     } catch {

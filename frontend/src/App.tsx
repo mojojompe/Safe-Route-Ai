@@ -15,6 +15,15 @@ const SafetyTips = lazy(() => import('./pages/SafetyTips'))
 const History = lazy(() => import('./pages/History'))
 const Emergency = lazy(() => import('./pages/Emergency'))
 const About = lazy(() => import('./pages/About'))
+const Profile = lazy(() => import('./pages/Profile'))
+const Analytics = lazy(() => import('./pages/Analytics'))
+const Settings = lazy(() => import('./pages/Settings'))
+const Favorites = lazy(() => import('./pages/Favorites'))
+const JourneyDetail = lazy(() => import('./pages/JourneyDetail'))
+const HazardMap = lazy(() => import('./pages/HazardMap'))
+const Achievements = lazy(() => import('./pages/Achievements'))
+const ArloChat = lazy(() => import('./pages/ArloChat'))
+const LiveShare = lazy(() => import('./pages/LiveShare'))
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -69,9 +78,18 @@ export default function App() {
           <Route path="/map" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><MapPage /></PageTransition></Suspense></Layout>} />
           <Route path="/route-breakdown" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><RouteBreakdown /></PageTransition></Suspense></Layout>} />
           <Route path="/history" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><History /></PageTransition></Suspense></Layout>} />
+          <Route path="/history/:id" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><JourneyDetail /></PageTransition></Suspense></Layout>} />
           <Route path="/about" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><About /></PageTransition></Suspense></Layout>} />
           <Route path="/safety-tips" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><SafetyTips /></PageTransition></Suspense></Layout>} />
           <Route path="/emergency" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><Emergency /></PageTransition></Suspense></Layout>} />
+          <Route path="/profile" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><Profile /></PageTransition></Suspense></Layout>} />
+          <Route path="/analytics" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><Analytics /></PageTransition></Suspense></Layout>} />
+          <Route path="/settings" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><Settings /></PageTransition></Suspense></Layout>} />
+          <Route path="/favorites" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><Favorites /></PageTransition></Suspense></Layout>} />
+          <Route path="/hazard-map" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><HazardMap /></PageTransition></Suspense></Layout>} />
+          <Route path="/achievements" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><Achievements /></PageTransition></Suspense></Layout>} />
+          <Route path="/arlo" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><ArloChat /></PageTransition></Suspense></Layout>} />
+          <Route path="/live-share" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><LiveShare /></PageTransition></Suspense></Layout>} />
         </Routes>
       </AnimatePresence>
     </AuthProvider>

@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { Route02Icon } from "hugeicons-react"
-
 import Map, { Marker, Source, Layer, Popup } from 'react-map-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
 import {
   MdMyLocation,
   MdLocationOn,
@@ -53,6 +53,7 @@ interface Suggestion {
 }
 
 export default function MapPage() {
+  const { mapStyle } = useTheme()
   const [mode, setMode] = useState<'walking' | 'driving'>('walking')
   const [viewState, setViewState] = useState({
     latitude: 40.7128,
@@ -121,7 +122,10 @@ export default function MapPage() {
   const [startCountry, setStartCountry] = useState<string | null>(null)
   const [destCountry, setDestCountry] = useState<string | null>(null)
 
-  // Debounced dual-source search: Nigeria DB + Mapbox (Nigeria-biased)
+  // ─── Triple-source location search ────────────────────────────────────────
+  // Priority: Nominatim (OSM) → Nigeria DB → Mapbox
+  // Nominatim covers: restaurants, hospitals, churches, mosques, markets,
+  //   hotels, petrol stations, schools, all road types — the full OSM dataset.
   useEffect(() => {
     const query = activeInput === 'start' ? startQuery : destQuery
     if (!query || query.length < 2) { setSuggestions([]); return }
@@ -129,8 +133,29 @@ export default function MapPage() {
     const timer = setTimeout(async () => {
       if (!MAPBOX_TOKEN) return
       try {
-        const [mapboxRes, nigeriaRes] = await Promise.allSettled([
-          // Mapbox — locked to Nigeria, biased to Lagos
+        const [nominatimRes, nigeriaRes, mapboxRes] = await Promise.allSettled([
+
+          // 1. OpenStreetMap Nominatim — the richest source for Nigeria POIs
+          //    NOTE: no custom headers (browsers block User-Agent in XHR/fetch CORS)
+          fetch(
+            `https://nominatim.openstreetmap.org/search?` +
+            new URLSearchParams({
+              q: query,
+              format: 'json',
+              addressdetails: '1',
+              limit: '7',
+              countrycodes: 'ng',
+              'accept-language': 'en',
+              dedupe: '1',
+            })
+          ).then(r => r.json()),
+
+          // 2. Our Nigeria DB — 107k schools + named roads
+          axios.get(`${import.meta.env.VITE_API_URL}/api/places`, {
+            params: { q: query, limit: 4 }
+          }).then(r => r.data),
+
+          // 3. Mapbox — additional POIs & address-level results
           axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json`, {
             params: {
               access_token: MAPBOX_TOKEN,
@@ -138,35 +163,48 @@ export default function MapPage() {
               country: 'ng',
               proximity: '3.3792,6.5244',
               limit: 5,
-              language: 'en'
+              language: 'en',
             }
-          }),
-          // Our Nigeria DB (schools, roads, POIs)
-          axios.get(`${import.meta.env.VITE_API_URL}/api/places`, {
-            params: { q: query, limit: 6 }
-          })
+          }).then(r => r.data.features),
         ])
 
-        const mapboxResults: Suggestion[] = mapboxRes.status === 'fulfilled'
-          ? mapboxRes.value.data.features : []
-        const nigeriaResults: Suggestion[] = nigeriaRes.status === 'fulfilled'
-          ? nigeriaRes.value.data : []
+        // ── Normalize Nominatim results ──────────────────────────────────────
+        const nominatimData: Suggestion[] = nominatimRes.status === 'fulfilled'
+          ? (nominatimRes.value as any[]).map((item: any) => ({
+            id: `nom-${item.place_id}`,
+            place_name: item.display_name,
+            text: item.name || item.display_name.split(',')[0],
+            center: [parseFloat(item.lon), parseFloat(item.lat)] as [number, number],
+            place_type: [item.type || item.class || 'place'],
+            properties: { source: 'nominatim', category: item.class }
+          }))
+          : []
 
-        // Nigeria DB first (more local detail), then Mapbox
-        // Deduplicate by normalised name prefix
+        // ── Nigeria DB results ───────────────────────────────────────────────
+        const nigeriaData: Suggestion[] = nigeriaRes.status === 'fulfilled'
+          ? (nigeriaRes.value as Suggestion[])
+          : []
+
+        // ── Mapbox results ───────────────────────────────────────────────────
+        const mapboxData: Suggestion[] = mapboxRes.status === 'fulfilled'
+          ? (mapboxRes.value as Suggestion[])
+          : []
+
+        // ── Merge + deduplicate ──────────────────────────────────────────────
+        // Nominatim first (richest POI data), then Nigeria DB, then Mapbox
         const seen = new Set<string>()
-        const merged = [...nigeriaResults, ...mapboxResults].filter(r => {
-          const label = (r.text || r.place_name).toLowerCase().slice(0, 22)
-          if (seen.has(label)) return false
-          seen.add(label)
+        const merged = [...nominatimData, ...nigeriaData, ...mapboxData].filter(r => {
+          const key = (r.text || r.place_name).toLowerCase().trim().slice(0, 28)
+          if (seen.has(key)) return false
+          seen.add(key)
           return true
         })
 
-        setSuggestions(merged.slice(0, 8))
+        setSuggestions(merged.slice(0, 10))
       } catch (err) {
         console.error('Search error:', err)
       }
-    }, 300)
+    }, 350)
 
     return () => clearTimeout(timer)
   }, [startQuery, destQuery, activeInput])
@@ -304,6 +342,54 @@ export default function MapPage() {
     }
   }
 
+  // ── Suggestion icon helper ─────────────────────────────────────────────────
+  const getPlaceIcon = (s: Suggestion): string => {
+    const cat = s.properties?.category || ''
+    const src = s.properties?.source || ''
+    const type = (s.place_type?.[0] || '').toLowerCase()
+
+    // OSM amenity types
+    const amenityMap: Record<string, string> = {
+      restaurant: '🍽️', fast_food: '🍔', cafe: '☕', bar: '🍺',
+      hospital: '🏥', clinic: '🏥', pharmacy: '💊', doctors: '👨‍⚕️',
+      school: '🏫', university: '🎓', college: '🎓', kindergarten: '🏫',
+      church: '⛪', mosque: '🕌', place_of_worship: '🛐',
+      bank: '🏦', atm: '🏧', fuel: '⛽', parking: '🅿️',
+      supermarket: '🛒', marketplace: '🛒', market: '🛒',
+      hotel: '🏨', guest_house: '🏨', hostel: '🏨',
+      police: '👮', fire_station: '🚒',
+      bus_station: '🚌', bus_stop: '🚏', airport: '✈️',
+      cinema: '🎬', library: '📚', post_office: '📮',
+    }
+    // OSM highway types
+    const highwayMap: Record<string, string> = {
+      motorway: '🛣️', trunk: '🛣️', primary: '🛣️',
+      secondary: '🛤️', tertiary: '🛤️', residential: '🏘️',
+      unclassified: '🛤️', service: '🛤️', path: '🚶', footway: '🚶',
+    }
+    // OSM tourism types
+    const tourismMap: Record<string, string> = {
+      hotel: '🏨', attraction: '🏛️', museum: '🏛️',
+      viewpoint: '🌄', park: '🌳', zoo: '🦁',
+    }
+
+    if (cat === 'school' || src === 'nigeria_db') return '🏫'
+    if (amenityMap[type]) return amenityMap[type]
+    if (amenityMap[cat]) return amenityMap[cat]
+    if (highwayMap[type]) return highwayMap[type]
+    if (highwayMap[cat]) return highwayMap[cat]
+    if (tourismMap[type]) return tourismMap[type]
+    if (tourismMap[cat]) return tourismMap[cat]
+    if (cat === 'highway' || type === 'road') return '🛤️'
+    if (cat === 'amenity') return '📍'
+    if (cat === 'shop') return '🛍️'
+    if (cat === 'leisure') return '🌳'
+    if (cat === 'tourism') return '🏛️'
+    if (type === 'poi') return '📍'
+    if (type === 'place') return '🌍'
+    return '📌'
+  }
+
   return (
     <PageTransition className="relative flex h-screen w-full flex-col bg-white dark:bg-sr-dark overflow-hidden font-sans">
       {/* Welcome Overlay */}
@@ -332,7 +418,7 @@ export default function MapPage() {
           {...viewState}
           onMove={(evt: any) => setViewState(evt.viewState)}
           style={{ width: '100%', height: '100%' }}
-          mapStyle="mapbox://styles/mapbox/streets-v12"
+          mapStyle={`mapbox://styles/mapbox/${mapStyle}`}
           mapboxAccessToken={MAPBOX_TOKEN}
           attributionControl={false}
         >
@@ -496,13 +582,7 @@ export default function MapPage() {
                           <button key={s.id} onClick={() => handleSelect(s)}
                             className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/5 border-b border-gray-100 dark:border-white/5 last:border-0 flex items-start gap-3 transition-colors"
                           >
-                            <span className="text-xl flex-shrink-0 mt-0.5">
-                              {s.properties?.category === 'school' ? '🏫'
-                                : s.subtype === 'motorway' || s.subtype === 'primary' ? '🛣️'
-                                  : s.properties?.category === 'road' ? '🛤️'
-                                    : s.place_type?.includes('poi') ? '🏢'
-                                      : '📌'}
-                            </span>
+                            <span className="text-xl flex-shrink-0 mt-0.5">{getPlaceIcon(s)}</span>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                                 {s.text || s.place_name.split(',')[0]}
@@ -511,6 +591,9 @@ export default function MapPage() {
                             </div>
                             {s.properties?.source === 'nigeria_db' && (
                               <span className="text-[10px] font-bold px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded flex-shrink-0 self-center">NG</span>
+                            )}
+                            {s.properties?.source === 'nominatim' && (
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-500 rounded flex-shrink-0 self-center">OSM</span>
                             )}
                           </button>
                         ))}
@@ -542,13 +625,7 @@ export default function MapPage() {
                           <button key={s.id} onClick={() => handleSelect(s)}
                             className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/5 border-b border-gray-100 dark:border-white/5 last:border-0 flex items-start gap-3 transition-colors"
                           >
-                            <span className="text-xl flex-shrink-0 mt-0.5">
-                              {s.properties?.category === 'school' ? '🏫'
-                                : s.subtype === 'motorway' || s.subtype === 'primary' ? '🛣️'
-                                  : s.properties?.category === 'road' ? '🛤️'
-                                    : s.place_type?.includes('poi') ? '🏢'
-                                      : '📌'}
-                            </span>
+                            <span className="text-xl flex-shrink-0 mt-0.5">{getPlaceIcon(s)}</span>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                                 {s.text || s.place_name.split(',')[0]}
@@ -557,6 +634,9 @@ export default function MapPage() {
                             </div>
                             {s.properties?.source === 'nigeria_db' && (
                               <span className="text-[10px] font-bold px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded flex-shrink-0 self-center">NG</span>
+                            )}
+                            {s.properties?.source === 'nominatim' && (
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-500 rounded flex-shrink-0 self-center">OSM</span>
                             )}
                           </button>
                         ))}

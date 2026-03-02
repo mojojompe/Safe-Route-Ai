@@ -12,7 +12,14 @@ import {
   MdHistory,
   MdInfo,
   MdClose,
-  MdLogout
+  MdLogout,
+  MdBarChart,
+  MdSettings,
+  MdWarning,
+  MdStar,
+  MdEmojiEvents,
+  MdSmartToy,
+  MdMyLocation
 } from "react-icons/md";
 import LogoutModal from "./layout/LogoutModal";
 
@@ -38,8 +45,16 @@ export default function Sidebar() {
     { name: "Home", path: "/", icon: MdHome },
     { name: "Plan Route", path: "/map", icon: MdMap },
     { name: "Route Breakdown", path: "/route-breakdown", icon: MdAltRoute },
+    { name: "Analytics", path: "/analytics", icon: MdBarChart },
+    { name: "Navigator", path: "/arlo", icon: MdSmartToy },
+    { name: "Live Share", path: "/live-share", icon: MdMyLocation },
+    { name: "Favorites", path: "/favorites", icon: MdStar },
+    { name: "Hazard Map", path: "/hazard-map", icon: MdWarning },
+    { name: "Achievements", path: "/achievements", icon: MdEmojiEvents },
     { name: "Safety Tips", path: "/safety-tips", icon: MdSecurity },
     { name: "History", path: "/history", icon: MdHistory },
+    { name: "Emergency", path: "/emergency", icon: MdWarning },
+    { name: "Settings", path: "/settings", icon: MdSettings },
     { name: "About", path: "/about", icon: MdInfo },
   ];
 
@@ -69,7 +84,7 @@ export default function Sidebar() {
       {/* Sidebar Container */}
       <aside
         className={cn(
-          "fixed md:sticky top-0 h-screen w-72 bg-white/80 dark:bg-black/40 backdrop-blur-2xl border-r border-gray-200/50 dark:border-white/10 flex flex-col p-6 z-50 transition-transform duration-300 ease-in-out md:translate-x-0 shadow-2xl md:shadow-none",
+          "fixed md:sticky top-0 h-screen w-72 bg-white/80 dark:bg-black/40 backdrop-blur-2xl border-r border-gray-200/50 dark:border-white/10 flex flex-col p-6 z-50 transition-transform duration-300 ease-in-out md:translate-x-0 shadow-2xl md:shadow-none overflow-hidden",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -88,8 +103,15 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 space-y-2">
+        {/* Navigation — scrollable */}
+        <nav className="flex-1 overflow-y-auto space-y-1 py-1 pr-1 -mr-1
+          [&::-webkit-scrollbar]:w-1.5
+          [&::-webkit-scrollbar-track]:bg-transparent
+          [&::-webkit-scrollbar-thumb]:bg-gray-200
+          dark:[&::-webkit-scrollbar-thumb]:bg-white/10
+          [&::-webkit-scrollbar-thumb]:rounded-full
+          hover:[&::-webkit-scrollbar-thumb]:bg-green-400/50
+        ">
           {navItems.map((item) => {
             const active = isActive(item.path);
             const Icon = item.icon;
@@ -134,11 +156,22 @@ export default function Sidebar() {
           })}
         </nav>
 
-        {/* Footer / User Profile */}
-        <div className="mt-auto pt-6 border-t border-gray-200/50 dark:border-white/10">
+        {/* Footer / User Profile — tap to go to Profile page */}
+        <div className="flex-shrink-0 pt-4 mt-2 border-t border-gray-200/50 dark:border-white/10">
           {user && (
-            <div className="flex items-center gap-3 mb-4 px-2">
-              <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden ring-2 ring-white dark:ring-white/10 shadow-md">
+            <Link
+              to="/profile"
+              onClick={() => setOpen(false)}
+              className={cn(
+                "flex items-center gap-3 mb-4 px-2 py-2 rounded-2xl transition-all hover:bg-gray-100/80 dark:hover:bg-white/5 group",
+                isActive('/profile') && "bg-green-500/10"
+              )}
+            >
+              <div className={cn(
+                "w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden shadow-md transition-all",
+                "ring-2",
+                isActive('/profile') ? "ring-green-500" : "ring-white dark:ring-white/10 group-hover:ring-green-400"
+              )}>
                 {user.photoURL ? (
                   <img src={user.photoURL} alt={user.displayName || "User"} className="w-full h-full object-cover" />
                 ) : (
@@ -148,14 +181,15 @@ export default function Sidebar() {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                <p className="text-sm font-bold text-gray-900 dark:text-white truncate group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
                   {user.displayName || "User"}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                   {user.email}
                 </p>
               </div>
-            </div>
+              <span className="text-gray-300 dark:text-gray-600 text-sm group-hover:text-green-500 transition-colors">›</span>
+            </Link>
           )}
 
           <button

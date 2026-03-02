@@ -3,12 +3,11 @@ import { Report } from '../models/Report.js'
 
 const router = Router()
 
-// Get all reports (optionally filter by bounds if needed later)
+// Get all reports — last 7 days (client does its own time filtering)
 router.get('/', async (req, res) => {
     try {
-        // Limit to last 24 hours to keep it relevant
-        const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000)
-        const reports = await Report.find({ createdAt: { $gte: yesterday } })
+        const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+        const reports = await Report.find({ createdAt: { $gte: since } }).sort({ createdAt: -1 }).limit(200)
         res.json(reports)
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch reports' })
@@ -41,6 +40,28 @@ router.delete('/:id', async (req, res) => {
         res.json({ message: 'Report deleted' })
     } catch (error) {
         res.status(500).json({ error: 'Failed to delete report' })
+    }
+})
+
+// Upvote a report
+router.post('/:id/upvote', async (req, res) => {
+    try {
+        const { userId } = req.body
+        const report = await Report.findById(req.params.id)
+        if (!report) return res.status(404).json({ error: 'Not found' })
+        const upvotedBy: string[] = (report as any).upvotedBy || []
+        const idx = upvotedBy.indexOf(userId)
+        if (idx === -1) {
+            upvotedBy.push(userId)
+        } else {
+            upvotedBy.splice(idx, 1)
+        }
+        ; (report as any).upvotedBy = upvotedBy
+            ; (report as any).upvotes = upvotedBy.length
+        await report.save()
+        res.json(report)
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to upvote' })
     }
 })
 
