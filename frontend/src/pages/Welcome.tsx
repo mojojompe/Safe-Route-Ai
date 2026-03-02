@@ -1,14 +1,16 @@
 import { useNavigate } from 'react-router-dom'
-import { useState, useRef } from 'react'
+import { useState, useRef, lazy, Suspense } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import { InfiniteMovingCards } from '../components/ui/infinite-moving-cards'
-import { Globe3D } from '../components/ui/3d-globe'
-import type { GlobeMarker } from '../components/ui/3d-globe'
-import WorldMap from '../components/ui/world-map'
 import { PageTransition } from '../components/ui/PageTransition'
+
+// Lazy load heavy 3D/canvas components — only load when scrolled into view
+const Globe3D = lazy(() => import('../components/ui/3d-globe').then(m => ({ default: m.Globe3D })))
+const WorldMap = lazy(() => import('../components/ui/world-map'))
+import type { GlobeMarker } from '../components/ui/3d-globe'
 
 export default function Welcome() {
     const nav = useNavigate()
@@ -116,6 +118,7 @@ export default function Welcome() {
                         loop
                         muted
                         playsInline
+                        preload="none"
                         className="w-full h-full object-cover"
                     >
                         <source src="/Hero1.mp4" type="video/mp4" />
@@ -217,16 +220,18 @@ export default function Welcome() {
                         {/* 3D Globe */}
                         <div className="flex-1 w-full relative h-[400px] md:h-[500px]">
                             <div className="absolute inset-0 bg-gradient-radial from-sr-green/20 to-transparent opacity-50 blur-3xl" />
-                            <Globe3D
-                                markers={globeMarkers}
-                                config={{
-                                    width: 1000,
-                                    height: 1000,
-                                    onRender: () => { },
-                                    devicePixelRatio: 2,
-                                    phi: 0, theta: 0, dark: 0, diffuse: 1.2, mapSamples: 16000, mapBrightness: 6, baseColor: [1, 1, 1], markerColor: [0, 0.8, 0.3], glowColor: [0.8, 1, 0.8], markers: [],
-                                }}
-                            />
+                            <Suspense fallback={<div className="w-full h-full flex items-center justify-center"><div className="w-8 h-8 border-4 border-green-500/30 border-t-green-500 rounded-full animate-spin" /></div>}>
+                                <Globe3D
+                                    markers={globeMarkers}
+                                    config={{
+                                        width: 1000,
+                                        height: 1000,
+                                        onRender: () => { },
+                                        devicePixelRatio: 2,
+                                        phi: 0, theta: 0, dark: 0, diffuse: 1.2, mapSamples: 8000, mapBrightness: 6, baseColor: [1, 1, 1], markerColor: [0, 0.8, 0.3], glowColor: [0.8, 1, 0.8], markers: [],
+                                    }}
+                                />
+                            </Suspense>
                             <motion.img
                                 src="/New Phone.png"
                                 alt="App on Phone"
@@ -264,7 +269,9 @@ export default function Welcome() {
                         Connecting safe paths across continents. Data shared, safety multiplied.
                     </p>
                 </div>
-                <WorldMap dots={mapDots} lineColor="#00d35a" />
+                <Suspense fallback={<div className="w-full aspect-[2/1] bg-white dark:bg-black" />}>
+                    <WorldMap dots={mapDots} lineColor="#00d35a" />
+                </Suspense>
             </div>
 
             {/* --- MISSION & VISION SECTION --- */}
@@ -521,6 +528,7 @@ export default function Welcome() {
                         loop
                         muted
                         playsInline
+                        preload="none"
                         className="w-full h-full object-cover"
                     >
                         <source src="/Hero2.mp4" type="video/mp4" />

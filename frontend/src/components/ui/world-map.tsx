@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useMemo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import DottedMap from "dotted-map";
 
@@ -17,14 +17,30 @@ export default function WorldMap({
     lineColor = "#10b981", // sr-green default
 }: MapProps) {
     const svgRef = useRef<SVGSVGElement>(null);
-    const map = new DottedMap({ height: 100, grid: "diagonal" });
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [isVisible, setIsVisible] = useState(false);
 
-    const svgMap = map.getSVG({
-        radius: 0.22,
-        color: "#e5e7eb", // slate-200
-        shape: "circle",
-        backgroundColor: "transparent",
-    });
+    // Only render SVG content once it's in the viewport
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); observer.disconnect(); } },
+            { rootMargin: '200px' }
+        );
+        if (containerRef.current) observer.observe(containerRef.current);
+        return () => observer.disconnect();
+    }, []);
+
+    // Memoize DottedMap generation — this is expensive CPU work
+    const svgMap = useMemo(() => {
+        if (!isVisible) return '';
+        const map = new DottedMap({ height: 100, grid: "diagonal" });
+        return map.getSVG({
+            radius: 0.22,
+            color: "#e5e7eb",
+            shape: "circle",
+            backgroundColor: "transparent",
+        });
+    }, [isVisible]);
 
     const projectPoint = (lat: number, lng: number) => {
         const x = (lng + 180) * (800 / 360);
@@ -42,7 +58,7 @@ export default function WorldMap({
     };
 
     return (
-        <div className="w-full aspect-[2/1] bg-white dark:bg-black relative font-sans">
+        <div ref={containerRef} className="w-full aspect-[2/1] bg-white dark:bg-black relative font-sans">
             <img
                 src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
                 className="h-full w-full [mask-image:linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none"

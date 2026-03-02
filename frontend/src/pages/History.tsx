@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { MdSearch, MdChevronRight, MdRefresh, MdHistory, MdTrendingUp, MdWarning } from 'react-icons/md';
+import { MdSearch, MdChevronRight, MdRefresh, MdHistory, MdTrendingUp, MdWarning, MdDelete, MdDeleteForever } from 'react-icons/md';
 import { useAuth } from '../context/AuthContext';
 import { GlassCard } from '../components/ui/GlassCard';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,6 +26,10 @@ export default function History() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('All');
   const [replayingId, setReplayingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [showClearAll, setShowClearAll] = useState(false);
+  const [clearingAll, setClearingAll] = useState(false);
 
   const { user } = useAuth();
   const nav = useNavigate();
@@ -93,6 +97,36 @@ export default function History() {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    setDeletingId(id);
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/history/${id}`);
+      // Optimistically remove from list with animation
+      setRoutes(prev => prev.filter(r => r._id !== id));
+      setConfirmDeleteId(null);
+    } catch (error) {
+      console.error('Failed to delete route', error);
+      alert('Failed to delete route. Please try again.');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const handleClearAll = async () => {
+    if (!user) return;
+    setClearingAll(true);
+    try {
+      await Promise.all(routes.map(r => axios.delete(`${import.meta.env.VITE_API_URL}/api/history/${r._id}`)));
+      setRoutes([]);
+      setShowClearAll(false);
+    } catch (error) {
+      console.error('Failed to clear history', error);
+      alert('Failed to clear history. Please try again.');
+    } finally {
+      setClearingAll(false);
+    }
+  };
+
   const filteredRoutes = routes.filter(route => {
     const matchesSearch = route.endLocation.toLowerCase().includes(search.toLowerCase()) ||
       route.startLocation.toLowerCase().includes(search.toLowerCase());
@@ -112,6 +146,102 @@ export default function History() {
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-500/10 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
 
+      {/* Confirm Delete Single Route Modal */}
+      <AnimatePresence>
+        {confirmDeleteId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            >
+              <GlassCard className="max-w-sm w-full p-8 text-center bg-white dark:bg-zinc-900 border-red-500/20">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20 mb-5">
+                  <MdDelete className="text-3xl text-red-500" />
+                </div>
+                <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2">Delete Route?</h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">
+                  This route will be permanently removed from your history. This action cannot be undone.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setConfirmDeleteId(null)}
+                    className="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 font-bold text-sm hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => handleDelete(confirmDeleteId)}
+                    disabled={deletingId === confirmDeleteId}
+                    className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold text-sm transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                  >
+                    {deletingId === confirmDeleteId ? (
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <><MdDelete /> Delete</>
+                    )}
+                  </button>
+                </div>
+              </GlassCard>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Confirm Clear All Modal */}
+      <AnimatePresence>
+        {showClearAll && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            >
+              <GlassCard className="max-w-sm w-full p-8 text-center bg-white dark:bg-zinc-900 border-red-500/20">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20 mb-5">
+                  <MdDeleteForever className="text-3xl text-red-500" />
+                </div>
+                <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2">Clear All History?</h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">
+                  All <strong className="text-gray-900 dark:text-white">{routes.length} routes</strong> will be permanently deleted. This cannot be undone.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowClearAll(false)}
+                    className="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 font-bold text-sm hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleClearAll}
+                    disabled={clearingAll}
+                    className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold text-sm transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                  >
+                    {clearingAll ? (
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <><MdDeleteForever /> Clear All</>
+                    )}
+                  </button>
+                </div>
+              </GlassCard>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="mx-auto max-w-5xl space-y-8">
 
         {/* Header */}
@@ -125,8 +255,8 @@ export default function History() {
             </p>
           </div>
 
-          {/* Stats Summary */}
-          <div className="flex gap-4">
+          {/* Stats Summary + Clear All */}
+          <div className="flex gap-3 items-center flex-wrap">
             <GlassCard className="px-5 py-3 flex items-center gap-3">
               <div className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg">
                 <MdTrendingUp size={20} />
@@ -145,6 +275,16 @@ export default function History() {
                 <p className="text-xl font-black text-gray-900 dark:text-white">{avgSafetyScore}/10</p>
               </div>
             </GlassCard>
+
+            {/* Clear All Button */}
+            {routes.length > 0 && (
+              <button
+                onClick={() => setShowClearAll(true)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 font-bold text-sm border border-red-200 dark:border-red-800/30 hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+              >
+                <MdDeleteForever size={18} /> Clear All
+              </button>
+            )}
           </div>
         </div>
 
@@ -198,8 +338,8 @@ export default function History() {
                   key={route._id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ delay: i * 0.05 }}
+                  exit={{ opacity: 0, x: -40, scale: 0.95 }}
+                  transition={{ delay: i * 0.04 }}
                   layout
                 >
                   <GlassCard className="p-4 md:p-5 flex flex-col md:flex-row gap-4 md:gap-5 items-start md:items-center group" hoverEffect>
@@ -244,8 +384,19 @@ export default function History() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
                         <p className="text-xs text-gray-400 font-medium hidden sm:block">Score: <span className="text-gray-900 dark:text-white font-bold">{route.safetyScore}/10</span></p>
+
+                        {/* Delete Button */}
+                        <button
+                          onClick={() => setConfirmDeleteId(route._id)}
+                          className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-50 dark:bg-red-900/10 hover:bg-red-100 dark:hover:bg-red-900/20 text-red-400 hover:text-red-500 border border-red-100 dark:border-red-900/20 transition-all"
+                          title="Delete Route"
+                        >
+                          <MdDelete className="text-lg" />
+                        </button>
+
+                        {/* Replay Button */}
                         <button
                           onClick={() => handleReplay(route)}
                           disabled={replayingId === route._id}

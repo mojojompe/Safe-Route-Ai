@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import routeRouter from './routes/routes.js'
 import historyRouter from './routes/history.js'
+import placesRouter from './routes/places.js'
 
 dotenv.config()
 
@@ -18,6 +19,7 @@ app.use('/api/route', routeRouter)
 app.use('/api/history', historyRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/reports', reportRouter)
+app.use('/api/places', placesRouter)
 
 const PORT = process.env.PORT || 4000
 mongoose.connect(process.env.MONGO_URI!, {})

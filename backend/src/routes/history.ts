@@ -30,4 +30,17 @@ router.post('/save', async (req, res) => {
   }
 })
 
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    const deleted = await Route.findByIdAndDelete(id)
+    if (!deleted) {
+      return res.status(404).json({ error: 'Route not found' })
+    }
+    res.json({ message: 'Route deleted successfully', id })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete route' })
+  }
+})
+
 export default router
