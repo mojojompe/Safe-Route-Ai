@@ -93,7 +93,7 @@ export default function HazardMap() {
             <div className="absolute inset-0">
                 <Map
                     {...viewState}
-                    onMove={e => setViewState(e.viewState)}
+                    onMove={(e: { viewState: typeof viewState }) => setViewState(e.viewState)}
                     style={{ width: '100%', height: '100%' }}
                     mapStyle="mapbox://styles/mapbox/dark-v11"
                     mapboxAccessToken={MAPBOX_TOKEN}
