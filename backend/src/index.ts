@@ -2,28 +2,106 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
-import routeRouter from './routes/routes.js'
-import historyRouter from './routes/history.js'
-import placesRouter from './routes/places.js'
+import { createServer } from 'http'
+import { Server } from 'socket.io'
 
 dotenv.config()
 
-const app = express()
-app.use(cors())
-app.use(express.json())
-
+import routeRouter from './routes/routes.js'
+import historyRouter from './routes/history.js'
+import placesRouter from './routes/places.js'
+import statsRouter from './routes/stats.js'
+import preferencesRouter from './routes/preferences.js'
+import favoritesRouter from './routes/favorites.js'
+import journeysRouter from './routes/journeys.js'
 import authRouter from './routes/auth.js'
 import reportRouter from './routes/reports.js'
+import chatRouter from './routes/chat.js'
 
+const app = express()
+app.use(cors({ origin: '*' }))
+app.use(express.json())
+
+// ── REST routes ──────────────────────────────────────────────────────────────
 app.use('/api/route', routeRouter)
 app.use('/api/history', historyRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/reports', reportRouter)
 app.use('/api/places', placesRouter)
+app.use('/api/stats', statsRouter)
+app.use('/api/preferences', preferencesRouter)
+app.use('/api/favorites', favoritesRouter)
+app.use('/api/journeys', journeysRouter)
+app.use('/api/chat', chatRouter)
 
+// ── Socket.io — Live Route Sharing ───────────────────────────────────────────
+const httpServer = createServer(app)
+const io = new Server(httpServer, {
+  cors: { origin: '*', methods: ['GET', 'POST'] }
+})
+
+// Active sessions: sessionCode → Set of socket IDs
+const sessions = new Map<string, Set<string>>()
+// Latest location per socket
+const locations = new Map<string, { lat: number; lng: number; userId: string; name: string; timestamp: number }>()
+
+io.on('connection', (socket) => {
+  console.log('Socket connected:', socket.id)
+
+  // Join or create a sharing session
+  socket.on('join-session', ({ sessionCode, userId, name }: { sessionCode: string; userId: string; name: string }) => {
+    socket.join(sessionCode)
+    if (!sessions.has(sessionCode)) sessions.set(sessionCode, new Set())
+    sessions.get(sessionCode)!.add(socket.id)
+    locations.set(socket.id, { lat: 0, lng: 0, userId, name, timestamp: Date.now() })
+
+    // Send all current participants' locations to the newcomer
+    const currentLocations: any[] = []
+    sessions.get(sessionCode)!.forEach(sid => {
+      if (sid !== socket.id && locations.has(sid)) {
+        currentLocations.push({ socketId: sid, ...locations.get(sid) })
+      }
+    })
+    socket.emit('session-state', currentLocations)
+
+    // Tell everyone else a new person joined
+    socket.to(sessionCode).emit('user-joined', { socketId: socket.id, userId, name })
+    console.log(`${name} joined session ${sessionCode}`)
+  })
+
+  // Receive a location update and broadcast to session
+  socket.on('location-update', ({ sessionCode, lat, lng }: { sessionCode: string; lat: number; lng: number }) => {
+    const loc = locations.get(socket.id)
+    if (!loc) return
+    loc.lat = lat; loc.lng = lng; loc.timestamp = Date.now()
+    socket.to(sessionCode).emit('location-update', { socketId: socket.id, ...loc })
+  })
+
+  // Leave session
+  socket.on('leave-session', ({ sessionCode }: { sessionCode: string }) => {
+    sessions.get(sessionCode)?.delete(socket.id)
+    locations.delete(socket.id)
+    socket.to(sessionCode).emit('user-left', { socketId: socket.id })
+    socket.leave(sessionCode)
+  })
+
+  socket.on('disconnect', () => {
+    // Clean up from all sessions
+    sessions.forEach((members, code) => {
+      if (members.has(socket.id)) {
+        members.delete(socket.id)
+        locations.delete(socket.id)
+        io.to(code).emit('user-left', { socketId: socket.id })
+      }
+    })
+    console.log('Socket disconnected:', socket.id)
+  })
+})
+
+// ── Start ─────────────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 4000
 mongoose.connect(process.env.MONGO_URI!, {})
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Mongo error', err))
 
-app.listen(PORT, () => console.log(`API running on ${PORT}`))
+httpServer.listen(PORT, () => console.log(`API + Socket.io running on ${PORT}`))

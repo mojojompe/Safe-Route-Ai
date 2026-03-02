@@ -387,6 +387,15 @@ export default function History() {
                       <div className="flex items-center gap-2">
                         <p className="text-xs text-gray-400 font-medium hidden sm:block">Score: <span className="text-gray-900 dark:text-white font-bold">{route.safetyScore}/10</span></p>
 
+                        {/* View Details Button */}
+                        <button
+                          onClick={() => nav(`/history/${route._id}`)}
+                          className="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-900/10 hover:bg-blue-100 dark:hover:bg-blue-900/20 text-blue-500 border border-blue-100 dark:border-blue-900/20 transition-all"
+                          title="View Journey Details"
+                        >
+                          <MdChevronRight className="text-lg" />
+                        </button>
+
                         {/* Delete Button */}
                         <button
                           onClick={() => setConfirmDeleteId(route._id)}
@@ -406,7 +415,7 @@ export default function History() {
                           {replayingId === route._id ? (
                             <MdRefresh className="animate-spin text-lg md:text-xl" />
                           ) : (
-                            <MdChevronRight className="text-xl md:text-2xl" />
+                            <MdRefresh className="text-xl md:text-2xl" />
                           )}
                         </button>
                       </div>
