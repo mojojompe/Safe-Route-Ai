@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PageTransition } from '../components/ui/PageTransition'
 import { GlassCard } from '../components/ui/GlassCard'
 import axios from 'axios'
-import { MdAdd, MdDelete, MdRoute, MdStar, MdEdit, MdCheck, MdClose } from 'react-icons/md'
+import { MdAdd, MdDelete, MdRoute, MdStar, MdCheck, MdClose } from 'react-icons/md'
 
 const API = import.meta.env.VITE_API_URL
 
@@ -32,7 +32,6 @@ export default function Favorites() {
     const [searchResults, setSearchResults] = useState<any[]>([])
     const [searching, setSearching] = useState(false)
 
-    const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 
     useEffect(() => {
         if (!user) return
