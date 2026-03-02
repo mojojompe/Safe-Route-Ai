@@ -118,11 +118,14 @@ export default function ArloChat() {
                 { role: 'user', text },
                 { role: 'model', text: reply },
             ])
-        } catch {
+        } catch (err: any) {
+            const backendMsg = err?.response?.data?.error
             const errMsg: Message = {
                 id: (Date.now() + 1).toString(),
                 role: 'arlo',
-                text: "I'm having a bit of trouble connecting right now. Please try again in a moment! 🛡️",
+                text: backendMsg
+                    ? `⚠️ ${backendMsg}`
+                    : "I'm having trouble connecting right now. Please try again in a moment! 🛡️",
                 timestamp: new Date(),
             }
             setMessages(prev => [...prev, errMsg])
