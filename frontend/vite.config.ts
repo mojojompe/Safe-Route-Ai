@@ -15,5 +15,19 @@ export default defineConfig({
   },
   server: {
     port: 5173
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Mapbox GL is ~1MB — keep it completely separate from the main bundle
+          'mapbox': ['mapbox-gl', 'react-map-gl'],
+          // Firebase auth module (large) separate from the app bundle
+          'firebase': ['firebase/app', 'firebase/auth'],
+          // Animation library in its own chunk
+          'framer': ['framer-motion'],
+        }
+      }
+    }
   }
 })

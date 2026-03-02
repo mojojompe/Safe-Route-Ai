@@ -40,8 +40,16 @@ interface Route {
 interface Suggestion {
   id: string;
   place_name: string;
+  text?: string;                  // short name (our DB)
   center: [number, number];
   context?: any[];
+  place_type?: string[];          // ['school'] | ['road'] | ['poi'] etc.
+  subtype?: string;               // 'primary' | 'motorway' | 'residential' etc.
+  properties?: {
+    category?: string;
+    source?: string;
+    [key: string]: any;
+  };
 }
 
 export default function MapPage() {
@@ -113,29 +121,50 @@ export default function MapPage() {
   const [startCountry, setStartCountry] = useState<string | null>(null)
   const [destCountry, setDestCountry] = useState<string | null>(null)
 
-  // Debounced search
+  // Debounced dual-source search: Nigeria DB + Mapbox (Nigeria-biased)
   useEffect(() => {
     const query = activeInput === 'start' ? startQuery : destQuery
-    if (!query || query.length < 3) {
-      setSuggestions([])
-      return
-    }
+    if (!query || query.length < 2) { setSuggestions([]); return }
 
     const timer = setTimeout(async () => {
       if (!MAPBOX_TOKEN) return
       try {
-        const res = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json`, {
-          params: {
-            access_token: MAPBOX_TOKEN,
-            types: 'poi,address,place,locality,neighborhood',
-            proximity: 'ip',
-            limit: 8,
-            language: 'en'
-          }
+        const [mapboxRes, nigeriaRes] = await Promise.allSettled([
+          // Mapbox — locked to Nigeria, biased to Lagos
+          axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json`, {
+            params: {
+              access_token: MAPBOX_TOKEN,
+              types: 'poi,address,place,locality,neighborhood',
+              country: 'ng',
+              proximity: '3.3792,6.5244',
+              limit: 5,
+              language: 'en'
+            }
+          }),
+          // Our Nigeria DB (schools, roads, POIs)
+          axios.get(`${import.meta.env.VITE_API_URL}/api/places`, {
+            params: { q: query, limit: 6 }
+          })
+        ])
+
+        const mapboxResults: Suggestion[] = mapboxRes.status === 'fulfilled'
+          ? mapboxRes.value.data.features : []
+        const nigeriaResults: Suggestion[] = nigeriaRes.status === 'fulfilled'
+          ? nigeriaRes.value.data : []
+
+        // Nigeria DB first (more local detail), then Mapbox
+        // Deduplicate by normalised name prefix
+        const seen = new Set<string>()
+        const merged = [...nigeriaResults, ...mapboxResults].filter(r => {
+          const label = (r.text || r.place_name).toLowerCase().slice(0, 22)
+          if (seen.has(label)) return false
+          seen.add(label)
+          return true
         })
-        setSuggestions(res.data.features)
+
+        setSuggestions(merged.slice(0, 8))
       } catch (err) {
-        console.error("Error fetching suggestions:", err)
+        console.error('Search error:', err)
       }
     }, 300)
 
@@ -462,10 +491,27 @@ export default function MapPage() {
                       placeholder="Current Location"
                     />
                     {activeInput === 'start' && suggestions.length > 0 && (
-                      <div className="absolute top-full mt-2 w-full bg-white dark:bg-gray-900 rounded-xl shadow-xl z-50 border border-gray-100 dark:border-gray-800 overflow-hidden">
+                      <div className="absolute top-full mt-2 w-full bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-50 border border-gray-100 dark:border-gray-800 overflow-hidden">
                         {suggestions.map(s => (
-                          <button key={s.id} onClick={() => handleSelect(s)} className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/5 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5 last:border-0 truncate">
-                            {s.place_name}
+                          <button key={s.id} onClick={() => handleSelect(s)}
+                            className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/5 border-b border-gray-100 dark:border-white/5 last:border-0 flex items-start gap-3 transition-colors"
+                          >
+                            <span className="text-xl flex-shrink-0 mt-0.5">
+                              {s.properties?.category === 'school' ? '🏫'
+                                : s.subtype === 'motorway' || s.subtype === 'primary' ? '🛣️'
+                                  : s.properties?.category === 'road' ? '🛤️'
+                                    : s.place_type?.includes('poi') ? '🏢'
+                                      : '📌'}
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                                {s.text || s.place_name.split(',')[0]}
+                              </p>
+                              <p className="text-xs text-gray-400 truncate">{s.place_name}</p>
+                            </div>
+                            {s.properties?.source === 'nigeria_db' && (
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded flex-shrink-0 self-center">NG</span>
+                            )}
                           </button>
                         ))}
                       </div>
@@ -491,10 +537,27 @@ export default function MapPage() {
                       placeholder="Destination"
                     />
                     {activeInput === 'dest' && suggestions.length > 0 && (
-                      <div className="absolute top-full mt-2 w-full bg-white dark:bg-gray-900 rounded-xl shadow-xl z-50 border border-gray-100 dark:border-gray-800 overflow-hidden">
+                      <div className="absolute top-full mt-2 w-full bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-50 border border-gray-100 dark:border-gray-800 overflow-hidden">
                         {suggestions.map(s => (
-                          <button key={s.id} onClick={() => handleSelect(s)} className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/5 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5 last:border-0 truncate">
-                            {s.place_name}
+                          <button key={s.id} onClick={() => handleSelect(s)}
+                            className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/5 border-b border-gray-100 dark:border-white/5 last:border-0 flex items-start gap-3 transition-colors"
+                          >
+                            <span className="text-xl flex-shrink-0 mt-0.5">
+                              {s.properties?.category === 'school' ? '🏫'
+                                : s.subtype === 'motorway' || s.subtype === 'primary' ? '🛣️'
+                                  : s.properties?.category === 'road' ? '🛤️'
+                                    : s.place_type?.includes('poi') ? '🏢'
+                                      : '📌'}
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                                {s.text || s.place_name.split(',')[0]}
+                              </p>
+                              <p className="text-xs text-gray-400 truncate">{s.place_name}</p>
+                            </div>
+                            {s.properties?.source === 'nigeria_db' && (
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded flex-shrink-0 self-center">NG</span>
+                            )}
                           </button>
                         ))}
                       </div>
