@@ -29,6 +29,46 @@ Rules:
 
 You were created by the Safe Route AI team to help Nigerians travel more safely.`
 
+// Try these models in order until one works
+const MODEL_FALLBACKS = [
+    'gemini-2.5-pro',
+    'gemini-2.5-flash',
+    'gemini-2.5-pro-preview-03-25',
+    'gemini-2.5-flash-preview-04-17',
+    'gemini-1.5-flash',
+    'gemini-1.5-flash-latest',
+    'gemini-1.0-pro',
+]
+
+async function tryChat(genAI: GoogleGenerativeAI, message: string, mappedHistory: any[]) {
+    let lastError: any
+    for (const modelName of MODEL_FALLBACKS) {
+        try {
+            const model = genAI.getGenerativeModel({
+                model: modelName,
+                systemInstruction: SYSTEM_PROMPT,
+            })
+            const chat = model.startChat({
+                history: mappedHistory,
+                generationConfig: { maxOutputTokens: 400, temperature: 0.7 },
+            })
+            const result = await chat.sendMessage(message)
+            return result.response.text()
+        } catch (err: any) {
+            lastError = err
+            const msg: string = err?.message || ''
+            // If it's a 404 / model not found, try the next model
+            if (msg.includes('404') || msg.includes('not found') || msg.includes('MODEL_NOT_FOUND') || msg.includes('INVALID_ARGUMENT')) {
+                console.warn(`Model ${modelName} unavailable, trying next...`)
+                continue
+            }
+            // For other errors (auth, quota, network), throw immediately
+            throw err
+        }
+    }
+    throw lastError
+}
+
 // POST /api/chat
 router.post('/', async (req, res) => {
     try {
@@ -43,12 +83,8 @@ router.post('/', async (req, res) => {
         }
 
         const genAI = new GoogleGenerativeAI(apiKey)
-        const model = genAI.getGenerativeModel({
-            model: 'gemini-1.5-flash',
-            systemInstruction: SYSTEM_PROMPT,
-        })
 
-        // Map history: frontend uses role='arlo' for assistant messages; SDK needs 'model'
+        // Map history roles: frontend uses 'arlo' for assistant; SDK needs 'model'
         const mappedHistory = (history as { role: string; text: string }[])
             .filter(h => h.role && h.text)
             .map(h => ({
@@ -56,27 +92,19 @@ router.post('/', async (req, res) => {
                 parts: [{ text: h.text }],
             }))
 
-        const chat = model.startChat({
-            history: mappedHistory,
-            generationConfig: {
-                maxOutputTokens: 400,
-                temperature: 0.7,
-            },
-        })
-
-        const result = await chat.sendMessage(message.trim())
-        const reply = result.response.text()
-
+        const reply = await tryChat(genAI, message.trim(), mappedHistory)
         res.json({ reply })
+
     } catch (error: any) {
         const msg: string = error?.message || String(error)
         console.error('Navigator chat error:', msg)
 
-        // Surface clean error to client
         let clientErr = 'Navigator is unavailable right now. Please try again.'
-        if (msg.includes('API key') || msg.includes('api key')) clientErr = 'Invalid API key configured.'
-        else if (msg.includes('quota') || msg.includes('RESOURCE_EXHAUSTED')) clientErr = 'AI quota exceeded. Try again later.'
-        else if (msg.includes('not found') || msg.includes('404')) clientErr = 'AI model not available.'
+        if (msg.includes('API key') || msg.includes('api key') || msg.includes('API_KEY')) {
+            clientErr = 'Invalid Gemini API key. Please check environment variables.'
+        } else if (msg.includes('quota') || msg.includes('RESOURCE_EXHAUSTED')) {
+            clientErr = 'AI quota exceeded. Please try again later.'
+        }
 
         res.status(500).json({ error: clientErr })
     }
