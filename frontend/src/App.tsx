@@ -7,8 +7,7 @@ import Sidebar from './components/Sidebar'
 // Eagerly load the landing page for instant first render
 import Welcome from './pages/Welcome'
 
-// Lazy load all app pages — their JS only downloads when the user navigates there.
-// This prevents pulling the heavy Mapbox GL bundle on the landing page.
+// Lazy load all app pages
 const MapPage = lazy(() => import('./pages/MapPage'))
 const RouteBreakdown = lazy(() => import('./pages/RouteBreakdown'))
 const SafetyTips = lazy(() => import('./pages/SafetyTips'))
@@ -25,32 +24,32 @@ const Achievements = lazy(() => import('./pages/Achievements'))
 const ArloChat = lazy(() => import('./pages/ArloChat'))
 const LiveShare = lazy(() => import('./pages/LiveShare'))
 
+// ── Layout shell ─────────────────────────────────────────────────────────────
 function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex bg-background-light dark:bg-background-dark text-gray-800 dark:text-white font-display">
       <Sidebar />
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
-        <main className="flex-1 overflow-auto">
-          {children}
-        </main>
+        <main className="flex-1 overflow-auto">{children}</main>
       </div>
     </div>
   )
 }
 
-const PageTransition = ({ children }: { children: React.ReactNode }) => (
+// ── Page transition wrapper ───────────────────────────────────────────────────
+const PT = ({ children }: { children: React.ReactNode }) => (
   <motion.div
-    initial={{ opacity: 0, y: 20 }}
+    initial={{ opacity: 0, y: 16 }}
     animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -20 }}
-    transition={{ duration: 0.3 }}
+    exit={{ opacity: 0, y: -16 }}
+    transition={{ duration: 0.25 }}
     className="h-full"
   >
     {children}
   </motion.div>
 )
 
-// Minimal skeleton shown while a lazy page chunk is loading
+// ── Suspense spinner ──────────────────────────────────────────────────────────
 function PageLoader() {
   return (
     <div className="flex items-center justify-center h-full w-full min-h-[60vh]">
@@ -59,14 +58,46 @@ function PageLoader() {
   )
 }
 
-// Wrapper to redirect if logged in
-function WelcomeWrapper() {
+// ── Protected route: redirects to / if not authenticated ─────────────────────
+// Shows a spinner while Firebase is still resolving auth state.
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
-  if (loading) return null
-  if (user) return <Navigate to="/map" replace />
-  return <PageTransition><Welcome /></PageTransition>
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen w-full bg-background-light dark:bg-background-dark">
+        <div className="w-10 h-10 border-4 border-green-500/30 border-t-green-500 rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  if (!user) return <Navigate to="/" replace />
+
+  return <>{children}</>
 }
 
+// ── Welcome wrapper: shows landing page, redirects logged-in users ───────────
+function WelcomeWrapper() {
+  const { user, loading } = useAuth()
+  // Show Welcome immediately; redirect once Firebase resolves
+  if (!loading && user) return <Navigate to="/map" replace />
+  return <PT><Welcome /></PT>
+}
+
+// ── Helper: wrap a lazy page in Layout + ProtectedRoute + Suspense ───────────
+function P({ page }: { page: React.ReactNode }) {
+  return (
+    <ProtectedRoute>
+      <Layout>
+        <Suspense fallback={<PageLoader />}>
+          <PT>{page}</PT>
+        </Suspense>
+      </Layout>
+    </ProtectedRoute>
+  )
+}
+
+// ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
   const location = useLocation()
 
@@ -74,22 +105,28 @@ export default function App() {
     <AuthProvider>
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
+          {/* Public */}
           <Route path="/" element={<WelcomeWrapper />} />
-          <Route path="/map" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><MapPage /></PageTransition></Suspense></Layout>} />
-          <Route path="/route-breakdown" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><RouteBreakdown /></PageTransition></Suspense></Layout>} />
-          <Route path="/history" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><History /></PageTransition></Suspense></Layout>} />
-          <Route path="/history/:id" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><JourneyDetail /></PageTransition></Suspense></Layout>} />
-          <Route path="/about" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><About /></PageTransition></Suspense></Layout>} />
-          <Route path="/safety-tips" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><SafetyTips /></PageTransition></Suspense></Layout>} />
-          <Route path="/emergency" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><Emergency /></PageTransition></Suspense></Layout>} />
-          <Route path="/profile" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><Profile /></PageTransition></Suspense></Layout>} />
-          <Route path="/analytics" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><Analytics /></PageTransition></Suspense></Layout>} />
-          <Route path="/settings" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><Settings /></PageTransition></Suspense></Layout>} />
-          <Route path="/favorites" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><Favorites /></PageTransition></Suspense></Layout>} />
-          <Route path="/hazard-map" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><HazardMap /></PageTransition></Suspense></Layout>} />
-          <Route path="/achievements" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><Achievements /></PageTransition></Suspense></Layout>} />
-          <Route path="/arlo" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><ArloChat /></PageTransition></Suspense></Layout>} />
-          <Route path="/live-share" element={<Layout><Suspense fallback={<PageLoader />}><PageTransition><LiveShare /></PageTransition></Suspense></Layout>} />
+
+          {/* Protected — every route below requires a signed-in user */}
+          <Route path="/map" element={<P page={<MapPage />} />} />
+          <Route path="/route-breakdown" element={<P page={<RouteBreakdown />} />} />
+          <Route path="/history" element={<P page={<History />} />} />
+          <Route path="/history/:id" element={<P page={<JourneyDetail />} />} />
+          <Route path="/analytics" element={<P page={<Analytics />} />} />
+          <Route path="/arlo" element={<P page={<ArloChat />} />} />
+          <Route path="/live-share" element={<P page={<LiveShare />} />} />
+          <Route path="/favorites" element={<P page={<Favorites />} />} />
+          <Route path="/hazard-map" element={<P page={<HazardMap />} />} />
+          <Route path="/achievements" element={<P page={<Achievements />} />} />
+          <Route path="/safety-tips" element={<P page={<SafetyTips />} />} />
+          <Route path="/emergency" element={<P page={<Emergency />} />} />
+          <Route path="/profile" element={<P page={<Profile />} />} />
+          <Route path="/settings" element={<P page={<Settings />} />} />
+          <Route path="/about" element={<P page={<About />} />} />
+
+          {/* Catch-all → home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AnimatePresence>
     </AuthProvider>
