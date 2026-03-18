@@ -1,0 +1,52 @@
+{
+  "name": "mobile",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@expo-google-fonts/lexend": "^0.4.1",
+    "@gorhom/bottom-sheet": "^5.2.8",
+    "@hugeicons/react-native": "^1.0.11",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@rnmapbox/maps": "^10.2.10",
+    "@tanstack/react-query": "^5.90.21",
+    "axios": "^1.13.6",
+    "expo": "~55.0.4",
+    "expo-camera": "^55.0.9",
+    "expo-constants": "^55.0.7",
+    "expo-contacts": "^55.0.8",
+    "expo-dev-client": "~55.0.10",
+    "expo-font": "^55.0.4",
+    "expo-haptics": "^55.0.8",
+    "expo-linear-gradient": "~55.0.8",
+    "expo-linking": "^55.0.7",
+    "expo-local-authentication": "^55.0.8",
+    "expo-location": "^55.1.2",
+    "expo-notifications": "~55.0.11",
+    "expo-router": "~55.0.4",
+    "expo-secure-store": "^55.0.8",
+    "expo-splash-screen": "^55.0.10",
+    "expo-status-bar": "~55.0.4",
+    "moti": "^0.30.0",
+    "react": "19.2.0",
+    "react-native": "0.83.2",
+    "react-native-gesture-handler": "^2.30.0",
+    "react-native-mmkv": "^4.1.2",
+    "react-native-reanimated": "4.2.1",
+    "react-native-safe-area-context": "~5.6.2",
+    "react-native-screens": "~4.23.0",
+    "react-native-svg": "^15.15.3",
+    "socket.io-client": "^4.8.3",
+    "zustand": "^5.0.11"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.2",
+    "typescript": "~5.9.2"
+  },
+  "private": true
+}

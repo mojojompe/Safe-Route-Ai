@@ -1,0 +1,18 @@
+# .easignore
+# This file tells EAS CLI what to ignore during the upload process.
+
+node_modules/
+.expo/
+dist/
+web-build/
+android/
+ios/
+
+# local env files
+.env*.local
+
+# macOS
+.DS_Store
+
+# typescript
+*.tsbuildinfo

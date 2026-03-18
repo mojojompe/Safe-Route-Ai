@@ -29,11 +29,12 @@ const DATA_DIR = path.join(__dirname, '../../Nigeria Details')
 function getLineStringMidpoint(coords: number[][]): number[] | null {
     if (!coords || coords.length === 0) return null
     const mid = coords[Math.floor(coords.length / 2)]
-    return Array.isArray(mid) && mid.length >= 2 && !isNaN(mid[0]) ? mid : coords[0]
+    if (mid && mid.length >= 2 && typeof mid[0] === 'number') return mid
+    return coords[0] || null
 }
 
 function inNigeria(coords: number[]): boolean {
-    return coords[0] >= 2.5 && coords[0] <= 15.0 && coords[1] >= 4.0 && coords[1] <= 14.0
+    return typeof coords[0] === 'number' && typeof coords[1] === 'number' && coords[0] >= 2.5 && coords[0] <= 15.0 && coords[1] >= 4.0 && coords[1] <= 14.0
 }
 
 async function batchInsert(docs: any[], label: string): Promise<number> {
@@ -79,14 +80,14 @@ async function importSchools() {
         } else if (geom.type === 'Polygon' && geom.coordinates?.[0]?.length > 0) {
             const ring: number[][] = geom.coordinates[0]
             coords = [
-                ring.reduce((s, c) => s + c[0], 0) / ring.length,
-                ring.reduce((s, c) => s + c[1], 0) / ring.length
+                ring.reduce((s, c) => s + (c[0] || 0), 0) / ring.length,
+                ring.reduce((s, c) => s + (c[1] || 0), 0) / ring.length
             ]
         } else if (geom.type === 'MultiPoint') {
             coords = geom.coordinates[0]
         }
 
-        if (!coords || coords.length < 2 || isNaN(coords[0]) || !inNigeria(coords)) continue
+        if (!coords || coords.length < 2 || typeof coords[0] !== 'number' || !inNigeria(coords)) continue
 
         docs.push({
             name: String(name).trim(),
@@ -164,6 +165,7 @@ async function importHOTOSMRoads() {
 
     let JSONStream: any
     try {
+        // @ts-ignore
         JSONStream = (await import('JSONStream')).default
     } catch {
         console.error('❌ JSONStream not installed. Run: npm install JSONStream')
@@ -207,7 +209,7 @@ async function importHOTOSMRoads() {
             let coords: number[] | null = null
             if (geom?.type === 'LineString') coords = getLineStringMidpoint(geom.coordinates)
             else if (geom?.type === 'MultiLineString' && geom.coordinates?.[0]) coords = getLineStringMidpoint(geom.coordinates[0])
-            if (!coords || coords.length < 2 || isNaN(coords[0])) return
+            if (!coords || coords.length < 2 || typeof coords[0] !== 'number') return
 
             pendingBatch.push({
                 name: String(name).trim(),

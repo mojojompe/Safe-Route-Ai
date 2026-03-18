@@ -1,0 +1,85 @@
+{
+  "expo": {
+    "name": "Safe Route AI",
+    "slug": "safe-route-ai",
+    "scheme": "saferoute",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0f14"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store",
+      "expo-camera",
+      "expo-location",
+      "expo-local-authentication",
+      [
+        "expo-notifications",
+        {
+          "color": "#00d35a",
+          "defaultChannel": "default"
+        }
+      ],
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsImpl": "mapbox",
+          "RNMAPBOX_MAPS_DOWNLOAD_TOKEN": "$MAPBOX_SECRET_KEY"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundColor": "#0a0f14"
+      },
+      "package": "com.saferoute.ai",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "CAMERA",
+        "READ_CONTACTS",
+        "CALL_PHONE",
+        "VIBRATE",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
+      ]
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.saferoute.ai",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Safe Route AI needs your location to calculate route safety.",
+        "NSLocationAlwaysUsageDescription": "Safe Route AI uses background location for live sharing.",
+        "NSCameraUsageDescription": "Safe Route AI uses your camera to report road hazards.",
+        "NSContactsUsageDescription": "Safe Route AI uses contacts for trusted contact safety alerts.",
+        "NSFaceIDUsageDescription": "Use Face ID for quick and secure login."
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "297a66ec-a1ed-40fe-acd6-865edd558f04"
+      }
+    }
+  }
+}

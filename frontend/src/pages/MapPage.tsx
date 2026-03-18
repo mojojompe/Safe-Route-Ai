@@ -155,11 +155,10 @@ export default function MapPage() {
             params: { q: query, limit: 4 }
           }).then(r => r.data),
 
-          // 3. Mapbox — additional POIs & address-level results
+          // 3. Mapbox — additional POIs, streets & address-level results
           axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json`, {
             params: {
               access_token: MAPBOX_TOKEN,
-              types: 'poi,address,place,locality,neighborhood',
               country: 'ng',
               proximity: '3.3792,6.5244',
               limit: 5,
@@ -187,13 +186,20 @@ export default function MapPage() {
 
         // ── Mapbox results ───────────────────────────────────────────────────
         const mapboxData: Suggestion[] = mapboxRes.status === 'fulfilled'
-          ? (mapboxRes.value as Suggestion[])
+          ? (mapboxRes.value as any[]).map((f: any) => ({
+              id: f.id,
+              place_name: f.place_name,
+              text: f.text || f.place_name.split(',')[0],
+              center: f.center as [number, number],
+              place_type: f.place_type || ['place'],
+              properties: { ...f.properties, source: 'mapbox' }
+            }))
           : []
 
         // ── Merge + deduplicate ──────────────────────────────────────────────
-        // Nominatim first (richest POI data), then Nigeria DB, then Mapbox
+        // Mapbox first (Priority), then Nominatim, then Nigeria DB
         const seen = new Set<string>()
-        const merged = [...nominatimData, ...nigeriaData, ...mapboxData].filter(r => {
+        const merged = [...mapboxData, ...nominatimData, ...nigeriaData].filter(r => {
           const key = (r.text || r.place_name).toLowerCase().trim().slice(0, 28)
           if (seen.has(key)) return false
           seen.add(key)
