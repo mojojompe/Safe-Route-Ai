@@ -113,7 +113,12 @@ const PORT = process.env.PORT || 4000
 mongoose.connect(process.env.MONGO_URI!, {})
   .then(() => {
     console.log('Connected to MongoDB')
-    startScheduler()
+    // node-cron requires a persistent process — skip on Vercel serverless
+    if (!process.env.VERCEL) {
+      startScheduler()
+    } else {
+      console.log('Vercel environment detected — scheduler disabled')
+    }
   })
   .catch(err => console.error('Mongo error', err))
 
