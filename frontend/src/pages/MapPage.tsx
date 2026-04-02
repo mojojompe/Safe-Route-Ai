@@ -715,6 +715,17 @@ export default function MapPage() {
                     >
                       Start Navigation
                     </button>
+                    <button
+                      onClick={() => {
+                        setStartQuery(''); setDestQuery('');
+                        setStartCoords(null); setDestCoords(null);
+                        setRoutes([]); setSelectedRouteIndex(0);
+                        localStorage.removeItem('mapState');
+                      }}
+                      className="w-full py-2.5 border border-red-400/40 text-red-500 dark:text-red-400 font-semibold rounded-xl hover:bg-red-50 dark:hover:bg-red-900/10 transition-all flex items-center justify-center gap-2 text-sm"
+                    >
+                      <MdDelete size={16} /> Clear Route
+                    </button>
                   </div>
                 )}
 

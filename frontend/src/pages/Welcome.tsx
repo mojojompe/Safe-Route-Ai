@@ -311,41 +311,27 @@ export default function Welcome() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                         <div className="space-y-8">
                             <div>
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 text-sm font-semibold mb-4">
+                                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                                    Coming Soon — Play Store & App Store
+                                </div>
                                 <h2 className="text-4xl md:text-5xl font-bold mb-6">
                                     Download Safe Route Ai Mobile App
                                 </h2>
                                 <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
-                                    Get Safe Route AI on your device and start navigating safely today. Available on iOS and Android.
+                                    The full native experience — with Mapbox navigation, offline maps, and emergency SOS — is launching soon. Be first in line.
                                 </p>
                             </div>
                             <div className="flex flex-col sm:flex-row gap-4">
-                                {/* Google Play Store Button */}
-                                <a
-                                    href="#"
-                                    className="flex items-center gap-3 px-6 py-4 bg-black dark:bg-white text-white dark:text-black rounded-2xl hover:scale-105 transition-transform shadow-lg group"
+                                <motion.a
+                                    href="/waitlist"
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.97 }}
+                                    className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-lg font-bold rounded-2xl shadow-lg shadow-green-500/30 hover:shadow-green-500/50 transition-all"
                                 >
-                                    <svg className="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.5,12.92 20.16,13.19L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
-                                    </svg>
-                                    <div className="text-left">
-                                        <div className="text-xs opacity-80">GET IT ON</div>
-                                        <div className="text-lg font-bold">Google Play</div>
-                                    </div>
-                                </a>
-
-                                {/* Apple App Store Button */}
-                                <a
-                                    href="#"
-                                    className="flex items-center gap-3 px-6 py-4 bg-black dark:bg-white text-white dark:text-black rounded-2xl hover:scale-105 transition-transform shadow-lg group"
-                                >
-                                    <svg className="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M18.71,19.5C17.88,20.74 17,21.95 15.66,21.97C14.32,22 13.89,21.18 12.37,21.18C10.84,21.18 10.37,21.95 9.1,22C7.79,22.05 6.8,20.68 5.96,19.47C4.25,17 2.94,12.45 4.7,9.39C5.57,7.87 7.13,6.91 8.82,6.88C10.1,6.86 11.32,7.75 12.11,7.75C12.89,7.75 14.37,6.68 15.92,6.84C16.57,6.87 18.39,7.1 19.56,8.82C19.47,8.88 17.39,10.1 17.41,12.63C17.44,15.65 20.06,16.66 20.09,16.67C20.06,16.74 19.67,18.11 18.71,19.5M13,3.5C13.73,2.67 14.94,2.04 15.94,2C16.07,3.17 15.6,4.35 14.9,5.19C14.21,6.04 13.07,6.7 11.95,6.61C11.8,5.46 12.36,4.26 13,3.5Z" />
-                                    </svg>
-                                    <div className="text-left">
-                                        <div className="text-xs opacity-80">Download on the</div>
-                                        <div className="text-lg font-bold">App Store</div>
-                                    </div>
-                                </a>
+                                    <span>🚀</span>
+                                    Join the Waitlist
+                                </motion.a>
                             </div>
                         </div>
                         <div className="relative md:-ml-16 lg:-ml-24">
@@ -519,21 +505,10 @@ export default function Welcome() {
             </section>
 
             {/* --- HERO 2 VIDEO SECTION: JOURNEY TO SAFETY --- */}
-            <section className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-black">
+            <section className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-gray-700">
                 {/* Video Background */}
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80 z-10" />
-                    <video
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        preload="none"
-                        className="w-full h-full object-cover"
-                    >
-                        <source src="/Hero2.mp4" type="video/mp4" />
-                        Your browser does not support the video tag.
-                    </video>
                 </div>
 
                 {/* Content Overlay */}
@@ -604,26 +579,6 @@ export default function Welcome() {
                                     <div className="text-gray-400 font-medium">{stat.label}</div>
                                 </div>
                             ))}
-                        </motion.div>
-
-                        {/* CTA Button */}
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 1, duration: 0.6 }}
-                            className="mt-12"
-                        >
-                            <button
-                                onClick={handleStart}
-                                disabled={loading}
-                                className="group relative px-10 py-5 bg-gradient-to-r from-sr-green to-teal-500 text-white text-lg font-bold rounded-full shadow-2xl hover:shadow-sr-green/50 transition-all duration-300 hover:scale-105 disabled:opacity-50 overflow-hidden"
-                            >
-                                <span className="relative z-10">
-                                    {loading ? 'Starting...' : 'Start Your Safe Journey'}
-                                </span>
-                                <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-sr-green opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                            </button>
                         </motion.div>
                     </motion.div>
                 </div>

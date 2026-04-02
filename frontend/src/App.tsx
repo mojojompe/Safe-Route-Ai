@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import Sidebar from './components/Sidebar'
+import { SafetyTipsLoader } from './components/ui/SafetyTipsLoader'
 
 // Eagerly load the landing page for instant first render
 import Welcome from './pages/Welcome'
@@ -23,6 +24,7 @@ const HazardMap = lazy(() => import('./pages/HazardMap'))
 const Achievements = lazy(() => import('./pages/Achievements'))
 const ArloChat = lazy(() => import('./pages/ArloChat'))
 const LiveShare = lazy(() => import('./pages/LiveShare'))
+const Waitlist = lazy(() => import('./pages/Waitlist'))
 
 // ── Layout shell ─────────────────────────────────────────────────────────────
 function Layout({ children }: { children: React.ReactNode }) {
@@ -51,11 +53,7 @@ const PT = ({ children }: { children: React.ReactNode }) => (
 
 // ── Suspense spinner ──────────────────────────────────────────────────────────
 function PageLoader() {
-  return (
-    <div className="flex items-center justify-center h-full w-full min-h-[60vh]">
-      <div className="w-8 h-8 border-4 border-green-500/30 border-t-green-500 rounded-full animate-spin" />
-    </div>
-  )
+  return <SafetyTipsLoader />
 }
 
 // ── Protected route: redirects to / if not authenticated ─────────────────────
@@ -64,11 +62,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen w-full bg-background-light dark:bg-background-dark">
-        <div className="w-10 h-10 border-4 border-green-500/30 border-t-green-500 rounded-full animate-spin" />
-      </div>
-    )
+    return <SafetyTipsLoader fullScreen />
   }
 
   if (!user) return <Navigate to="/" replace />
@@ -107,6 +101,7 @@ export default function App() {
         <Routes location={location} key={location.pathname}>
           {/* Public */}
           <Route path="/" element={<WelcomeWrapper />} />
+          <Route path="/waitlist" element={<Suspense fallback={<PageLoader />}><PT><Waitlist /></PT></Suspense>} />
 
           {/* Protected — every route below requires a signed-in user */}
           <Route path="/map" element={<P page={<MapPage />} />} />

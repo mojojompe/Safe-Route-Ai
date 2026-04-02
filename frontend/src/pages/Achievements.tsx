@@ -4,108 +4,86 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { PageTransition } from '../components/ui/PageTransition'
 import { GlassCard } from '../components/ui/GlassCard'
 import axios from 'axios'
+import {
+  MdEmojiEvents, MdShield, MdRoute, MdExplore, MdGroups,
+  MdStar, MdNaturePeople, MdBedtime, MdDirectionsWalk,
+  MdLock, MdCheckCircle, MdNavigation
+} from 'react-icons/md'
+import type { IconType } from 'react-icons'
 
 const API = import.meta.env.VITE_API_URL
 
 // ── Badge definitions ────────────────────────────────────────────────────────
-const BADGES = [
+const BADGES: {
+    id: string; Icon: IconType; name: string; desc: string; color: string
+    check: (s: any) => boolean; progress: (s: any) => number; max: number
+}[] = [
     {
-        id: 'first_route',
-        emoji: '🛣️',
-        name: 'First Steps',
-        desc: 'Plan your first route',
+        id: 'first_route', Icon: MdRoute,
+        name: 'First Steps', desc: 'Plan your first route',
         color: 'from-green-400 to-emerald-500',
         check: (s: any) => s.totalRoutes >= 1,
-        progress: (s: any) => Math.min(s.totalRoutes, 1),
-        max: 1,
+        progress: (s: any) => Math.min(s.totalRoutes, 1), max: 1,
     },
     {
-        id: 'ten_routes',
-        emoji: '🏅',
-        name: 'Regular Traveller',
-        desc: 'Plan 10 routes',
+        id: 'ten_routes', Icon: MdStar,
+        name: 'Regular Traveller', desc: 'Plan 10 routes',
         color: 'from-blue-400 to-sky-500',
         check: (s: any) => s.totalRoutes >= 10,
-        progress: (s: any) => Math.min(s.totalRoutes, 10),
-        max: 10,
+        progress: (s: any) => Math.min(s.totalRoutes, 10), max: 10,
     },
     {
-        id: 'fifty_routes',
-        emoji: '🏆',
-        name: 'Road Warrior',
-        desc: 'Plan 50 routes',
+        id: 'fifty_routes', Icon: MdEmojiEvents,
+        name: 'Road Warrior', desc: 'Plan 50 routes',
         color: 'from-amber-400 to-orange-500',
         check: (s: any) => s.totalRoutes >= 50,
-        progress: (s: any) => Math.min(s.totalRoutes, 50),
-        max: 50,
+        progress: (s: any) => Math.min(s.totalRoutes, 50), max: 50,
     },
     {
-        id: 'safe_streak',
-        emoji: '🛡️',
-        name: 'Safety First',
-        desc: 'Average safety score ≥ 8.0',
+        id: 'safe_streak', Icon: MdShield,
+        name: 'Safety First', desc: 'Average safety score ≥ 8.0',
         color: 'from-green-500 to-teal-500',
         check: (s: any) => s.avgScore >= 8.0,
-        progress: (s: any) => Math.min(s.avgScore * 10, 100),
-        max: 100,
+        progress: (s: any) => Math.min(s.avgScore * 10, 100), max: 100,
     },
     {
-        id: 'low_risk',
-        emoji: '🌿',
-        name: 'Safe Pathfinder',
-        desc: '80% of routes rated Low Risk',
+        id: 'low_risk', Icon: MdNaturePeople,
+        name: 'Safe Pathfinder', desc: '80% of routes rated Low Risk',
         color: 'from-lime-400 to-green-400',
-        check: (s: any) => {
-            const total = s.totalRoutes
-            if (!total) return false
-            return (s.riskBreakdown?.Low / total) >= 0.8
-        },
-        progress: (s: any) => {
-            const total = s.totalRoutes
-            if (!total) return 0
-            return Math.round((s.riskBreakdown?.Low / total) * 100)
-        },
+        check: (s: any) => { const total = s.totalRoutes; if (!total) return false; return (s.riskBreakdown?.Low / total) >= 0.8 },
+        progress: (s: any) => { const total = s.totalRoutes; if (!total) return 0; return Math.round((s.riskBreakdown?.Low / total) * 100) },
         max: 100,
     },
     {
-        id: 'community',
-        emoji: '🤝',
-        name: 'Community Guardian',
-        desc: 'Submit 5 hazard reports',
+        id: 'community', Icon: MdGroups,
+        name: 'Community Guardian', desc: 'Submit 5 hazard reports',
         color: 'from-purple-400 to-violet-500',
         check: (s: any) => (s.reportCount || 0) >= 5,
-        progress: (s: any) => Math.min(s.reportCount || 0, 5),
-        max: 5,
+        progress: (s: any) => Math.min(s.reportCount || 0, 5), max: 5,
     },
     {
-        id: 'explorer',
-        emoji: '🗺️',
-        name: 'Explorer',
-        desc: 'Plan routes to 10 unique destinations',
+        id: 'explorer', Icon: MdExplore,
+        name: 'Explorer', desc: 'Plan routes to 10 unique destinations',
         color: 'from-cyan-400 to-blue-400',
         check: (s: any) => (s.uniqueDestinations || 0) >= 10,
-        progress: (s: any) => Math.min(s.uniqueDestinations || 0, 10),
-        max: 10,
+        progress: (s: any) => Math.min(s.uniqueDestinations || 0, 10), max: 10,
     },
     {
-        id: 'night_owl',
-        emoji: '🌙',
-        name: 'Night Owl',
-        desc: 'Plan 5 late-night routes (after 10 PM)',
+        id: 'night_owl', Icon: MdBedtime,
+        name: 'Night Owl', desc: 'Plan 5 late-night routes (after 10 PM)',
         color: 'from-indigo-500 to-purple-600',
         check: (s: any) => (s.nightRoutes || 0) >= 5,
-        progress: (s: any) => Math.min(s.nightRoutes || 0, 5),
-        max: 5,
+        progress: (s: any) => Math.min(s.nightRoutes || 0, 5), max: 5,
     },
 ]
 
 // Tier definitions based on total routes
-const TIERS = [
-    { name: 'Commuter', minRoutes: 0, color: '#94a3b8', emoji: '🚶' },
-    { name: 'Traveller', minRoutes: 10, color: '#22c55e', emoji: '🧭' },
-    { name: 'Navigator', minRoutes: 25, color: '#3b82f6', emoji: '🗺️' },
-    { name: 'Pathfinder', minRoutes: 50, color: '#f59e0b', emoji: '⭐' },
-    { name: 'SafeGuard', minRoutes: 100, color: '#a855f7', emoji: '🛡️' },
+const TIERS: { name: string; minRoutes: number; color: string; Icon: IconType }[] = [
+    { name: 'Commuter', minRoutes: 0, color: '#94a3b8', Icon: MdDirectionsWalk },
+    { name: 'Traveller', minRoutes: 10, color: '#22c55e', Icon: MdNavigation },
+    { name: 'Navigator', minRoutes: 25, color: '#3b82f6', Icon: MdExplore },
+    { name: 'Pathfinder', minRoutes: 50, color: '#f59e0b', Icon: MdStar },
+    { name: 'SafeGuard', minRoutes: 100, color: '#a855f7', Icon: MdShield },
 ]
 
 function getTier(routes: number) {
@@ -149,7 +127,9 @@ export default function Achievements() {
 
                 {/* Header */}
                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-                    <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white">🏆 Achievements</h1>
+                    <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white flex items-center gap-2">
+                    <MdEmojiEvents className="text-amber-500" size={32}/> Achievements
+                </h1>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         {earned.length}/{BADGES.length} badges earned
                     </p>
@@ -164,9 +144,9 @@ export default function Achievements() {
                             style={{ background: `radial-gradient(circle at 30% 50%, ${tier.color}, transparent 70%)` }}
                         />
                         <div className="relative flex items-center gap-4">
-                            <div className="w-16 h-16 rounded-3xl bg-gradient-to-br flex items-center justify-center text-4xl shadow-xl flex-shrink-0"
+                            <div className="w-16 h-16 rounded-3xl bg-gradient-to-br flex items-center justify-center shadow-xl flex-shrink-0"
                                 style={{ background: `linear-gradient(135deg, ${tier.color}33, ${tier.color}88)` }}>
-                                {tier.emoji}
+                                <tier.Icon size={32} style={{ color: tier.color }} />
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Current Tier</p>
@@ -184,7 +164,9 @@ export default function Achievements() {
                         {nextTier && (
                             <div className="mt-4 relative">
                                 <div className="flex justify-between text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5">
-                                    <span>Progress to {nextTier.emoji} {nextTier.name}</span>
+                                    <span>Progress to </span>
+                                    <nextTier.Icon size={14} style={{ color: nextTier.color }} />
+                                    <span>{nextTier.name}</span>
                                     <span>{stats?.totalRoutes}/{nextTier.minRoutes}</span>
                                 </div>
                                 <div className="h-2.5 bg-gray-200 dark:bg-white/10 rounded-full overflow-hidden">
@@ -205,7 +187,7 @@ export default function Achievements() {
                 {earned.length > 0 && (
                     <div>
                         <h2 className="text-sm font-black text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
-                            <span>✨</span> Earned Badges ({earned.length})
+                            <MdCheckCircle className="text-green-500" size={16} /> Earned Badges ({earned.length})
                         </h2>
                         <div className="grid grid-cols-2 gap-3">
                             {earned.map((badge, i) => (
@@ -218,8 +200,8 @@ export default function Achievements() {
                                         className="p-4 cursor-pointer hover:scale-[1.02] transition-all active:scale-95"
                                         onClick={() => setSelected(badge)}
                                     >
-                                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${badge.color} flex items-center justify-center text-2xl mb-3 shadow-lg`}>
-                                            {badge.emoji}
+                                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${badge.color} flex items-center justify-center mb-3 shadow-lg`}>
+                                            <badge.Icon size={24} className="text-white" />
                                         </div>
                                         <p className="text-sm font-black text-gray-900 dark:text-white leading-tight">{badge.name}</p>
                                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-tight">{badge.desc}</p>
@@ -239,7 +221,7 @@ export default function Achievements() {
                 {unearned.length > 0 && (
                     <div>
                         <h2 className="text-sm font-black text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
-                            <span>🔒</span> Locked ({unearned.length})
+                            <MdLock className="text-gray-400" size={16} /> Locked ({unearned.length})
                         </h2>
                         <div className="grid grid-cols-2 gap-3">
                             {unearned.map((badge, i) => {
@@ -252,8 +234,8 @@ export default function Achievements() {
                                         transition={{ delay: 0.15 + i * 0.05 }}
                                     >
                                         <GlassCard className="p-4 opacity-75 hover:opacity-100 cursor-pointer transition-all" onClick={() => setSelected(badge)}>
-                                            <div className="w-12 h-12 rounded-2xl bg-gray-200 dark:bg-white/10 flex items-center justify-center text-2xl mb-3 grayscale">
-                                                {badge.emoji}
+                                            <div className="w-12 h-12 rounded-2xl bg-gray-200 dark:bg-white/10 flex items-center justify-center mb-3 grayscale">
+                                                <badge.Icon size={24} className="text-gray-500" />
                                             </div>
                                             <p className="text-sm font-black text-gray-900 dark:text-white leading-tight">{badge.name}</p>
                                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-tight">{badge.desc}</p>
@@ -297,8 +279,10 @@ export default function Achievements() {
                             className="bg-white dark:bg-gray-900 rounded-3xl p-6 max-w-xs w-full shadow-2xl"
                             onClick={e => e.stopPropagation()}
                         >
-                            <div className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${selected.color} flex items-center justify-center text-4xl mx-auto mb-4 shadow-xl ${!earned.find(b => b.id === selected.id) ? 'grayscale opacity-60' : ''}`}>
-                                {selected.emoji}
+                            <div className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${selected.color} flex items-center justify-center mx-auto mb-4 shadow-xl ${
+                                !earned.find(b => b.id === selected.id) ? 'grayscale opacity-60' : ''
+                            }`}>
+                                <selected.Icon size={36} className="text-white" />
                             </div>
                             <h2 className="text-xl font-black text-center text-gray-900 dark:text-white">{selected.name}</h2>
                             <p className="text-sm text-center text-gray-500 dark:text-gray-400 mt-1">{selected.desc}</p>

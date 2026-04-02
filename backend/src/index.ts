@@ -17,6 +17,8 @@ import journeysRouter from './routes/journeys.js'
 import authRouter from './routes/auth.js'
 import reportRouter from './routes/reports.js'
 import chatRouter from './routes/chat.js'
+import waitlistRouter from './routes/waitlist.js'
+import { startScheduler } from './services/scheduler.js'
 
 const app = express()
 app.use(cors({ origin: '*' }))
@@ -33,6 +35,7 @@ app.use('/api/preferences', preferencesRouter)
 app.use('/api/favorites', favoritesRouter)
 app.use('/api/journeys', journeysRouter)
 app.use('/api/chat', chatRouter)
+app.use('/api/waitlist', waitlistRouter)
 
 // ── Socket.io — Live Route Sharing ───────────────────────────────────────────
 const httpServer = createServer(app)
@@ -101,7 +104,10 @@ io.on('connection', (socket) => {
 // ── Start ─────────────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 4000
 mongoose.connect(process.env.MONGO_URI!, {})
-  .then(() => console.log('Connected to MongoDB'))
+  .then(() => {
+    console.log('Connected to MongoDB')
+    startScheduler()
+  })
   .catch(err => console.error('Mongo error', err))
 
 httpServer.listen(PORT, () => console.log(`API + Socket.io running on ${PORT}`))

@@ -47,6 +47,8 @@ export default function RouteBreakdown() {
   const [isNavigating, setIsNavigating] = useState(false)
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null)
+  const [mapStyle, setMapStyle] = useState<'satellite-streets-v12' | 'streets-v12'>('satellite-streets-v12')
+  const [voiceEnabled, setVoiceEnabled] = useState(true)
 
   // Sheet: 'peek' = just handle visible, 'half' = ~50% open, 'full' = fully open
   const [sheetState, setSheetState] = useState<'peek' | 'half' | 'full'>('half')
@@ -75,6 +77,14 @@ export default function RouteBreakdown() {
         if (next >= routeData.steps.length) { setIsNavigating(false); return prev }
         const step = routeData.steps[next]
         setUserLocation(step.maneuver.location)
+        // Voice instruction
+        if (voiceEnabled && step.maneuver.instruction && window.speechSynthesis) {
+          window.speechSynthesis.cancel()
+          const utter = new SpeechSynthesisUtterance(step.maneuver.instruction)
+          utter.rate = 0.95
+          utter.pitch = 1
+          window.speechSynthesis.speak(utter)
+        }
         if (mapRef.current) {
           mapRef.current.flyTo({ center: step.maneuver.location, zoom: 17, pitch: 60, bearing: step.maneuver.bearing_after || 0 })
         }
@@ -82,7 +92,7 @@ export default function RouteBreakdown() {
       })
     }, 4000)
     return () => clearInterval(interval)
-  }, [isNavigating, routeData])
+  }, [isNavigating, routeData, voiceEnabled])
 
   // Share with static map IMAGE (not just a link)
   const handleShare = useCallback(async () => {
@@ -164,7 +174,7 @@ export default function RouteBreakdown() {
             zoom: 13
           }}
           style={{ width: '100%', height: '100%' }}
-          mapStyle="mapbox://styles/mapbox/streets-v12"
+          mapStyle={`mapbox://styles/mapbox/${mapStyle}`}
           mapboxAccessToken={MAPBOX_TOKEN}
           attributionControl={false}
         >
@@ -221,7 +231,18 @@ export default function RouteBreakdown() {
         </div>
       </div>
 
-      {/* Share button top-right */}
+      {/* Map style toggle (Satellite / Streets) */}
+      <div className="absolute top-4 right-4 z-30">
+        <button
+          onClick={() => setMapStyle(prev => prev === 'satellite-streets-v12' ? 'streets-v12' : 'satellite-streets-v12')}
+          className="w-10 h-10 bg-white/95 dark:bg-black/90 backdrop-blur-xl rounded-2xl flex items-center justify-center shadow-lg border border-white/20 text-gray-700 dark:text-white hover:text-green-500 transition-colors text-lg"
+          title={mapStyle === 'satellite-streets-v12' ? 'Switch to Streets' : 'Switch to Satellite'}
+        >
+          {mapStyle === 'satellite-streets-v12' ? '🛰️' : '🗺️'}
+        </button>
+      </div>
+
+      {/* Share button top-right (shifted left) */}
       <div className="absolute top-4 right-16 z-30">
         <button
           onClick={handleShare}
@@ -267,9 +288,25 @@ export default function RouteBreakdown() {
                 <div className="text-2xl font-black">{Math.round(currentStep.distance)}m</div>
                 <div className="font-medium opacity-90 text-sm truncate">{currentStep.maneuver.instruction}</div>
               </div>
-              <div className="text-xs opacity-60 text-right">
-                <div className="font-bold">{currentStepIndex + 1}/{routeData.steps?.length}</div>
-                <div>steps</div>
+              <div className="flex flex-col items-end gap-1">
+                <div className="text-xs opacity-60 text-right">
+                  <div className="font-bold">{currentStepIndex + 1}/{routeData.steps?.length}</div>
+                  <div>steps</div>
+                </div>
+                {/* Voice toggle */}
+                <button
+                  onClick={() => {
+                    setVoiceEnabled(v => {
+                      const next = !v
+                      if (!next) window.speechSynthesis?.cancel()
+                      return next
+                    })
+                  }}
+                  className="mt-1 text-white/80 hover:text-white transition-colors text-xl"
+                  title={voiceEnabled ? 'Mute voice' : 'Enable voice'}
+                >
+                  {voiceEnabled ? '🔊' : '🔇'}
+                </button>
               </div>
             </div>
           </motion.div>

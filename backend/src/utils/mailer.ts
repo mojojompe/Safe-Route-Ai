@@ -91,3 +91,98 @@ export async function sendOtpEmail(to: string, name: string, code: string, type:
         html,
     })
 }
+
+export async function sendWaitlistConfirmation(to: string, name: string) {
+    const html = `
+  <!DOCTYPE html>
+  <html>
+  <head><meta charset="UTF-8"/></head>
+  <body style="margin:0;padding:0;background:#0a0f14;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0f14;min-height:100vh;">
+      <tr><td align="center" style="padding:40px 20px;">
+        <table width="520" cellpadding="0" cellspacing="0" style="background:#111820;border-radius:20px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;">
+          <tr>
+            <td style="background:linear-gradient(135deg,#0a1a0f,#0d2018);padding:32px;text-align:center;border-bottom:1px solid rgba(0,211,90,0.15);">
+              <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:800;">Safe Route AI 🛡️</h1>
+              <p style="margin:4px 0 0;color:rgba(255,255,255,0.5);font-size:12px;letter-spacing:1px;text-transform:uppercase;">You're on the list!</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:36px 32px;">
+              <p style="margin:0 0 8px;color:rgba(255,255,255,0.6);font-size:14px;">Hey ${name} 👋,</p>
+              <h2 style="margin:0 0 16px;color:#ffffff;font-size:22px;font-weight:700;">Welcome to the Waitlist!</h2>
+              <p style="margin:0 0 24px;color:rgba(255,255,255,0.55);font-size:15px;line-height:1.7;">
+                You've officially secured your spot on the <strong style="color:#00d35a;">Safe Route AI</strong> mobile app waitlist. 🎉<br/><br/>
+                When we launch on the Play Store and App Store, you'll be the <em>first to know</em> — and you'll get exclusive early-bird access plus a complimentary premium month on us.
+              </p>
+              <div style="background:rgba(0,211,90,0.08);border:1px solid rgba(0,211,90,0.2);border-radius:14px;padding:20px;margin-bottom:24px;">
+                <p style="margin:0;color:rgba(255,255,255,0.4);font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">What's coming</p>
+                <p style="margin:0;color:#ffffff;font-size:14px;line-height:1.7;">
+                  🗺️ AI-powered safe route planning<br/>
+                  🚨 Emergency SOS with live location<br/>
+                  🤖 Arlo AI navigator built-in<br/>
+                  📡 Real-time live location sharing<br/>
+                  🏆 Safety achievements &amp; rewards
+                </p>
+              </div>
+              <p style="margin:0;color:rgba(255,255,255,0.4);font-size:13px;">In the meantime, try the web version at <a href="https://safe-route-ai.vercel.app" style="color:#00d35a;">safe-route-ai.vercel.app</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 32px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;">
+              <p style="margin:0;color:rgba(255,255,255,0.25);font-size:11px;">© 2026 Safe Route AI · Nigeria's Route Safety Platform</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+    </table>
+  </body>
+  </html>`
+
+    await transporter.sendMail({
+        from: process.env.MAIL_FROM || '"Safe Route AI" <saferouteai@gmail.com>',
+        to,
+        subject: `🎉 You're on the Safe Route AI waitlist, ${name}!`,
+        html,
+    })
+}
+
+export async function sendBroadcastEmail(to: string, name: string, subject: string, bodyHtml: string) {
+    const html = `
+  <!DOCTYPE html>
+  <html>
+  <head><meta charset="UTF-8"/></head>
+  <body style="margin:0;padding:0;background:#0a0f14;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0f14;min-height:100vh;">
+      <tr><td align="center" style="padding:40px 20px;">
+        <table width="520" cellpadding="0" cellspacing="0" style="background:#111820;border-radius:20px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;">
+          <tr>
+            <td style="background:linear-gradient(135deg,#0a1a0f,#0d2018);padding:32px;text-align:center;border-bottom:1px solid rgba(0,211,90,0.15);">
+              <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:800;">Safe Route AI 🛡️</h1>
+              <p style="margin:4px 0 0;color:rgba(255,255,255,0.5);font-size:12px;letter-spacing:1px;text-transform:uppercase;">Navigate Safely</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:36px 32px;">
+              <p style="margin:0 0 8px;color:rgba(255,255,255,0.6);font-size:14px;">Hi ${name},</p>
+              ${bodyHtml}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:16px 32px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;">
+              <p style="margin:0;color:rgba(255,255,255,0.25);font-size:11px;">© 2026 Safe Route AI · You're receiving this because you use Safe Route AI.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+    </table>
+  </body>
+  </html>`
+
+    await transporter.sendMail({
+        from: process.env.MAIL_FROM || '"Safe Route AI" <saferouteai@gmail.com>',
+        to,
+        subject,
+        html,
+    })
+}

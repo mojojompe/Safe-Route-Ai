@@ -6,17 +6,19 @@ import { GlassCard } from '../components/ui/GlassCard'
 import Map, { Marker, Popup } from 'react-map-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import axios from 'axios'
-import { MdFilterList, MdRefresh, MdClose, MdThumbUp, MdWarning } from 'react-icons/md'
+import { MdFilterList, MdRefresh, MdClose, MdThumbUp, MdWarning, MdMap,
+  MdCrisisAlert, MdLocalPolice, MdBlock } from 'react-icons/md'
+import type { IconType } from 'react-icons'
 
 const API = import.meta.env.VITE_API_URL
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 
-const REPORT_TYPES = [
-    { id: 'all', label: 'All', emoji: '🗺️' },
-    { id: 'accident', label: 'Accident', emoji: '💥' },
-    { id: 'hazard', label: 'Hazard', emoji: '⚠️' },
-    { id: 'police', label: 'Police', emoji: '👮' },
-    { id: 'closure', label: 'Closure', emoji: '🚧' },
+const REPORT_TYPES: { id: string; label: string; Icon: IconType; color: string }[] = [
+    { id: 'all', label: 'All', Icon: MdMap, color: 'text-gray-400' },
+    { id: 'accident', label: 'Accident', Icon: MdCrisisAlert, color: 'text-red-500' },
+    { id: 'hazard', label: 'Hazard', Icon: MdWarning, color: 'text-amber-500' },
+    { id: 'police', label: 'Police', Icon: MdLocalPolice, color: 'text-blue-500' },
+    { id: 'closure', label: 'Closure', Icon: MdBlock, color: 'text-orange-500' },
 ]
 const TIME_FILTERS = ['24h', 'Week', 'All']
 
@@ -30,8 +32,8 @@ interface Report {
     upvotedBy?: string[]
 }
 
-function getEmoji(type: string) {
-    return REPORT_TYPES.find(r => r.id === type)?.emoji || '📍'
+function getReportIcon(type: string) {
+    return REPORT_TYPES.find(r => r.id === type) || REPORT_TYPES[1]
 }
 
 function timeAgo(date: string): string {
@@ -111,9 +113,9 @@ export default function HazardMap() {
                             <motion.div
                                 whileHover={{ scale: 1.2 }}
                                 whileTap={{ scale: 0.9 }}
-                                className="text-2xl cursor-pointer drop-shadow-lg select-none"
+                                className="cursor-pointer drop-shadow-lg select-none"
                             >
-                                {getEmoji(r.type)}
+                                {(() => { const t = getReportIcon(r.type); return <t.Icon size={28} className={t.color} /> })()}
                             </motion.div>
                         </Marker>
                     ))}
@@ -135,7 +137,7 @@ export default function HazardMap() {
                             >
                                 <div className="flex items-start justify-between gap-2 mb-2">
                                     <div className="flex items-center gap-2">
-                                        <span className="text-xl">{getEmoji(selected.type)}</span>
+                                        {(() => { const t = getReportIcon(selected.type); return <t.Icon size={20} className={t.color} /> })()}
                                         <div>
                                             <p className="text-sm font-black text-gray-900 dark:text-white capitalize">{selected.type}</p>
                                             <p className="text-[10px] text-gray-400">{timeAgo(selected.createdAt)}</p>
@@ -211,9 +213,10 @@ export default function HazardMap() {
                                 <div className="space-y-1.5">
                                     {REPORT_TYPES.map(t => (
                                         <button key={t.id} onClick={() => setTypeFilter(t.id)}
-                                            className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold transition-all ${typeFilter === t.id ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5'
-                                                }`}>
-                                            <span>{t.emoji}</span> {t.label}
+                                            className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold transition-all ${
+                                                typeFilter === t.id ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5'
+                                            }`}>
+                                            <t.Icon size={16} className={typeFilter === t.id ? 'text-green-600' : t.color} /> {t.label}
                                         </button>
                                     ))}
                                 </div>
@@ -242,7 +245,7 @@ export default function HazardMap() {
                     <div className="flex gap-3">
                         {REPORT_TYPES.slice(1).map(t => (
                             <div key={t.id} className="flex items-center gap-1">
-                                <span className="text-base">{t.emoji}</span>
+                                <t.Icon size={16} className={t.color} />
                                 <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400">{t.label}</span>
                             </div>
                         ))}
@@ -254,7 +257,7 @@ export default function HazardMap() {
             {!loading && filtered.length === 0 && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div className="text-center">
-                        <p className="text-5xl mb-3">🗺️</p>
+                        <MdMap size={56} className="mx-auto mb-3 text-gray-500" />
                         <p className="text-white font-bold text-lg">No reports in this area</p>
                         <p className="text-gray-400 text-sm mt-1">Try changing filters or zoom out</p>
                     </div>

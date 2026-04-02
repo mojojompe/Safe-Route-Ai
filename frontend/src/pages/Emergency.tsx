@@ -8,7 +8,8 @@ import axios from 'axios'
 import {
   MdLocalPolice, MdLocalHospital, MdLocalFireDepartment,
   MdDirectionsCar, MdLocationOn, MdTimer, MdPhone,
-  MdSettings, MdContentCopy, MdCheck, MdImage
+  MdSettings, MdContentCopy, MdCheck, MdImage, MdSos,
+  MdFlag, MdWarning, MdMyLocation
 } from 'react-icons/md'
 
 const API = import.meta.env.VITE_API_URL
@@ -170,11 +171,13 @@ export default function Emergency() {
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white">🆘 Emergency</h1>
+              <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white flex items-center gap-2">
+                <MdSos className="text-red-500" size={32} /> Emergency
+              </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Stay calm — help is nearby</p>
             </div>
-            <span className="px-2.5 py-1 bg-gray-100 dark:bg-white/10 text-xs font-black text-gray-500 dark:text-gray-400 rounded-xl">
-              📍 {countryCode}
+            <span className="px-2.5 py-1 bg-gray-100 dark:bg-white/10 text-xs font-black text-gray-500 dark:text-gray-400 rounded-xl flex items-center gap-1">
+              <MdFlag size={12} /> {countryCode}
             </span>
           </div>
         </motion.div>
@@ -233,8 +236,9 @@ export default function Emergency() {
             <MdLocationOn className="text-green-500" /> Share My Location
           </h2>
           {location ? (
-            <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
-              📍 {location.latitude.toFixed(5)}°N, {location.longitude.toFixed(5)}°E
+            <p className="text-xs text-gray-500 dark:text-gray-400 font-mono flex items-center gap-1">
+              <MdMyLocation size={14} className="text-green-500" />
+              {location.latitude.toFixed(5)}°N, {location.longitude.toFixed(5)}°E
             </p>
           ) : (
             <p className="text-xs text-gray-400">Tap below to get your location</p>
@@ -339,10 +343,12 @@ export default function Emergency() {
               </motion.p>
               {remaining === 0 && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-2">
-                  <p className="text-sm font-bold text-red-500">⚠️ Timer expired — share your location now!</p>
+                  <p className="text-sm font-bold text-red-500 flex items-center justify-center gap-1">
+                    <MdWarning size={16} /> Timer expired — share your location now!
+                  </p>
                   <button onClick={generateShareLink}
-                    className="w-full py-2.5 bg-red-500 text-white font-bold text-sm rounded-2xl">
-                    📍 Share Location
+                    className="w-full py-2.5 bg-red-500 text-white font-bold text-sm rounded-2xl flex items-center justify-center gap-2">
+                    <MdMyLocation size={16} /> Share Location
                   </button>
                 </motion.div>
               )}
