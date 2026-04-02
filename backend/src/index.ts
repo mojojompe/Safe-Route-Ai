@@ -21,7 +21,14 @@ import waitlistRouter from './routes/waitlist.js'
 import { startScheduler } from './services/scheduler.js'
 
 const app = express()
-app.use(cors({ origin: '*' }))
+
+const corsOptions = {
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}
+app.use(cors(corsOptions))
+app.options('*', cors(corsOptions)) // Handle preflight for all routes
 app.use(express.json())
 
 // ── REST routes ──────────────────────────────────────────────────────────────
