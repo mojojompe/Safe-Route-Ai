@@ -6,4 +6,6 @@ const WaitlistSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
 })
 
-export const Waitlist = mongoose.model('Waitlist', WaitlistSchema)
+// Use models cache guard for Vercel serverless warm restarts
+export const Waitlist = (mongoose.models['Waitlist'] as mongoose.Model<any>) ||
+    mongoose.model('Waitlist', WaitlistSchema)
