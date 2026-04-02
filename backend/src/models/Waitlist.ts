@@ -6,4 +6,4 @@ const WaitlistSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
 })
 
-export const Waitlist = mongoose.models.Waitlist || mongoose.model('Waitlist', WaitlistSchema)
+export const Waitlist = mongoose.model('Waitlist', WaitlistSchema)
