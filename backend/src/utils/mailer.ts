@@ -28,7 +28,7 @@ export async function sendOtpEmail(to: string, name: string, code: string, type:
           <tr>
             <td style="background:linear-gradient(135deg,#0a1a0f,#0d2018);padding:32px;text-align:center;border-bottom:1px solid rgba(0,211,90,0.15);">
               <div style="display:inline-block;width:60px;height:60px;background:rgba(0,211,90,0.12);border:2px solid #00d35a;border-radius:18px;line-height:60px;font-size:28px;margin-bottom:12px;">📍</div>
-              <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:800;letter-spacing:-0.3px;">Safe Route AI</h1>
+              <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:800;letter-spacing:-0.3px;">Safe Route Ai</h1>
               <p style="margin:4px 0 0;color:rgba(255,255,255,0.5);font-size:12px;letter-spacing:1px;text-transform:uppercase;">Navigate Safely</p>
             </td>
           </tr>
@@ -103,7 +103,7 @@ export async function sendWaitlistConfirmation(to: string, name: string) {
         <table width="520" cellpadding="0" cellspacing="0" style="background:#111820;border-radius:20px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;">
           <tr>
             <td style="background:linear-gradient(135deg,#0a1a0f,#0d2018);padding:32px;text-align:center;border-bottom:1px solid rgba(0,211,90,0.15);">
-              <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:800;">Safe Route AI 🛡️</h1>
+              <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:800;">Safe Route AI </h1>
               <p style="margin:4px 0 0;color:rgba(255,255,255,0.5);font-size:12px;letter-spacing:1px;text-transform:uppercase;">You're on the list!</p>
             </td>
           </tr>
@@ -125,7 +125,7 @@ export async function sendWaitlistConfirmation(to: string, name: string) {
                   🏆 Safety achievements &amp; rewards
                 </p>
               </div>
-              <p style="margin:0;color:rgba(255,255,255,0.4);font-size:13px;">In the meantime, try the web version at <a href="https://safe-route-ai.vercel.app" style="color:#00d35a;">safe-route-ai.vercel.app</a></p>
+              <p style="margin:0;color:rgba(255,255,255,0.4);font-size:13px;">In the meantime, try the web version at <a href="https://safe-route-ai.vercel.app" style="color:#00d35a;">Safe Route Ai</a></p>
             </td>
           </tr>
           <tr>
@@ -158,7 +158,7 @@ export async function sendBroadcastEmail(to: string, name: string, subject: stri
         <table width="520" cellpadding="0" cellspacing="0" style="background:#111820;border-radius:20px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;">
           <tr>
             <td style="background:linear-gradient(135deg,#0a1a0f,#0d2018);padding:32px;text-align:center;border-bottom:1px solid rgba(0,211,90,0.15);">
-              <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:800;">Safe Route AI 🛡️</h1>
+              <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:800;">Safe Route AI </h1>
               <p style="margin:4px 0 0;color:rgba(255,255,255,0.5);font-size:12px;letter-spacing:1px;text-transform:uppercase;">Navigate Safely</p>
             </td>
           </tr>

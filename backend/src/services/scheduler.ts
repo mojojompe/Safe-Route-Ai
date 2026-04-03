@@ -8,51 +8,51 @@ const NIGERIAN_HOLIDAYS: { name: string; month: number; day: number; message: (n
         name: 'New Year',
         month: 0, day: 1,
         message: name => ({
-            subject: `Happy New Year, ${name}! Navigate 2026 Safely`,
+            subject: `Happy New Year, ${name}! Navigate the New Year Safely`,
             body: `<h2 style="color:#fff;margin:0 0 16px;">Happy New Year!</h2>
 <p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.7;">
-  A brand new year means brand new journeys. As you step out to embrace everything 2026 has to offer, remember that your safety comes first — always.<br/><br/>
+  A brand new year means brand new journeys. As you step out to embrace everything 2026 has to offer, remember that your safety comes first, always.<br/><br/>
   <strong style="color:#00d35a;">Safe Route AI is with you every step of the way.</strong> Use Arlo to plan your routes, report hazards for your community, and share your live location with loved ones.<br/><br/>
   Here's to a safe, thriving, and adventure-filled year ahead!
 </p>`
         })
     },
-    {
-        name: 'Easter Sunday',
-        month: 3, day: 20,
-        message: name => ({
-            subject: `Happy Easter, ${name}! Stay Safe on Your Journey`,
-            body: `<h2 style="color:#fff;margin:0 0 16px;">Happy Easter!</h2>
-<p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.7;">
-  As you make your way to visit loved ones and attend celebrations, travel with complete peace of mind.<br/><br/>
-  The roads are busier during Easter — but with <strong style="color:#00d35a;">Safe Route AI</strong>, you'll always have the safest path mapped out. Check live hazard reports, avoid traffic hotspots, and share your location with family. Wishing you a blessed and safe Easter!
-</p>`
-        })
-    },
-    {
-        name: 'Eid el-Fitr',
-        month: 3, day: 30,
-        message: name => ({
-            subject: `Eid Mubarak, ${name}! Travel Safely This Celebration`,
-            body: `<h2 style="color:#fff;margin:0 0 16px;">Eid Mubarak!</h2>
-<p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.7;">
-  As you celebrate Eid el-Fitr with family and friends, may your journeys be as joyful and peaceful as the occasion.<br/><br/>
-  Use <strong style="color:#00d35a;">Safe Route AI</strong> to find the safest roads to your celebrations. Our live hazard map will help you avoid congested or risky areas. Eid Mubarak from the Safe Route AI family!
-</p>`
-        })
-    },
-    {
-        name: 'Eid el-Kabir',
-        month: 6, day: 7,
-        message: name => ({
-            subject: `Eid el-Kabir Mubarak, ${name}! Safe Travels Today`,
-            body: `<h2 style="color:#fff;margin:0 0 16px;">Eid el-Kabir Mubarak!</h2>
-<p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.7;">
-  On this special occasion, we pray your travels are smooth and your celebrations beautiful.<br/><br/>
-  Wherever your journey takes you today, let <strong style="color:#00d35a;">Safe Route AI</strong> be your safety companion. Eid Mubarak from all of us!
-</p>`
-        })
-    },
+//     {
+//         name: 'Easter Sunday',
+//         month: 3, day: 20,
+//         message: name => ({
+//             subject: `Happy Easter, ${name}! Stay Safe on Your Journey`,
+//             body: `<h2 style="color:#fff;margin:0 0 16px;">Happy Easter!</h2>
+// <p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.7;">
+//   As you make your way to visit loved ones and attend celebrations, travel with complete peace of mind.<br/><br/>
+//   The roads are busier during Easter — but with <strong style="color:#00d35a;">Safe Route AI</strong>, you'll always have the safest path mapped out. Check live hazard reports, avoid traffic hotspots, and share your location with family. Wishing you a blessed and safe Easter!
+// </p>`
+//         })
+//     },
+//     {
+//         name: 'Eid el-Fitr',
+//         month: 3, day: 30,
+//         message: name => ({
+//             subject: `Eid Mubarak, ${name}! Travel Safely This Celebration`,
+//             body: `<h2 style="color:#fff;margin:0 0 16px;">Eid Mubarak!</h2>
+// <p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.7;">
+//   As you celebrate Eid el-Fitr with family and friends, may your journeys be as joyful and peaceful as the occasion.<br/><br/>
+//   Use <strong style="color:#00d35a;">Safe Route AI</strong> to find the safest roads to your celebrations. Our live hazard map will help you avoid congested or risky areas. Eid Mubarak from the Safe Route AI family!
+// </p>`
+//         })
+//     },
+//     {
+//         name: 'Eid el-Kabir',
+//         month: 6, day: 7,
+//         message: name => ({
+//             subject: `Eid el-Kabir Mubarak, ${name}! Safe Travels Today`,
+//             body: `<h2 style="color:#fff;margin:0 0 16px;">Eid el-Kabir Mubarak!</h2>
+// <p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.7;">
+//   On this special occasion, we pray your travels are smooth and your celebrations beautiful.<br/><br/>
+//   Wherever your journey takes you today, let <strong style="color:#00d35a;">Safe Route AI</strong> be your safety companion. Eid Mubarak from all of us!
+// </p>`
+//         })
+//     },
     {
         name: 'Independence Day',
         month: 9, day: 1,
