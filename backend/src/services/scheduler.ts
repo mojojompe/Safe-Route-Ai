@@ -1,5 +1,9 @@
 import cron from 'node-cron'
-import { User } from '../models/User.js'
+import mongoose from 'mongoose'
+
+// Use the cached model if already registered by auth.ts (avoids OverwriteModelError)
+const User = (mongoose.models['User'] as mongoose.Model<{ displayName?: string; email: string; verified?: boolean }>) ||
+    mongoose.model('User', new mongoose.Schema({ displayName: String, email: String, verified: Boolean }))
 import { sendBroadcastEmail } from '../utils/mailer.js'
 
 // ── Holiday definitions (month is 0-indexed) ──────────────────────────────────
