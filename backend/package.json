@@ -2,8 +2,10 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
+    "start": "tsx src/index.ts",
+    "build": "echo 'No build step required'",
     "dev": "tsx watch src/index.ts",
     "import:nigeria": "tsx src/scripts/importNigeriaPlaces.ts",
     "import:schools": "tsx src/scripts/importNigeriaPlaces.ts schools",
