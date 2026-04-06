@@ -18,7 +18,7 @@ import authRouter from './routes/auth.js'
 import reportRouter from './routes/reports.js'
 import chatRouter from './routes/chat.js'
 import waitlistRouter from './routes/waitlist.js'
-import { startScheduler } from './services/scheduler.js'
+import { startScheduler, broadcastToAll } from './services/scheduler.js'
 
 const app = express()
 
@@ -43,6 +43,28 @@ app.use('/api/favorites', favoritesRouter)
 app.use('/api/journeys', journeysRouter)
 app.use('/api/chat', chatRouter)
 app.use('/api/waitlist', waitlistRouter)
+
+// ── Manual broadcast trigger (admin use) ─────────────────────────────────────
+app.post('/api/broadcast/weekly', async (_req, res) => {
+  try {
+    const tip = 'roads are busiest on Monday mornings. Leave 15 minutes earlier and use Safe Route AI to avoid accident-prone areas.'
+    await broadcastToAll(
+      'Stay Safe This Week - A Quick Safety Reminder',
+      name => `<h2 style="color:#fff;margin:0 0 16px;">Good morning, ${name}!</h2>
+<p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.7;">
+  A new week means new journeys. Here is a quick safety reminder:<br/><br/>
+  <div style="background:rgba(0,211,90,0.08);border-left:3px solid #00d35a;padding:16px;border-radius:0 12px 12px 0;margin:16px 0;">
+    <strong style="color:#00d35a;">This week's tip:</strong><br/>
+    <span style="color:rgba(255,255,255,0.7);">Nigerian ${tip}</span>
+  </div>
+  Stay safe on your way to work, school, or anywhere life takes you.
+</p>`
+    )
+    res.json({ ok: true, message: 'Weekly broadcast sent.' })
+  } catch (err: any) {
+    res.status(500).json({ ok: false, error: err.message })
+  }
+})
 
 // ── Socket.io — Live Route Sharing ───────────────────────────────────────────
 const httpServer = createServer(app)
