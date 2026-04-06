@@ -154,6 +154,27 @@ export function startScheduler() {
             )
         }, { timezone: tz })
 
+        // Every Friday at 4:00 PM WAT
+        cron.schedule('0 16 * * 5', async () => {
+            await broadcastToAll(
+                'The Weekend Is Here - Travel Smart, Stay Safe',
+                name => `<h2 style="color:#fff;margin:0 0 16px;">TGIF, ${name}!</h2>
+<p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.7;">
+  The weekend is here and we know you have places to be. Whether you are heading out to see family, catch a show, or just enjoy the city — let <strong style="color:#00d35a;">Safe Route AI</strong> help you get there safely.<br/><br/>
+  <div style="background:rgba(0,211,90,0.08);border-left:3px solid #00d35a;padding:16px;border-radius:0 12px 12px 0;margin:16px 0;">
+    <strong style="color:#00d35a;">Weekend safety reminders:</strong><br/>
+    <span style="color:rgba(255,255,255,0.7);">
+      - Friday evenings are peak traffic hours — plan your route early<br/>
+      - Avoid poorly lit roads after dark<br/>
+      - Share your live location with someone before long trips<br/>
+      - Check the community hazard map for reported incidents near you
+    </span>
+  </div>
+  Have a great weekend and stay safe out there!
+</p>`
+            )
+        }, { timezone: tz })
+
         // 1st of every month at 9:00 AM WAT
         cron.schedule('0 9 1 * *', async () => {
             const month = new Date().toLocaleString('en-NG', { month: 'long' })
@@ -187,7 +208,7 @@ export function startScheduler() {
             }
         }, { timezone: tz })
 
-        console.log('Scheduler started: Weekly (Mon 8am WAT), Monthly (1st 9am WAT), Holidays (daily 9am WAT)')
+        console.log('Scheduler started: Mon 8am WAT, Fri 4pm WAT, Monthly 1st 9am WAT, Holidays 9am WAT')
     } catch (err: any) {
         console.error('Scheduler failed to start:', err.message)
     }

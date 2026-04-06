@@ -66,6 +66,31 @@ app.post('/api/broadcast/weekly', async (_req, res) => {
   }
 })
 
+app.post('/api/broadcast/friday', async (_req, res) => {
+  try {
+    await broadcastToAll(
+      'The Weekend Is Here - Travel Smart, Stay Safe',
+      name => `<h2 style="color:#fff;margin:0 0 16px;">TGIF, ${name}!</h2>
+<p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.7;">
+  The weekend is here and we know you have places to be. Whether you are heading out to see family, catch a show, or just enjoy the city — let <strong style="color:#00d35a;">Safe Route AI</strong> help you get there safely.<br/><br/>
+  <div style="background:rgba(0,211,90,0.08);border-left:3px solid #00d35a;padding:16px;border-radius:0 12px 12px 0;margin:16px 0;">
+    <strong style="color:#00d35a;">Weekend safety reminders:</strong><br/>
+    <span style="color:rgba(255,255,255,0.7);">
+      - Friday evenings are peak traffic hours — plan your route early<br/>
+      - Avoid poorly lit roads after dark<br/>
+      - Share your live location with someone before long trips<br/>
+      - Check the community hazard map for reported incidents near you
+    </span>
+  </div>
+  Have a great weekend and stay safe out there!
+</p>`
+    )
+    res.json({ ok: true, message: 'Friday broadcast sent.' })
+  } catch (err: any) {
+    res.status(500).json({ ok: false, error: err.message })
+  }
+})
+
 // ── Socket.io — Live Route Sharing ───────────────────────────────────────────
 const httpServer = createServer(app)
 const io = new Server(httpServer, {
