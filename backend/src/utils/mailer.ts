@@ -88,7 +88,12 @@ export async function sendOtpEmail(to: string, name: string, code: string, type:
         from: process.env.MAIL_FROM || '"Safe Route AI" <saferouteai@gmail.com>',
         to,
         subject,
+        text: `Safe Route AI\n\nHi ${name},\n\nYour code is: ${code}\n\nThis expires in 3 minutes. If you did not request this, please ignore.`,
         html,
+        headers: {
+            'List-Unsubscribe': '<mailto:saferouteai@gmail.com?subject=unsubscribe>',
+            'X-Mailer': 'Safe Route AI Mailer',
+        },
     })
 }
 
@@ -116,13 +121,13 @@ export async function sendWaitlistConfirmation(to: string, name: string) {
                 When we launch on the Play Store and App Store, you'll be the <em>first to know</em> — and you'll get exclusive early-bird access plus a complimentary premium month on us.
               </p>
               <div style="background:rgba(0,211,90,0.08);border:1px solid rgba(0,211,90,0.2);border-radius:14px;padding:20px;margin-bottom:24px;">
-                <p style="margin:0;color:rgba(255,255,255,0.4);font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">What's coming</p>
+              <p style="margin:0;color:rgba(255,255,255,0.4);font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">What's coming</p>
                 <p style="margin:0;color:#ffffff;font-size:14px;line-height:1.7;">
-                  🗺️ AI-powered safe route planning<br/>
-                  🚨 Emergency SOS with live location<br/>
-                  🤖 Arlo AI navigator built-in<br/>
-                  📡 Real-time live location sharing<br/>
-                  🏆 Safety achievements &amp; rewards
+                  - AI-powered safe route planning<br/>
+                  - Emergency SOS with live location<br/>
+                  - Arlo AI navigator built-in<br/>
+                  - Real-time live location sharing<br/>
+                  - Safety achievements and rewards
                 </p>
               </div>
               <p style="margin:0;color:rgba(255,255,255,0.4);font-size:13px;">In the meantime, try the web version at <a href="https://safe-route-ai.vercel.app" style="color:#00d35a;">Safe Route Ai</a></p>
@@ -142,8 +147,13 @@ export async function sendWaitlistConfirmation(to: string, name: string) {
     await transporter.sendMail({
         from: process.env.MAIL_FROM || '"Safe Route AI" <saferouteai@gmail.com>',
         to,
-        subject: `🎉 You're on the Safe Route AI waitlist, ${name}!`,
+        subject: `You are on the Safe Route AI waitlist, ${name}`,
+        text: `Hi ${name},\n\nWelcome to the Safe Route AI waitlist! You have secured your spot.\n\nWhen we launch on Play Store and App Store, you will be the first to know — with exclusive early-bird access and a free premium month.\n\nIn the meantime, try the web version at https://safe-route-ai.vercel.app\n\nSafe Route AI Team`,
         html,
+        headers: {
+            'List-Unsubscribe': '<mailto:saferouteai@gmail.com?subject=unsubscribe>',
+            'X-Mailer': 'Safe Route AI Mailer',
+        },
     })
 }
 
@@ -183,6 +193,11 @@ export async function sendBroadcastEmail(to: string, name: string, subject: stri
         from: process.env.MAIL_FROM || '"Safe Route AI" <saferouteai@gmail.com>',
         to,
         subject,
+        text: `Hi ${name},\n\n${subject}\n\nSafe Route AI Team\nhttps://safe-route-ai.vercel.app`,
         html,
+        headers: {
+            'List-Unsubscribe': '<mailto:saferouteai@gmail.com?subject=unsubscribe>',
+            'X-Mailer': 'Safe Route AI Mailer',
+        },
     })
 }
